@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "4";
+	app.meta.h["build"] = "8";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "openfl";
 	app.meta.h["name"] = "openfl";
@@ -3378,7 +3378,7 @@ var Main = function() {
 	}
 	this.get_graphics().lineStyle(0,0,0);
 	this.get_graphics().lineStyle(1,16777215);
-	haxe_Log.trace("Done",{ fileName : "src/Main.hx", lineNumber : 88, className : "Main", methodName : "new"});
+	haxe_Log.trace("Done",{ fileName : "src/Main.hx", lineNumber : 52, className : "Main", methodName : "new"});
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = "Main";
@@ -23111,7 +23111,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 889501;
+	this.version = 136722;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
