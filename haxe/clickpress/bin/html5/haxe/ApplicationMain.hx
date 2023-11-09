@@ -20,7 +20,7 @@ class ApplicationMain
 
 		#if (js && html5)
 		#if (munit || utest)
-		lime.system.System.embed("openfl", null, 1600, 900);
+		lime.system.System.embed("openfl", null, 810, 1066);
 		#end
 		#else
 		create(null);
@@ -35,7 +35,7 @@ class ApplicationMain
 		ManifestResources.init(config);
 		#end
 
-		app.meta["build"] = "8";
+		app.meta["build"] = "9";
 		app.meta["company"] = "xlift44";
 		app.meta["file"] = "openfl";
 		app.meta["name"] = "openfl";
@@ -54,14 +54,14 @@ class ApplicationMain
 			element: null,
 			frameRate: 60,
 			#if !web fullscreen: false, #end
-			height: 900,
+			height: 1066,
 			hidden: #if munit true #else false #end,
 			maximized: false,
 			minimized: false,
 			parameters: {},
 			resizable: true,
 			title: "openfl",
-			width: 1600,
+			width: 810,
 			x: null,
 			y: null,
 		};

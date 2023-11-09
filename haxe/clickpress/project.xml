@@ -9,7 +9,7 @@
 	<app main="Main" file="openfl" path="bin" />
 	
 	<window background="#000000" fps="60" />
-	<window width="1600" height="900" unless="mobile" />
+	<window width="810" height="1066"/>
 	<window orientation="landscape" vsync="false" antialiasing="0" if="cpp" />
 	
 	<!-- classpath, haxe libs -->

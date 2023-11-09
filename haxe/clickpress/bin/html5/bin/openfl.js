@@ -899,13 +899,13 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "8";
+	app.meta.h["build"] = "9";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "openfl";
 	app.meta.h["name"] = "openfl";
 	app.meta.h["packageName"] = "openfl";
 	app.meta.h["version"] = "1.0.0";
-	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 900, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "openfl", width : 1600, x : null, y : null};
+	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 1066, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "openfl", width : 810, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : false};
 	if(app.__window == null) {
 		if(config != null) {
@@ -3356,29 +3356,31 @@ var Main = function() {
 	this.x0 = 0;
 	this.stepGridY = 100;
 	this.stepGridX = 100;
-	this.maxY = 900;
-	this.maxX = 1600;
+	this.maxY = 1066;
+	this.maxX = 810;
 	openfl_display_Sprite.call(this);
 	haxe_Log.trace("Start",{ fileName : "src/Main.hx", lineNumber : 33, className : "Main", methodName : "new"});
 	this.get_graphics().clear();
-	this.get_graphics().lineStyle(1,3355443);
+	this.get_graphics().lineStyle(1,4473924);
+	this.get_graphics().drawRect(0,0,this.maxX,this.maxY);
+	var countX = 6;
+	var countY = 8;
 	var _g = 0;
-	var _g1 = this.maxX / this.stepGridX + 1 | 0;
-	while(_g < _g1) {
-		var x = _g++;
-		this.get_graphics().moveTo(x * this.stepGridX,0);
-		this.get_graphics().lineTo(x * this.stepGridX,this.maxY);
-	}
-	var _g = 0;
-	var _g1 = this.maxY / this.stepGridY + 1 | 0;
+	var _g1 = countY + 1;
 	while(_g < _g1) {
 		var y = _g++;
 		this.get_graphics().moveTo(0,y * this.stepGridY);
-		this.get_graphics().lineTo(this.maxX,y * this.stepGridY);
+		this.get_graphics().lineTo(countX * this.stepGridX,y * this.stepGridY);
 	}
-	this.get_graphics().lineStyle(0,0,0);
+	var _g = 0;
+	var _g1 = countX + 1;
+	while(_g < _g1) {
+		var x = _g++;
+		this.get_graphics().moveTo(x * this.stepGridX,0);
+		this.get_graphics().lineTo(x * this.stepGridX,countY * this.stepGridY);
+	}
 	this.get_graphics().lineStyle(1,16777215);
-	haxe_Log.trace("Done",{ fileName : "src/Main.hx", lineNumber : 52, className : "Main", methodName : "new"});
+	haxe_Log.trace("Done",{ fileName : "src/Main.hx", lineNumber : 59, className : "Main", methodName : "new"});
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = "Main";
@@ -23111,7 +23113,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 136722;
+	this.version = 313043;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
