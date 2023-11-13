@@ -8,6 +8,9 @@ import openfl.Assets;
 import openfl.Lib;
 import openfl.display.GradientType;
 import openfl.geom.Matrix;
+import openfl.events.Event;
+import openfl.events.KeyboardEvent;
+import openfl.events.MouseEvent;
 
 
 /**
@@ -18,6 +21,8 @@ import openfl.geom.Matrix;
 
 class Main extends Sprite {
 	
+	public var count:Int = 0;
+
 	public var maxX:Int = 810;
 	public var maxY:Int = 1066;
 	
@@ -49,17 +54,56 @@ class Main extends Sprite {
 			graphics.moveTo(x * stepGridX, 0);
 			graphics.lineTo(x * stepGridX, countY * stepGridY);	
 		}
-
-		// graphics.lineStyle(0, 0, 0);
 	
 		graphics.lineStyle(1, 0xFFFFFF);
 		
-		
-			
-		trace("Done");
+		addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+		addEventListener(KeyboardEvent.KEY_UP, keyUp);
 
+		addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+		addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+		addEventListener(Event.ENTER_FRAME, enterFrame);	
+			
+		graphics.lineStyle(0, 0, 0);
+
+		trace("Done");
 	}
 
+
+	public function destroy() {
+		removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+		removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
+		removeEventListener(Event.ENTER_FRAME, enterFrame);
+	}
+
+
+	public function enterFrame(e:Event) {
+		count++;
+		if (count % 600 == 0) trace(count / 60);
+		
+	}
+
+
+	public function mouseDown(e:MouseEvent) { // Нажатие на кнопку мыши
+		trace("mouseDown");
+	}
+	
+	
+	public function mouseUp(e:MouseEvent) { // Отпускание кнопки мыши
+		trace("mouseUp");
+	}
+	
+	
+	public function keyDown(e:KeyboardEvent) { // Нажатие на клавишу клавиатуры
+		trace("keyDown", e.keyCode);
+	}
+	
+	
+	public function keyUp(e:KeyboardEvent) { // Отпускание клавиши клавиатуры
+		trace("keyUp", e.keyCode);
+	}
+	
+	
 	
 }
 

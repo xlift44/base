@@ -35,7 +35,7 @@ class ApplicationMain
 		ManifestResources.init(config);
 		#end
 
-		app.meta["build"] = "9";
+		app.meta["build"] = "10";
 		app.meta["company"] = "xlift44";
 		app.meta["file"] = "openfl";
 		app.meta["name"] = "openfl";
@@ -52,7 +52,7 @@ class ApplicationMain
 			borderless: false,
 			// display: 0,
 			element: null,
-			frameRate: 60,
+			frameRate: 30,
 			#if !web fullscreen: false, #end
 			height: 1066,
 			hidden: #if munit true #else false #end,
@@ -105,7 +105,7 @@ class ApplicationMain
 		app.window.title = "openfl";
 		#else
 		app.window.context.attributes.background = 0;
-		app.window.frameRate = 60;
+		app.window.frameRate = 30;
 		#end
 
 		var preloader = getPreloader();
