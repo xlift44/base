@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "11";
+	app.meta.h["build"] = "12";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3352,42 +3352,16 @@ openfl_display_Sprite.prototype = $extend(openfl_display_DisplayObjectContainer.
 	,__properties__: $extend(openfl_display_DisplayObjectContainer.prototype.__properties__,{get_graphics:"get_graphics",set_buttonMode:"set_buttonMode",get_buttonMode:"get_buttonMode"})
 });
 var Main = function() {
-	this.y0 = 0;
-	this.x0 = 0;
-	this.stepGridY = 100;
-	this.stepGridX = 100;
-	this.maxY = 1066;
-	this.maxX = 810;
-	this.count = 0;
 	openfl_display_Sprite.call(this);
-	haxe_Log.trace("Start",{ fileName : "src/Main.hx", lineNumber : 36, className : "Main", methodName : "new"});
-	this.get_graphics().clear();
-	this.get_graphics().lineStyle(1,4473924);
-	this.get_graphics().drawRect(0,0,this.maxX,this.maxY);
-	var countX = 6;
-	var countY = 8;
-	var _g = 0;
-	var _g1 = countY + 1;
-	while(_g < _g1) {
-		var y = _g++;
-		this.get_graphics().moveTo(0,y * this.stepGridY);
-		this.get_graphics().lineTo(countX * this.stepGridX,y * this.stepGridY);
-	}
-	var _g = 0;
-	var _g1 = countX + 1;
-	while(_g < _g1) {
-		var x = _g++;
-		this.get_graphics().moveTo(x * this.stepGridX,0);
-		this.get_graphics().lineTo(x * this.stepGridX,countY * this.stepGridY);
-	}
-	this.get_graphics().lineStyle(1,16777215);
+	haxe_Log.trace("Start",{ fileName : "src/Main.hx", lineNumber : 31, className : "Main", methodName : "new"});
+	this.view = new View();
+	this.addChild(this.view);
 	this.stage.addEventListener("keyDown",$bind(this,this.keyDown));
 	this.stage.addEventListener("keyUp",$bind(this,this.keyUp));
 	this.stage.addEventListener("mouseDown",$bind(this,this.mouseDown));
 	this.stage.addEventListener("mouseUp",$bind(this,this.mouseUp));
 	this.stage.addEventListener("enterFrame",$bind(this,this.enterFrame));
-	this.get_graphics().lineStyle(0,0,0);
-	haxe_Log.trace("Done",{ fileName : "src/Main.hx", lineNumber : 66, className : "Main", methodName : "new"});
+	haxe_Log.trace("Done",{ fileName : "src/Main.hx", lineNumber : 42, className : "Main", methodName : "new"});
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = "Main";
@@ -3403,16 +3377,18 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 	,enterFrame: function(e) {
 	}
 	,mouseDown: function(e) {
-		haxe_Log.trace("mouseDown",{ fileName : "src/Main.hx", lineNumber : 85, className : "Main", methodName : "mouseDown", customParams : [e]});
+		haxe_Log.trace("mouseDown",{ fileName : "src/Main.hx", lineNumber : 61, className : "Main", methodName : "mouseDown", customParams : [e]});
 	}
 	,mouseUp: function(e) {
-		haxe_Log.trace("mouseUp",{ fileName : "src/Main.hx", lineNumber : 90, className : "Main", methodName : "mouseUp", customParams : [e]});
+		haxe_Log.trace("mouseUp",{ fileName : "src/Main.hx", lineNumber : 66, className : "Main", methodName : "mouseUp", customParams : [e]});
 	}
 	,keyDown: function(e) {
-		haxe_Log.trace("keyDown",{ fileName : "src/Main.hx", lineNumber : 95, className : "Main", methodName : "keyDown", customParams : [e]});
+		haxe_Log.trace("keyDown",{ fileName : "src/Main.hx", lineNumber : 71, className : "Main", methodName : "keyDown", customParams : [e]});
+		this.view.drawButton(e.keyCode,true);
 	}
 	,keyUp: function(e) {
-		haxe_Log.trace("keyUp",{ fileName : "src/Main.hx", lineNumber : 100, className : "Main", methodName : "keyUp", customParams : [e]});
+		haxe_Log.trace("keyUp",{ fileName : "src/Main.hx", lineNumber : 77, className : "Main", methodName : "keyUp", customParams : [e]});
+		this.view.drawButton(e.keyCode,false);
 	}
 	,__class__: Main
 });
@@ -3981,6 +3957,99 @@ UInt.toFloat = function(this1) {
 		return int + 0.0;
 	}
 };
+var View = function() {
+	this.y0 = 0;
+	this.x0 = 0;
+	this.stepGridY = 100;
+	this.stepGridX = 100;
+	this.maxY = 1066;
+	this.maxX = 810;
+	openfl_display_Sprite.call(this);
+	this.startScreen();
+};
+$hxClasses["View"] = View;
+View.__name__ = "View";
+View.__super__ = openfl_display_Sprite;
+View.prototype = $extend(openfl_display_Sprite.prototype,{
+	startScreen: function() {
+		this.get_graphics().clear();
+		this.get_graphics().lineStyle(1,4473924);
+		this.get_graphics().drawRect(0,0,this.maxX,this.maxY);
+		var countX = 6;
+		var countY = 8;
+		var _g = 0;
+		var _g1 = countY + 1;
+		while(_g < _g1) {
+			var y = _g++;
+			this.get_graphics().moveTo(0,y * this.stepGridY);
+			this.get_graphics().lineTo(countX * this.stepGridX,y * this.stepGridY);
+		}
+		var _g = 0;
+		var _g1 = countX + 1;
+		while(_g < _g1) {
+			var x = _g++;
+			this.get_graphics().moveTo(x * this.stepGridX,0);
+			this.get_graphics().lineTo(x * this.stepGridX,countY * this.stepGridY);
+		}
+		this.get_graphics().lineStyle(1,16777215);
+		this.get_graphics().lineStyle(0,0,0);
+	}
+	,drawButton: function(key,on) {
+		var color = 4473924;
+		var text = "";
+		var tf = new openfl_text_TextFormat();
+		var tText = new openfl_text_TextField();
+		var x = 0;
+		var y = 0;
+		var w = 0;
+		var h = 0;
+		switch(key) {
+		case 16:
+			text = "SHIFT";
+			x = 20;
+			y = 80;
+			w = 100;
+			h = 40;
+			break;
+		case 17:
+			text = "CTRL";
+			x = 20;
+			y = 20;
+			w = 100;
+			h = 40;
+			break;
+		case 18:
+			text = "ALT";
+			x = 20;
+			y = 140;
+			w = 100;
+			h = 40;
+			break;
+		}
+		if(on) {
+			color = 65280;
+		} else {
+			color = 4473924;
+		}
+		this.get_graphics().lineStyle(3,color);
+		this.get_graphics().drawRoundRect(x,y,w,h,15,15);
+		if(on) {
+			tf.color = color;
+		} else {
+			tf.color = 4473924;
+		}
+		tf.font = "Arial";
+		tf.size = 24;
+		tf.bold = true;
+		tf.align = openfl_text_TextFormatAlign.fromString("center");
+		tText.set_defaultTextFormat(tf);
+		tText.set_x(x);
+		tText.set_y(y);
+		tText.set_text(text);
+		this.addChild(tText);
+	}
+	,__class__: View
+});
 var haxe_StackItem = $hxEnums["haxe.StackItem"] = { __ename__:"haxe.StackItem",__constructs__:null
 	,CFunction: {_hx_name:"CFunction",_hx_index:0,__enum__:"haxe.StackItem",toString:$estr}
 	,Module: ($_=function(m) { return {_hx_index:1,m:m,__enum__:"haxe.StackItem",toString:$estr}; },$_._hx_name="Module",$_.__params__ = ["m"],$_)
@@ -23141,7 +23210,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 576030;
+	this.version = 637730;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
