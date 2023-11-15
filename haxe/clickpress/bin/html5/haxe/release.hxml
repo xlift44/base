@@ -18,6 +18,6 @@
 -D html5
 -D web
 --remap flash:openfl
--js bin/html5/bin/openfl.js
+-js bin/html5/bin/clickpress.js
 -cp bin/html5/haxe
 -D html5

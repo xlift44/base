@@ -16,11 +16,11 @@ class ApplicationMain
 	#if !macro
 	public static function main()
 	{
-		lime.system.System.__registerEntryPoint("openfl", create);
+		lime.system.System.__registerEntryPoint("clickpress", create);
 
 		#if (js && html5)
 		#if (munit || utest)
-		lime.system.System.embed("openfl", null, 810, 1066);
+		lime.system.System.embed("clickpress", null, 810, 1066);
 		#end
 		#else
 		create(null);
@@ -35,11 +35,11 @@ class ApplicationMain
 		ManifestResources.init(config);
 		#end
 
-		app.meta["build"] = "10";
+		app.meta["build"] = "11";
 		app.meta["company"] = "xlift44";
-		app.meta["file"] = "openfl";
-		app.meta["name"] = "openfl";
-		app.meta["packageName"] = "openfl";
+		app.meta["file"] = "clickpress";
+		app.meta["name"] = "clickpress";
+		app.meta["packageName"] = "clickpress";
 		app.meta["version"] = "1.0.0";
 
 		
@@ -60,7 +60,7 @@ class ApplicationMain
 			minimized: false,
 			parameters: {},
 			resizable: true,
-			title: "openfl",
+			title: "clickpress",
 			width: 810,
 			x: null,
 			y: null,
@@ -102,7 +102,7 @@ class ApplicationMain
 		app.createWindow(attributes);
 		
 		#elseif air
-		app.window.title = "openfl";
+		app.window.title = "clickpress";
 		#else
 		app.window.context.attributes.background = 0;
 		app.window.frameRate = 30;

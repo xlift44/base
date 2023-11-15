@@ -894,18 +894,18 @@ var ApplicationMain = function() { };
 $hxClasses["ApplicationMain"] = ApplicationMain;
 ApplicationMain.__name__ = "ApplicationMain";
 ApplicationMain.main = function() {
-	lime_system_System.__registerEntryPoint("openfl",ApplicationMain.create);
+	lime_system_System.__registerEntryPoint("clickpress",ApplicationMain.create);
 };
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "10";
+	app.meta.h["build"] = "11";
 	app.meta.h["company"] = "xlift44";
-	app.meta.h["file"] = "openfl";
-	app.meta.h["name"] = "openfl";
-	app.meta.h["packageName"] = "openfl";
+	app.meta.h["file"] = "clickpress";
+	app.meta.h["name"] = "clickpress";
+	app.meta.h["packageName"] = "clickpress";
 	app.meta.h["version"] = "1.0.0";
-	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 30, height : 1066, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "openfl", width : 810, x : null, y : null};
+	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 30, height : 1066, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "clickpress", width : 810, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : false};
 	if(app.__window == null) {
 		if(config != null) {
@@ -3360,7 +3360,7 @@ var Main = function() {
 	this.maxX = 810;
 	this.count = 0;
 	openfl_display_Sprite.call(this);
-	haxe_Log.trace("Start",{ fileName : "src/Main.hx", lineNumber : 38, className : "Main", methodName : "new"});
+	haxe_Log.trace("Start",{ fileName : "src/Main.hx", lineNumber : 36, className : "Main", methodName : "new"});
 	this.get_graphics().clear();
 	this.get_graphics().lineStyle(1,4473924);
 	this.get_graphics().drawRect(0,0,this.maxX,this.maxY);
@@ -3381,40 +3381,38 @@ var Main = function() {
 		this.get_graphics().lineTo(x * this.stepGridX,countY * this.stepGridY);
 	}
 	this.get_graphics().lineStyle(1,16777215);
-	this.addEventListener("keyDown",$bind(this,this.keyDown));
-	this.addEventListener("keyUp",$bind(this,this.keyUp));
-	this.addEventListener("mouseDown",$bind(this,this.mouseDown));
-	this.addEventListener("mouseUp",$bind(this,this.mouseUp));
-	this.addEventListener("enterFrame",$bind(this,this.enterFrame));
+	this.stage.addEventListener("keyDown",$bind(this,this.keyDown));
+	this.stage.addEventListener("keyUp",$bind(this,this.keyUp));
+	this.stage.addEventListener("mouseDown",$bind(this,this.mouseDown));
+	this.stage.addEventListener("mouseUp",$bind(this,this.mouseUp));
+	this.stage.addEventListener("enterFrame",$bind(this,this.enterFrame));
 	this.get_graphics().lineStyle(0,0,0);
-	haxe_Log.trace("Done",{ fileName : "src/Main.hx", lineNumber : 69, className : "Main", methodName : "new"});
+	haxe_Log.trace("Done",{ fileName : "src/Main.hx", lineNumber : 66, className : "Main", methodName : "new"});
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = "Main";
 Main.__super__ = openfl_display_Sprite;
 Main.prototype = $extend(openfl_display_Sprite.prototype,{
 	destroy: function() {
-		this.removeEventListener("mouseDown",$bind(this,this.mouseDown));
-		this.removeEventListener("mouseUp",$bind(this,this.mouseUp));
-		this.removeEventListener("enterFrame",$bind(this,this.enterFrame));
+		this.stage.removeEventListener("keyDown",$bind(this,this.keyDown));
+		this.stage.removeEventListener("keyUp",$bind(this,this.keyUp));
+		this.stage.removeEventListener("mouseDown",$bind(this,this.mouseDown));
+		this.stage.removeEventListener("mouseUp",$bind(this,this.mouseUp));
+		this.stage.removeEventListener("enterFrame",$bind(this,this.enterFrame));
 	}
 	,enterFrame: function(e) {
-		this.count++;
-		if(this.count % 600 == 0) {
-			haxe_Log.trace(this.count / 60,{ fileName : "src/Main.hx", lineNumber : 82, className : "Main", methodName : "enterFrame"});
-		}
 	}
 	,mouseDown: function(e) {
-		haxe_Log.trace("mouseDown",{ fileName : "src/Main.hx", lineNumber : 88, className : "Main", methodName : "mouseDown"});
+		haxe_Log.trace("mouseDown",{ fileName : "src/Main.hx", lineNumber : 85, className : "Main", methodName : "mouseDown", customParams : [e]});
 	}
 	,mouseUp: function(e) {
-		haxe_Log.trace("mouseUp",{ fileName : "src/Main.hx", lineNumber : 93, className : "Main", methodName : "mouseUp"});
+		haxe_Log.trace("mouseUp",{ fileName : "src/Main.hx", lineNumber : 90, className : "Main", methodName : "mouseUp", customParams : [e]});
 	}
 	,keyDown: function(e) {
-		haxe_Log.trace("keyDown",{ fileName : "src/Main.hx", lineNumber : 98, className : "Main", methodName : "keyDown", customParams : [e.keyCode]});
+		haxe_Log.trace("keyDown",{ fileName : "src/Main.hx", lineNumber : 95, className : "Main", methodName : "keyDown", customParams : [e]});
 	}
 	,keyUp: function(e) {
-		haxe_Log.trace("keyUp",{ fileName : "src/Main.hx", lineNumber : 103, className : "Main", methodName : "keyUp", customParams : [e.keyCode]});
+		haxe_Log.trace("keyUp",{ fileName : "src/Main.hx", lineNumber : 100, className : "Main", methodName : "keyUp", customParams : [e]});
 	}
 	,__class__: Main
 });
@@ -23143,7 +23141,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 170084;
+	this.version = 576030;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -76763,7 +76761,7 @@ ApplicationMain.main();
 });
 $hx_exports.lime = $hx_exports.lime || {};
 $hx_exports.lime.$scripts = $hx_exports.lime.$scripts || {};
-$hx_exports.lime.$scripts["openfl"] = $hx_script;
+$hx_exports.lime.$scripts["clickpress"] = $hx_script;
 $hx_exports.lime.embed = function(projectName) { var exports = {};
 	var script = $hx_exports.lime.$scripts[projectName];
 	if (!script) throw Error("Cannot find project name \"" + projectName + "\"");
