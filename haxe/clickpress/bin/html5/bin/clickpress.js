@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "12";
+	app.meta.h["build"] = "13";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3993,6 +3993,7 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		}
 		this.get_graphics().lineStyle(1,16777215);
 		this.get_graphics().lineStyle(0,0,0);
+		this.sticker(0,true);
 	}
 	,drawButton: function(key,on) {
 		var color = 4473924;
@@ -4047,6 +4048,18 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		tText.set_y(y);
 		tText.set_text(text);
 		this.addChild(tText);
+	}
+	,sticker: function(key,on) {
+		this.set_width(200);
+		this.set_height(100);
+		var color = 4473924;
+		if(on) {
+			color = 65280;
+		} else {
+			color = 4473924;
+		}
+		this.get_graphics().lineStyle(3,color);
+		this.get_graphics().drawRoundRect(200,200,this.get_width(),this.get_height(),15,15);
 	}
 	,__class__: View
 });
@@ -23210,7 +23223,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 637730;
+	this.version = 354090;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
