@@ -40,13 +40,12 @@ class View extends Sprite
 			graphics.lineTo(x * stepGridX, countY * stepGridY);	
 		}
 	
-		graphics.lineStyle(1, 0xFFFFFF);
-		
-		
 		graphics.lineStyle(0, 0, 0);
         
-        sticker(0, true);
-
+        var sticker = new Sticker("ТЕКСТ", true);
+        addChild(sticker);
+        sticker.x = 0;
+        sticker.y = 0;
     }
 
     public function drawButton(key: Int, on: Bool) {
@@ -104,15 +103,4 @@ class View extends Sprite
 
     }
 
-    public function sticker(key: Int, on: Bool) {
-        this.width = 200;
-        this.height = 100;
-
-        var color = 0x444444;
-
-        if (on) color =0x00FF00; else color = 0x444444;
-
-        graphics.lineStyle(3, color);
-        graphics.drawRoundRect(200, 200, this.width, this.height, 15, 15);
-    }
 }

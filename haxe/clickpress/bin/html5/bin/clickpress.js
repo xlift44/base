@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "13";
+	app.meta.h["build"] = "14";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3722,6 +3722,26 @@ Std.parseInt = function(x) {
 	}
 	return null;
 };
+var Sticker = function(name,on) {
+	if(on == null) {
+		on = true;
+	}
+	openfl_display_Sprite.call(this);
+	var color = 13504785;
+	if(on) {
+		color = 65280;
+	} else {
+		color = 4473924;
+	}
+	this.get_graphics().lineStyle(3,color);
+	this.get_graphics().drawRoundRect(0,0,200,80,15,15);
+};
+$hxClasses["Sticker"] = Sticker;
+Sticker.__name__ = "Sticker";
+Sticker.__super__ = openfl_display_Sprite;
+Sticker.prototype = $extend(openfl_display_Sprite.prototype,{
+	__class__: Sticker
+});
 var _$String_String_$Impl_$ = function() { };
 $hxClasses["_String.String_Impl_"] = _$String_String_$Impl_$;
 _$String_String_$Impl_$.__name__ = "_String.String_Impl_";
@@ -3991,9 +4011,11 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 			this.get_graphics().moveTo(x * this.stepGridX,0);
 			this.get_graphics().lineTo(x * this.stepGridX,countY * this.stepGridY);
 		}
-		this.get_graphics().lineStyle(1,16777215);
 		this.get_graphics().lineStyle(0,0,0);
-		this.sticker(0,true);
+		var sticker = new Sticker("ТЕКСТ",true);
+		this.addChild(sticker);
+		sticker.set_x(0);
+		sticker.set_y(0);
 	}
 	,drawButton: function(key,on) {
 		var color = 4473924;
@@ -4048,18 +4070,6 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		tText.set_y(y);
 		tText.set_text(text);
 		this.addChild(tText);
-	}
-	,sticker: function(key,on) {
-		this.set_width(200);
-		this.set_height(100);
-		var color = 4473924;
-		if(on) {
-			color = 65280;
-		} else {
-			color = 4473924;
-		}
-		this.get_graphics().lineStyle(3,color);
-		this.get_graphics().drawRoundRect(200,200,this.get_width(),this.get_height(),15,15);
 	}
 	,__class__: View
 });
@@ -23223,7 +23233,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 354090;
+	this.version = 251759;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
