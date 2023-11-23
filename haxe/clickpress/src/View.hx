@@ -44,8 +44,8 @@ class View extends Sprite
         
         var sticker = new Sticker("ТЕКСТ", true);
         addChild(sticker);
-        sticker.x = 0;
-        sticker.y = 0;
+        sticker.x = 200;
+        sticker.y = 100;
     }
 
     public function drawButton(key: Int, on: Bool) {

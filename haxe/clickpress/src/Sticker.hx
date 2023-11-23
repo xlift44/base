@@ -22,8 +22,28 @@ class Sticker extends Sprite
         if (on) color =0x00FF00; else color = 0x444444;
 
         graphics.lineStyle(3, color);
-        graphics.drawRoundRect(0, 0, 200, 80, 15, 15);
+        graphics.drawRoundRect(10, 10, 180, 80, 15, 15);
 		
+        var text = name;
+        var tf:TextFormat = new TextFormat(); 
+        var tText:TextField = new TextField();
+
+        tf.font = "Arial";
+		tf.size = 24;
+		tf.bold = true;
+		tf.align = "center";
+		tf.color = color;
+
+        tText.defaultTextFormat = tf;
+        
+        tText.text = text;
+        addChild(tText);
+
+		tText.x = this.width / 2 - tText.width / 2;
+		trace(this.width, tText.width);
+        tText.y = this.height / 2 - tText.height / 2;
+		trace(this.height, tText.height);
+
 		// var bmp:Bitmap = new Bitmap();
 		// bmp.bitmapData = Assets.getBitmapData("img/button.png");
 		// addChild(bmp);
