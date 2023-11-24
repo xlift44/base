@@ -14,16 +14,21 @@ class Sticker extends Sprite
 		super();
 		//this.x = 10;
 		//this.y = 10;
-        //this.width = 200;
-        //this.height = 100;
+        // this.width = 500;
+        // this.height = 500;
 
         var color = 0xCE1111;
-
         if (on) color =0x00FF00; else color = 0x444444;
 
         graphics.lineStyle(3, color);
-        graphics.drawRoundRect(10, 10, 180, 80, 15, 15);
-		
+		graphics.beginFill(0x222222, 1);
+
+        graphics.drawRoundRect(10, 10, 180, 80, 15, 15);		
+		graphics.drawRoundRect(10, 10, 80, 80, 15, 15);	
+
+		graphics.endFill();
+
+
         var text = name;
         var tf:TextFormat = new TextFormat(); 
         var tText:TextField = new TextField();
@@ -39,10 +44,14 @@ class Sticker extends Sprite
         tText.text = text;
         addChild(tText);
 
-		tText.x = this.width / 2 - tText.width / 2;
-		trace(this.width, tText.width);
-        tText.y = this.height / 2 - tText.height / 2;
-		trace(this.height, tText.height);
+		//tText.x = this.width / 2 - tText.width / 2;
+		tText.x = 0;
+		tText.y = 32;
+
+		trace("this: ",this.width, this.height);
+		trace("text:", tText.width, tText.height);
+
+
 
 		// var bmp:Bitmap = new Bitmap();
 		// bmp.bitmapData = Assets.getBitmapData("img/button.png");

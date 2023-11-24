@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "15";
+	app.meta.h["build"] = "16";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3734,7 +3734,10 @@ var Sticker = function(name,on) {
 		color = 4473924;
 	}
 	this.get_graphics().lineStyle(3,color);
+	this.get_graphics().beginFill(2236962,1);
 	this.get_graphics().drawRoundRect(10,10,180,80,15,15);
+	this.get_graphics().drawRoundRect(10,10,80,80,15,15);
+	this.get_graphics().endFill();
 	var text = name;
 	var tf = new openfl_text_TextFormat();
 	var tText = new openfl_text_TextField();
@@ -3746,10 +3749,10 @@ var Sticker = function(name,on) {
 	tText.set_defaultTextFormat(tf);
 	tText.set_text(text);
 	this.addChild(tText);
-	tText.set_x(this.get_width() / 2 - tText.get_width() / 2);
-	haxe_Log.trace(this.get_width(),{ fileName : "src/Sticker.hx", lineNumber : 43, className : "Sticker", methodName : "new", customParams : [tText.get_width()]});
-	tText.set_y(this.get_height() / 2 - tText.get_height() / 2);
-	haxe_Log.trace(this.get_height(),{ fileName : "src/Sticker.hx", lineNumber : 45, className : "Sticker", methodName : "new", customParams : [tText.get_height()]});
+	tText.set_x(0);
+	tText.set_y(32);
+	haxe_Log.trace("this: ",{ fileName : "src/Sticker.hx", lineNumber : 51, className : "Sticker", methodName : "new", customParams : [this.get_width(),this.get_height()]});
+	haxe_Log.trace("text:",{ fileName : "src/Sticker.hx", lineNumber : 52, className : "Sticker", methodName : "new", customParams : [tText.get_width(),tText.get_height()]});
 };
 $hxClasses["Sticker"] = Sticker;
 Sticker.__name__ = "Sticker";
@@ -4010,7 +4013,7 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		this.get_graphics().clear();
 		this.get_graphics().lineStyle(1,4473924);
 		this.get_graphics().drawRect(0,0,this.maxX,this.maxY);
-		var countX = 6;
+		var countX = 8;
 		var countY = 8;
 		var _g = 0;
 		var _g1 = countY + 1;
@@ -4031,6 +4034,14 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		this.addChild(sticker);
 		sticker.set_x(200);
 		sticker.set_y(100);
+		var sticker = new Sticker("TAB",true);
+		this.addChild(sticker);
+		sticker.set_x(200);
+		sticker.set_y(200);
+		var sticker = new Sticker("Z",true);
+		this.addChild(sticker);
+		sticker.set_x(200);
+		sticker.set_y(300);
 	}
 	,drawButton: function(key,on) {
 		var color = 4473924;
@@ -23248,7 +23259,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 713230;
+	this.version = 327766;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";

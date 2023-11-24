@@ -27,7 +27,7 @@ class View extends Sprite
 		graphics.lineStyle(1, 0x444444);
 		graphics.drawRect(0, 0, maxX, maxY);
 	
-		var countX = 6; // Std.int(maxX/stepGridX);
+		var countX = 8; // Std.int(maxX/stepGridX);
 		var countY = 8; // Std.int(maxY/stepGridY);
 
 		for (y in 0...countY + 1) {
@@ -42,10 +42,22 @@ class View extends Sprite
 	
 		graphics.lineStyle(0, 0, 0);
         
+
         var sticker = new Sticker("ТЕКСТ", true);
         addChild(sticker);
         sticker.x = 200;
         sticker.y = 100;
+        
+        var sticker = new Sticker("TAB", true);
+        addChild(sticker);
+        sticker.x = 200;
+        sticker.y = 200;
+        
+        var sticker = new Sticker("Z", true);
+        addChild(sticker);
+        sticker.x = 200;
+        sticker.y = 300;
+        
     }
 
     public function drawButton(key: Int, on: Bool) {
