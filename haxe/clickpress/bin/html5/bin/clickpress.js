@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "16";
+	app.meta.h["build"] = "17";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3384,11 +3384,11 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 	}
 	,keyDown: function(e) {
 		haxe_Log.trace("keyDown",{ fileName : "src/Main.hx", lineNumber : 71, className : "Main", methodName : "keyDown", customParams : [e]});
-		this.view.drawButton(e.keyCode,true);
+		this.view.drawButton(e.keyCode,e.charCode,true);
 	}
 	,keyUp: function(e) {
 		haxe_Log.trace("keyUp",{ fileName : "src/Main.hx", lineNumber : 77, className : "Main", methodName : "keyUp", customParams : [e]});
-		this.view.drawButton(e.keyCode,false);
+		this.view.drawButton(e.keyCode,e.charCode,false);
 	}
 	,__class__: Main
 });
@@ -3722,20 +3722,22 @@ Std.parseInt = function(x) {
 	}
 	return null;
 };
-var Sticker = function(name,on) {
+var Sticker = function(name,info,on) {
 	if(on == null) {
 		on = true;
 	}
 	openfl_display_Sprite.call(this);
-	var color = 13504785;
+	var color = 0;
 	if(on) {
 		color = 65280;
 	} else {
 		color = 4473924;
 	}
-	this.get_graphics().lineStyle(3,color);
+	this.get_graphics().lineStyle(3,26112);
 	this.get_graphics().beginFill(2236962,1);
 	this.get_graphics().drawRoundRect(10,10,180,80,15,15);
+	this.get_graphics().lineStyle(3,color);
+	this.get_graphics().beginFill(0,1);
 	this.get_graphics().drawRoundRect(10,10,80,80,15,15);
 	this.get_graphics().endFill();
 	var text = name;
@@ -3751,8 +3753,20 @@ var Sticker = function(name,on) {
 	this.addChild(tText);
 	tText.set_x(0);
 	tText.set_y(32);
-	haxe_Log.trace("this: ",{ fileName : "src/Sticker.hx", lineNumber : 51, className : "Sticker", methodName : "new", customParams : [this.get_width(),this.get_height()]});
-	haxe_Log.trace("text:",{ fileName : "src/Sticker.hx", lineNumber : 52, className : "Sticker", methodName : "new", customParams : [tText.get_width(),tText.get_height()]});
+	var text2 = info;
+	var tf2 = new openfl_text_TextFormat();
+	var tText2 = new openfl_text_TextField();
+	var tText2t = new openfl_text_TextField();
+	tf2.font = "Arial";
+	tf2.size = 12;
+	tf2.bold = true;
+	tf2.align = openfl_text_TextFormatAlign.fromString("left");
+	tf2.color = 26112;
+	tText2.set_defaultTextFormat(tf2);
+	tText2.set_text(text2);
+	this.addChild(tText2);
+	tText2.set_x(100);
+	tText2.set_y(17);
 };
 $hxClasses["Sticker"] = Sticker;
 Sticker.__name__ = "Sticker";
@@ -3996,8 +4010,8 @@ UInt.toFloat = function(this1) {
 	}
 };
 var View = function() {
-	this.y0 = 0;
-	this.x0 = 0;
+	this.countY = 8;
+	this.countX = 8;
 	this.stepGridY = 100;
 	this.stepGridX = 100;
 	this.maxY = 1066;
@@ -4010,92 +4024,57 @@ View.__name__ = "View";
 View.__super__ = openfl_display_Sprite;
 View.prototype = $extend(openfl_display_Sprite.prototype,{
 	startScreen: function() {
+		this.xBorder = (this.maxX - this.stepGridX * this.countX) / 2 | 0;
+		this.yBorder = this.xBorder;
 		this.get_graphics().clear();
 		this.get_graphics().lineStyle(1,4473924);
 		this.get_graphics().drawRect(0,0,this.maxX,this.maxY);
-		var countX = 8;
-		var countY = 8;
 		var _g = 0;
-		var _g1 = countY + 1;
+		var _g1 = this.countY + 1;
 		while(_g < _g1) {
 			var y = _g++;
-			this.get_graphics().moveTo(0,y * this.stepGridY);
-			this.get_graphics().lineTo(countX * this.stepGridX,y * this.stepGridY);
+			this.get_graphics().moveTo(this.xBorder,this.yBorder + y * this.stepGridY);
+			this.get_graphics().lineTo(this.xBorder + this.countX * this.stepGridX,this.yBorder + y * this.stepGridY);
 		}
 		var _g = 0;
-		var _g1 = countX + 1;
+		var _g1 = this.countX + 1;
 		while(_g < _g1) {
 			var x = _g++;
-			this.get_graphics().moveTo(x * this.stepGridX,0);
-			this.get_graphics().lineTo(x * this.stepGridX,countY * this.stepGridY);
+			this.get_graphics().moveTo(this.xBorder + x * this.stepGridX,this.yBorder);
+			this.get_graphics().lineTo(this.xBorder + x * this.stepGridX,this.yBorder + this.countY * this.stepGridY);
 		}
 		this.get_graphics().lineStyle(0,0,0);
-		var sticker = new Sticker("ТЕКСТ",true);
-		this.addChild(sticker);
-		sticker.set_x(200);
-		sticker.set_y(100);
-		var sticker = new Sticker("TAB",true);
-		this.addChild(sticker);
-		sticker.set_x(200);
-		sticker.set_y(200);
-		var sticker = new Sticker("Z",true);
-		this.addChild(sticker);
-		sticker.set_x(200);
-		sticker.set_y(300);
 	}
-	,drawButton: function(key,on) {
-		var color = 4473924;
+	,drawButton: function(keyCode,charCode,on) {
+		var xBut = 0;
+		var yBut = 0;
 		var text = "";
-		var tf = new openfl_text_TextFormat();
-		var tText = new openfl_text_TextField();
-		var x = 0;
-		var y = 0;
-		var w = 0;
-		var h = 0;
-		switch(key) {
+		switch(keyCode) {
 		case 16:
 			text = "SHIFT";
-			x = 20;
-			y = 80;
-			w = 100;
-			h = 40;
+			xBut = this.xBorder;
+			yBut = this.yBorder + this.stepGridY;
 			break;
 		case 17:
 			text = "CTRL";
-			x = 20;
-			y = 20;
-			w = 100;
-			h = 40;
+			xBut = this.xBorder;
+			yBut = this.yBorder;
 			break;
 		case 18:
 			text = "ALT";
-			x = 20;
-			y = 140;
-			w = 100;
-			h = 40;
+			xBut = this.xBorder;
+			yBut = this.yBorder + this.stepGridY * 2;
 			break;
+		default:
+			text = String.fromCodePoint(keyCode);
+			xBut = this.xBorder + (this.stepGridX * (this.countX / 2 - 1) * 2 | 0);
+			yBut = this.yBorder;
 		}
-		if(on) {
-			color = 65280;
-		} else {
-			color = 4473924;
-		}
-		this.get_graphics().lineStyle(3,color);
-		this.get_graphics().drawRoundRect(x,y,w,h,15,15);
-		if(on) {
-			tf.color = color;
-		} else {
-			tf.color = 4473924;
-		}
-		tf.font = "Arial";
-		tf.size = 24;
-		tf.bold = true;
-		tf.align = openfl_text_TextFormatAlign.fromString("center");
-		tText.set_defaultTextFormat(tf);
-		tText.set_x(x);
-		tText.set_y(y);
-		tText.set_text(text);
-		this.addChild(tText);
+		var sticker = new Sticker(text,"\n" + "keyCode:" + keyCode + "(" + String.fromCodePoint(keyCode) + ")" + "\n" + "charCode:" + charCode + "(" + String.fromCodePoint(charCode) + ")" + "\n" + "",true);
+		this.addChild(sticker);
+		sticker.set_x(xBut);
+		sticker.set_y(yBut);
+		haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 101, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
 	}
 	,__class__: View
 });
@@ -23259,7 +23238,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 327766;
+	this.version = 980781;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -74612,6 +74591,8 @@ openfl_display_DisplayObject.__tempStack = new lime_utils_ObjectPool(function() 
 },function(stack) {
 	stack.set_length(0);
 });
+View.colorOn = 65280;
+View.colorOff = 26112;
 haxe_Serializer.USE_CACHE = false;
 haxe_Serializer.USE_ENUM_INDEX = false;
 haxe_Serializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";

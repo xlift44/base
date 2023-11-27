@@ -9,7 +9,7 @@ import openfl.Assets;
 class Sticker extends Sprite
 {
 
-	public function new(name:String, on:Bool = true) 
+	public function new(name:String, info:String, on:Bool = true) 
 	{
 		super();
 		//this.x = 10;
@@ -17,13 +17,15 @@ class Sticker extends Sprite
         // this.width = 500;
         // this.height = 500;
 
-        var color = 0xCE1111;
-        if (on) color =0x00FF00; else color = 0x444444;
+        var color = 0;
+        if (on) color = View.colorOn; else color = 0x444444;
+
+		graphics.lineStyle(3, View.colorOff);
+		graphics.beginFill(0x222222, 1);
+        graphics.drawRoundRect(10, 10, 180, 80, 15, 15);		
 
         graphics.lineStyle(3, color);
-		graphics.beginFill(0x222222, 1);
-
-        graphics.drawRoundRect(10, 10, 180, 80, 15, 15);		
+		graphics.beginFill(0, 1);
 		graphics.drawRoundRect(10, 10, 80, 80, 15, 15);	
 
 		graphics.endFill();
@@ -44,15 +46,29 @@ class Sticker extends Sprite
         tText.text = text;
         addChild(tText);
 
-		//tText.x = this.width / 2 - tText.width / 2;
 		tText.x = 0;
 		tText.y = 32;
 
-		trace("this: ",this.width, this.height);
-		trace("text:", tText.width, tText.height);
+		var text2 = info;
+        var tf2:TextFormat = new TextFormat(); 
+        var tText2:TextField = new TextField();
+        var tText2t:TextField = new TextField();
 
+        tf2.font = "Arial";
+		tf2.size = 12;
+		tf2.bold = true;
+		tf2.align = "left";
+		tf2.color = View.colorOff;
 
+        tText2.defaultTextFormat = tf2;
+        
+        tText2.text = text2;
+        addChild(tText2);
 
+		tText2.x = 100;
+		tText2.y = 17;	
+
+		
 		// var bmp:Bitmap = new Bitmap();
 		// bmp.bitmapData = Assets.getBitmapData("img/button.png");
 		// addChild(bmp);
