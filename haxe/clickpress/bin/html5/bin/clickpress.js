@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "17";
+	app.meta.h["build"] = "18";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -4066,11 +4066,11 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 			yBut = this.yBorder + this.stepGridY * 2;
 			break;
 		default:
-			text = String.fromCodePoint(keyCode);
+			text = String.fromCodePoint(charCode);
 			xBut = this.xBorder + (this.stepGridX * (this.countX / 2 - 1) * 2 | 0);
 			yBut = this.yBorder;
 		}
-		var sticker = new Sticker(text,"\n" + "keyCode:" + keyCode + "(" + String.fromCodePoint(keyCode) + ")" + "\n" + "charCode:" + charCode + "(" + String.fromCodePoint(charCode) + ")" + "\n" + "",true);
+		var sticker = new Sticker(text,"\n" + "keyCode:" + keyCode + "\n" + "charCode:" + charCode + "\n" + "",true);
 		this.addChild(sticker);
 		sticker.set_x(xBut);
 		sticker.set_y(yBut);
@@ -23238,7 +23238,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 980781;
+	this.version = 423801;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";

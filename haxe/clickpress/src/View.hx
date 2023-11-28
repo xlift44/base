@@ -87,14 +87,14 @@ class View extends Sprite
                 yBut = yBorder + stepGridY * 2; 
             }
             default: {
-                text = String.fromCharCode(keyCode); 
+                text = String.fromCharCode(charCode); 
                 xBut = xBorder + Std.int(stepGridX * (countX / 2 - 1) * 2) ; 
                 yBut = yBorder;
             }
         }
         var sticker = new Sticker(text, "\n" 
-        + "keyCode:" + keyCode + "(" + String.fromCharCode(keyCode) + ")" + "\n" 
-        + "charCode:" + charCode + "(" + String.fromCharCode(charCode) + ")" + "\n"+ "", true);
+        + "keyCode:" + keyCode + "\n" 
+        + "charCode:" + charCode + "\n"+ "", true);
         addChild(sticker);
         sticker.x = xBut;
         sticker.y = yBut;
