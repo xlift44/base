@@ -69,13 +69,13 @@ class Main extends Sprite
 	
 	public function keyDown(e:KeyboardEvent) { // Нажатие на клавишу клавиатуры
 		trace("keyDown", e);
-		view.drawButton(e.keyCode, e.charCode, true);
+		view.drawButton(e, true);
 	}
 	
 	
 	public function keyUp(e:KeyboardEvent) { // Отпускание клавиши клавиатуры
 		trace("keyUp", e);
-		view.drawButton(e.keyCode, e.charCode, false);
+		view.drawButton(e, false);
 	}
 	
 	
