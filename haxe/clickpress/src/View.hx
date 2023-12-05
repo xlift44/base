@@ -28,6 +28,7 @@ class View extends Sprite
         startScreen();
 	}
 
+
     public function startScreen() {
         
         xBorder = Std.int((maxX - stepGridX * countX) / 2);
@@ -60,35 +61,42 @@ class View extends Sprite
         var yBut:Int = 0;
         var text:String = "";
 
-        switch (keyCode) {
-            case 17: {
-                text = "CTRL"; 
-                xBut = xBorder; 
-                yBut = yBorder + stepGridY; 
+        if (on) {
+            switch (keyCode) {
+                case 17: {
+                    text = "CTRL"; 
+                    xBut = xBorder; 
+                    yBut = yBorder + stepGridY; 
+                }
+                case 16: {
+                    text = "SHIFT"; 
+                    xBut = xBorder; 
+                    yBut = yBorder + stepGridY * 2; 
+                }
+                case 18: {
+                    text = "ALT"; 
+                    xBut = xBorder; 
+                    yBut = yBorder + stepGridY * 3; 
+                }
+                default: {
+                    text = String.fromCharCode(charCode); 
+                    xBut = xBorder + Std.int(stepGridX * (countX / 2 - 1) * 2) ; 
+                    yBut = yBorder + stepGridY;
+                }
             }
-            case 16: {
-                text = "SHIFT"; 
-                xBut = xBorder; 
-                yBut = yBorder + stepGridY * 2; 
-            }
-            case 18: {
-                text = "ALT"; 
-                xBut = xBorder; 
-                yBut = yBorder + stepGridY * 3; 
-            }
-            default: {
-                text = String.fromCharCode(charCode); 
-                xBut = xBorder + Std.int(stepGridX * (countX / 2 - 1) * 2) ; 
-                yBut = yBorder + stepGridY;
-            }
+            var sticker = new Sticker(text, "\n" 
+            + "keyCode:" + keyCode + "\n" 
+            + "charCode:" + charCode + "\n"+ "", true);
+            addChild(sticker);
+            sticker.x = xBut;
+            sticker.y = yBut;
+            trace(text, sticker.x, sticker.y);
+        } else {
+            
         }
-        var sticker = new Sticker(text, "\n" 
-        + "keyCode:" + keyCode + "\n" 
-        + "charCode:" + charCode + "\n"+ "", true);
-        addChild(sticker);
-        sticker.x = xBut;
-        sticker.y = yBut;
-        trace(text, sticker.x, sticker.y);
+            
+        
+
     }
 
 }

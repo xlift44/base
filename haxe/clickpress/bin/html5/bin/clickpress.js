@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "19";
+	app.meta.h["build"] = "20";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -4051,32 +4051,34 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		var xBut = 0;
 		var yBut = 0;
 		var text = "";
-		switch(keyCode) {
-		case 16:
-			text = "SHIFT";
-			xBut = this.xBorder;
-			yBut = this.yBorder + this.stepGridY * 2;
-			break;
-		case 17:
-			text = "CTRL";
-			xBut = this.xBorder;
-			yBut = this.yBorder + this.stepGridY;
-			break;
-		case 18:
-			text = "ALT";
-			xBut = this.xBorder;
-			yBut = this.yBorder + this.stepGridY * 3;
-			break;
-		default:
-			text = String.fromCodePoint(charCode);
-			xBut = this.xBorder + (this.stepGridX * (this.countX / 2 - 1) * 2 | 0);
-			yBut = this.yBorder + this.stepGridY;
+		if(on) {
+			switch(keyCode) {
+			case 16:
+				text = "SHIFT";
+				xBut = this.xBorder;
+				yBut = this.yBorder + this.stepGridY * 2;
+				break;
+			case 17:
+				text = "CTRL";
+				xBut = this.xBorder;
+				yBut = this.yBorder + this.stepGridY;
+				break;
+			case 18:
+				text = "ALT";
+				xBut = this.xBorder;
+				yBut = this.yBorder + this.stepGridY * 3;
+				break;
+			default:
+				text = String.fromCodePoint(charCode);
+				xBut = this.xBorder + (this.stepGridX * (this.countX / 2 - 1) * 2 | 0);
+				yBut = this.yBorder + this.stepGridY;
+			}
+			var sticker = new Sticker(text,"\n" + "keyCode:" + keyCode + "\n" + "charCode:" + charCode + "\n" + "",true);
+			this.addChild(sticker);
+			sticker.set_x(xBut);
+			sticker.set_y(yBut);
+			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 94, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
 		}
-		var sticker = new Sticker(text,"\n" + "keyCode:" + keyCode + "\n" + "charCode:" + charCode + "\n" + "",true);
-		this.addChild(sticker);
-		sticker.set_x(xBut);
-		sticker.set_y(yBut);
-		haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 91, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
 	}
 	,__class__: View
 });
@@ -23240,7 +23242,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 115064;
+	this.version = 328893;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
