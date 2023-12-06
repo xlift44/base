@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "20";
+	app.meta.h["build"] = "21";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -4010,6 +4010,7 @@ UInt.toFloat = function(this1) {
 	}
 };
 var View = function() {
+	this.stickers = [];
 	this.countY = 8;
 	this.countX = 8;
 	this.stepGridY = 100;
@@ -4075,9 +4076,18 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 			}
 			var sticker = new Sticker(text,"\n" + "keyCode:" + keyCode + "\n" + "charCode:" + charCode + "\n" + "",true);
 			this.addChild(sticker);
+			this.stickers.push(sticker);
 			sticker.set_x(xBut);
 			sticker.set_y(yBut);
-			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 94, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
+			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 98, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
+		} else {
+			var _g = 0;
+			var _g1 = this.stickers;
+			while(_g < _g1.length) {
+				var stick = _g1[_g];
+				++_g;
+				haxe_Log.trace("stickers:",{ fileName : "src/View.hx", lineNumber : 101, className : "View", methodName : "drawButton", customParams : [stick]});
+			}
 		}
 	}
 	,__class__: View
@@ -23242,7 +23252,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 328893;
+	this.version = 80194;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";

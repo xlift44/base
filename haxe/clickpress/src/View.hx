@@ -22,6 +22,8 @@ class View extends Sprite
     static inline public var colorOn = 0x00FF00;
     static inline public var colorOff = 0x006600;
 
+    public var stickers:Array<Sticker> = [];
+
     public function new() {
 		super();
 
@@ -88,10 +90,16 @@ class View extends Sprite
             + "keyCode:" + keyCode + "\n" 
             + "charCode:" + charCode + "\n"+ "", true);
             addChild(sticker);
+
+            stickers.push(sticker);
+
             sticker.x = xBut;
             sticker.y = yBut;
             trace(text, sticker.x, sticker.y);
         } else {
+            for (stick in stickers) {
+                //if ()
+            }
             
         }
             
