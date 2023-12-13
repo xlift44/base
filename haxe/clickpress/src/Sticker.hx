@@ -8,8 +8,12 @@ import openfl.Assets;
 
 class Sticker extends Sprite
 {
+	public var keyCode:Int = 0;
 
-	public function new(name:String, info:String, on:Bool = true) 
+	public var tText1:TextField;
+	public var tText2:TextField;
+
+	public function new(name:String, info:String) 
 	{
 		super();
 		//this.x = 10;
@@ -17,8 +21,7 @@ class Sticker extends Sprite
         // this.width = 500;
         // this.height = 500;
 
-        var color = 0;
-        if (on) color = View.colorOn; else color = 0x444444;
+        var color = View.colorOn; 
 
 		graphics.lineStyle(3, View.colorOff);
 		graphics.beginFill(0x222222, 1);
@@ -31,67 +34,59 @@ class Sticker extends Sprite
 		graphics.endFill();
 
 
-        var text = name;
+        var text1:String = name;
         var tf:TextFormat = new TextFormat(); 
-        var tText:TextField = new TextField();
-
+ 
         tf.font = "Arial";
 		tf.size = 24;
 		tf.bold = true;
 		tf.align = "center";
 		tf.color = color;
 
-        tText.defaultTextFormat = tf;
+		tText1 = new TextField();
+        tText1.defaultTextFormat = tf;
         
-        tText.text = text;
-        addChild(tText);
+        addChild(tText1);
+		tText1.text = text1;
+		tText1.x = 0;
+		tText1.y = 32;
 
-		tText.x = 0;
-		tText.y = 32;
 
-		var text2 = info;
+		var text2:String = info;
         var tf2:TextFormat = new TextFormat(); 
-        var tText2:TextField = new TextField();
-        var tText2t:TextField = new TextField();
 
         tf2.font = "Arial";
 		tf2.size = 12;
 		tf2.bold = true;
 		tf2.align = "left";
-		tf2.color = View.colorOff;
+		tf2.color = View.colorOn;
 
+		tText2 = new TextField();
         tText2.defaultTextFormat = tf2;
         
-        tText2.text = text2;
         addChild(tText2);
-
+		tText2.text = text2;
 		tText2.x = 100;
 		tText2.y = 17;	
 
-		
-		// var bmp:Bitmap = new Bitmap();
-		// bmp.bitmapData = Assets.getBitmapData("img/button.png");
-		// addChild(bmp);
-		
-		// useHandCursor = true;
-		// buttonMode = true;
-		
-		// var textField = new TextField();
-		// var textFormat = new TextFormat();
-		
-		// textFormat.font = "Arial";
-		// textFormat.color = 0x000000;
-		// textFormat.size = 18;
-		// textFormat.bold = true;
-		// textFormat.align = "center";
+	}
 
-		// textField.mouseEnabled = false;
-		// textField.width = this.width;
-		// textField.defaultTextFormat = textFormat;
-		// textField.text = name;
-		// textField.y = 18;
-		
-		//addChild(textField);
+	public function off () {
+		var color = 0x444444;
+
+		graphics.lineStyle(3, View.colorOff);
+		//graphics.beginFill(0, 1);
+		graphics.drawRoundRect(10, 10, 80, 80, 15, 15);	
+		//graphics.endFill();
+
+		tText1.textColor = View.colorOff;
+		tText2.textColor = View.colorOff;
+	}
+
+	public function slide () {
+
+		y += 100;
+		trace("slide");
 	}
 	
 }

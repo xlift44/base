@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "21";
+	app.meta.h["build"] = "22";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3383,11 +3383,9 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 		haxe_Log.trace("mouseUp",{ fileName : "src/Main.hx", lineNumber : 66, className : "Main", methodName : "mouseUp", customParams : [e]});
 	}
 	,keyDown: function(e) {
-		haxe_Log.trace("keyDown",{ fileName : "src/Main.hx", lineNumber : 71, className : "Main", methodName : "keyDown", customParams : [e]});
 		this.view.drawButton(e,true);
 	}
 	,keyUp: function(e) {
-		haxe_Log.trace("keyUp",{ fileName : "src/Main.hx", lineNumber : 77, className : "Main", methodName : "keyUp", customParams : [e]});
 		this.view.drawButton(e,false);
 	}
 	,__class__: Main
@@ -3722,57 +3720,60 @@ Std.parseInt = function(x) {
 	}
 	return null;
 };
-var Sticker = function(name,info,on) {
-	if(on == null) {
-		on = true;
-	}
+var Sticker = function(name,info) {
+	this.keyCode = 0;
 	openfl_display_Sprite.call(this);
-	var color = 0;
-	if(on) {
-		color = 65280;
-	} else {
-		color = 4473924;
-	}
-	this.get_graphics().lineStyle(3,26112);
+	var color = 65280;
+	this.get_graphics().lineStyle(3,17408);
 	this.get_graphics().beginFill(2236962,1);
 	this.get_graphics().drawRoundRect(10,10,180,80,15,15);
 	this.get_graphics().lineStyle(3,color);
 	this.get_graphics().beginFill(0,1);
 	this.get_graphics().drawRoundRect(10,10,80,80,15,15);
 	this.get_graphics().endFill();
-	var text = name;
+	var text1 = name;
 	var tf = new openfl_text_TextFormat();
-	var tText = new openfl_text_TextField();
 	tf.font = "Arial";
 	tf.size = 24;
 	tf.bold = true;
 	tf.align = openfl_text_TextFormatAlign.fromString("center");
 	tf.color = color;
-	tText.set_defaultTextFormat(tf);
-	tText.set_text(text);
-	this.addChild(tText);
-	tText.set_x(0);
-	tText.set_y(32);
+	this.tText1 = new openfl_text_TextField();
+	this.tText1.set_defaultTextFormat(tf);
+	this.addChild(this.tText1);
+	this.tText1.set_text(text1);
+	this.tText1.set_x(0);
+	this.tText1.set_y(32);
 	var text2 = info;
 	var tf2 = new openfl_text_TextFormat();
-	var tText2 = new openfl_text_TextField();
-	var tText2t = new openfl_text_TextField();
 	tf2.font = "Arial";
 	tf2.size = 12;
 	tf2.bold = true;
 	tf2.align = openfl_text_TextFormatAlign.fromString("left");
-	tf2.color = 26112;
-	tText2.set_defaultTextFormat(tf2);
-	tText2.set_text(text2);
-	this.addChild(tText2);
-	tText2.set_x(100);
-	tText2.set_y(17);
+	tf2.color = 65280;
+	this.tText2 = new openfl_text_TextField();
+	this.tText2.set_defaultTextFormat(tf2);
+	this.addChild(this.tText2);
+	this.tText2.set_text(text2);
+	this.tText2.set_x(100);
+	this.tText2.set_y(17);
 };
 $hxClasses["Sticker"] = Sticker;
 Sticker.__name__ = "Sticker";
 Sticker.__super__ = openfl_display_Sprite;
 Sticker.prototype = $extend(openfl_display_Sprite.prototype,{
-	__class__: Sticker
+	off: function() {
+		var color = 4473924;
+		this.get_graphics().lineStyle(3,17408);
+		this.get_graphics().drawRoundRect(10,10,80,80,15,15);
+		this.tText1.set_textColor(17408);
+		this.tText2.set_textColor(17408);
+	}
+	,slide: function() {
+		this.set_y(this.get_y() + 100);
+		haxe_Log.trace("slide",{ fileName : "src/Sticker.hx", lineNumber : 89, className : "Sticker", methodName : "slide"});
+	}
+	,__class__: Sticker
 });
 var _$String_String_$Impl_$ = function() { };
 $hxClasses["_String.String_Impl_"] = _$String_String_$Impl_$;
@@ -4053,6 +4054,26 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		var yBut = 0;
 		var text = "";
 		if(on) {
+			var needSlide = true;
+			var _g = 0;
+			var _g1 = this.stickers;
+			while(_g < _g1.length) {
+				var stick = _g1[_g];
+				++_g;
+				if(stick.keyCode == keyCode) {
+					needSlide = true;
+					break;
+				}
+			}
+			if(needSlide) {
+				var _g = 0;
+				var _g1 = this.stickers;
+				while(_g < _g1.length) {
+					var stick = _g1[_g];
+					++_g;
+					stick.slide();
+				}
+			}
 			switch(keyCode) {
 			case 16:
 				text = "SHIFT";
@@ -4074,19 +4095,22 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 				xBut = this.xBorder + (this.stepGridX * (this.countX / 2 - 1) * 2 | 0);
 				yBut = this.yBorder + this.stepGridY;
 			}
-			var sticker = new Sticker(text,"\n" + "keyCode:" + keyCode + "\n" + "charCode:" + charCode + "\n" + "",true);
+			var sticker = new Sticker(text,"\n" + "keyCode:" + keyCode + "\n" + "charCode:" + charCode + "\n" + "");
+			sticker.keyCode = keyCode;
 			this.addChild(sticker);
 			this.stickers.push(sticker);
 			sticker.set_x(xBut);
 			sticker.set_y(yBut);
-			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 98, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
+			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 112, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
 		} else {
 			var _g = 0;
 			var _g1 = this.stickers;
 			while(_g < _g1.length) {
 				var stick = _g1[_g];
 				++_g;
-				haxe_Log.trace("stickers:",{ fileName : "src/View.hx", lineNumber : 101, className : "View", methodName : "drawButton", customParams : [stick]});
+				if(stick.keyCode == keyCode) {
+					stick.off();
+				}
 			}
 		}
 	}
@@ -23252,7 +23276,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 80194;
+	this.version = 870289;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -74606,7 +74630,8 @@ openfl_display_DisplayObject.__tempStack = new lime_utils_ObjectPool(function() 
 	stack.set_length(0);
 });
 View.colorOn = 65280;
-View.colorOff = 26112;
+View.colorOff = 17408;
+View.colorGrey = 4473924;
 haxe_Serializer.USE_CACHE = false;
 haxe_Serializer.USE_ENUM_INDEX = false;
 haxe_Serializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";

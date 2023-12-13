@@ -20,7 +20,8 @@ class View extends Sprite
     public var yBorder:Int;
 
     static inline public var colorOn = 0x00FF00;
-    static inline public var colorOff = 0x006600;
+    static inline public var colorOff = 0x004400;
+    static inline public var colorGrey = 0x444444;
 
     public var stickers:Array<Sticker> = [];
 
@@ -38,7 +39,7 @@ class View extends Sprite
 
         graphics.clear();
 
-		graphics.lineStyle(1, 0x444444);
+		graphics.lineStyle(1, colorGrey);
 		graphics.drawRect(0, 0, maxX, maxY);
 	
 		for (y in 0...countY + 1) {
@@ -64,6 +65,18 @@ class View extends Sprite
         var text:String = "";
 
         if (on) {
+
+            var needSlide:Bool = true;
+            for (stick in stickers) {
+                if (stick.keyCode == keyCode) {
+                    needSlide = true;
+                    break;
+                }
+            }
+            
+            if (needSlide) 
+                for (stick in stickers) stick.slide();
+
             switch (keyCode) {
                 case 17: {
                     text = "CTRL"; 
@@ -88,7 +101,8 @@ class View extends Sprite
             }
             var sticker = new Sticker(text, "\n" 
             + "keyCode:" + keyCode + "\n" 
-            + "charCode:" + charCode + "\n"+ "", true);
+            + "charCode:" + charCode + "\n"+ "");
+            sticker.keyCode = keyCode;
             addChild(sticker);
 
             stickers.push(sticker);
@@ -96,9 +110,14 @@ class View extends Sprite
             sticker.x = xBut;
             sticker.y = yBut;
             trace(text, sticker.x, sticker.y);
+
+            
+
         } else {
             for (stick in stickers) {
-                //if ()
+                if (stick.keyCode == keyCode) {
+                    stick.off();
+                }
             }
             
         }
