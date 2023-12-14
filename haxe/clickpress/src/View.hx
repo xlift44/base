@@ -79,7 +79,7 @@ class View extends Sprite
             if ( !(keyCode == 17 || keyCode == 16 || keyCode == 18) ) {
                 for (stick in stickers) {
                     if (stick.keyCode == keyCode) {
-                        needSlide = true;
+                        needSlide = false;
                         break;
                     }
                 }
@@ -87,7 +87,8 @@ class View extends Sprite
                 if (needSlide) 
                     for (stick in stickers) 
                         if ( !(stick.keyCode == 17 || stick.keyCode == 16 || stick.keyCode == 18) ) stick.slide();
-                }
+            }
+
             switch (keyCode) {
                 case 17: {
                     text = "CTRL"; 
@@ -110,6 +111,7 @@ class View extends Sprite
                     yBut = yBorder + stepGridY;
                 }
             }
+            
             var sticker = new Sticker(text, "\n" 
             + "keyCode:" + keyCode + "\n" 
             + "charCode:" + charCode + "\n"+ "");
