@@ -64,19 +64,30 @@ class View extends Sprite
         var yBut:Int = 0;
         var text:String = "";
 
+        // var controlKey:Array<Int> = [ 17, 16, 18];
+        // var controlKeyStr:Array<String>;
+        // controlKeyStr[17] = "CTRL";
+        // controlKeyStr[16] = "SHIFT";
+        // controlKeyStr[18] = "ALT";
+        // var controlKeyY:Array<Int>;
+
+
         if (on) {
 
             var needSlide:Bool = true;
-            for (stick in stickers) {
-                if (stick.keyCode == keyCode) {
-                    needSlide = true;
-                    break;
-                }
-            }
-            
-            if (needSlide) 
-                for (stick in stickers) stick.slide();
 
+            if ( !(keyCode == 17 || keyCode == 16 || keyCode == 18) ) {
+                for (stick in stickers) {
+                    if (stick.keyCode == keyCode) {
+                        needSlide = true;
+                        break;
+                    }
+                }
+                
+                if (needSlide) 
+                    for (stick in stickers) 
+                        if ( !(stick.keyCode == 17 || stick.keyCode == 16 || stick.keyCode == 18) ) stick.slide();
+                }
             switch (keyCode) {
                 case 17: {
                     text = "CTRL"; 
@@ -95,7 +106,7 @@ class View extends Sprite
                 }
                 default: {
                     text = String.fromCharCode(charCode); 
-                    xBut = xBorder + Std.int(stepGridX * (countX / 2 - 1) * 2) ; 
+                    xBut = xBorder + stepGridX * 2; // Std.int(stepGridX * (countX / 2 - 1) * 2) ; 
                     yBut = yBorder + stepGridY;
                 }
             }
@@ -117,6 +128,9 @@ class View extends Sprite
             for (stick in stickers) {
                 if (stick.keyCode == keyCode) {
                     stick.off();
+                    // if (stick.y > yBorder + stepGridY * countY) {
+                    //     destroy(stick);
+                    // }
                 }
             }
             

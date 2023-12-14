@@ -85,8 +85,7 @@ class Sticker extends Sprite
 
 	public function slide () {
 
-		y += 100;
-		trace("slide");
+		y += 60;
 	}
 	
 }
