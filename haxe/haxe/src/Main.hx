@@ -8,6 +8,11 @@ import openfl.display.Sprite;
  * @author xlift44
  */
 
+/* TODO:
+var int:Int = Std.parseInt("1083715881696"); приведение типов
+массивы
+*/
+
 class Main extends Sprite {
 
 	public function new() {
