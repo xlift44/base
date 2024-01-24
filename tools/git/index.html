@@ -17,6 +17,19 @@ TODO:
 меню с якорями в этом документе
 
 
+создание нового проекта на GitHub
+- создаем на github новый репозиторий (например base)
+- заходим в рабочую папку: cd e:/WorkX/
+- клонируем, папки проекта быть не должно: git clone https://github.com/xlift44/base
+- копируем файлы проекта внутрь появившейся папки
+
+cd base
+git status
+git add .
+git commit -m 'init'
+git log
+git push
+
 сбросить все локальные изменения: git reset --hard HEAD
 отменить добавление файлов
 отменить коммит
@@ -27,7 +40,12 @@ TODO:
 переключиться на последний коммит
 
 создать новую рабочую ветку
+возможные действия
 слить рабочую ветку с основной
+
+уничтожение коммитов
+
+создание ключа на github
 
 
 
@@ -56,22 +74,7 @@ git config --local user.email "xlift44@gmail.com"
     path = /e/WorkX/.gitconfig
 
 <hr>
-Создаем на github новый репозиторий
 
-cd e:/WorkX/
-клонируем, папки быть не должно:
-git clone https://github.com/xlift44/base
-
-копируем файлы проекта внутрь появившейся папки
-
-cd base
-git status
-git add .
-git commit -m 'initial commit'
-git log
-git push
-
-<hr>
 Убрать "warning: LF will be replaced by CRLF" :
 git config --global core.autocrlf false
 
