@@ -16,7 +16,7 @@
 TODO: меню с якорями в этом документе
 
 
-создание нового проекта на GitHub
+создание нового проекта на GitHub:
 - создаем на github новый репозиторий (например base)
 - заходим в рабочую папку: cd e:/WorkX/
 - клонируем, папки проекта быть не должно: git clone https://github.com/xlift44/base
@@ -29,10 +29,15 @@ git commit -m 'init'
 git log
 git push
 
+<hr><h2>Стандартные действия</h6>
 сбросить все локальные изменения: git reset --hard HEAD
+
 отменить добавление файлов в коммит без отмены изменений в них: git reset --soft HEAD
+
 переназвать коммит: git commit --amend -m 'новое сообщение'
+
 отменить коммит: git reset HEAD~
+
 отменить пуш
 
 запушить предыдущий коммит
@@ -53,27 +58,20 @@ git push --force
 создание ключа на github
 
 
-
-Установка: https://git-scm.com/download/win
-
+<hr><h2>Установка и настройка </h6>
+https://git-scm.com/download/win
 Ярлык "C:\Program Files\Git\git-bash.exe" --cd="d:\dev"
 
-Запустить Git Bash
-cd папка_с_проектом
-git init
-git add .
-git commit -m 'initial commit'
-git log
+посмотреть текущие настройки Git: git config --list
 
+глобальные настройки:
 git config --global user.name "xlift44"
 git config --global user.email "xlift44@gmail.com"
 
-Настройки Git
-git config --list
-
-Проект для другого аккаунта Git
+локальные настройки для другого аккаунта Git
 git config --local user.name "xlift44"
 git config --local user.email "xlift44@gmail.com"
+
 
 [includeIf "gitdir:/e/WorkX/"]
     path = /e/WorkX/.gitconfig
