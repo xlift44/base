@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>base</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+
+<body>
+
+  
+<div class="list">
+  <ul>Нулевой уровень 1
+      <li class="aaa">Первый уровень 1-1</li>
+      <li>Первый уровень 1-2</li>
+      <li>Первый уровень 1-3</li>
+      <li>Первый уровень 1-4</li>
+      <li>Первый уровень 1-5</li>
+  </ul>
+  <ul >Нулевой уровень 2
+      <li>Первый уровень 2-1</li>
+      <li>Первый уровень 2-2</li>
+      <li>Первый уровень 2-3</li>
+      <li>Первый уровень 2-4</li>
+      <li>Первый уровень 2-5</li>
+  </ul>
+  
+  <ul>
+    <li>
+      HTML
+      <ul>
+        <li>HTML syntax:
+          <a href="html/html/index.html">src/demo</a>
+          <a href="https://github.com/xlift44/base/blob/main/html/html/index.html">github src</a>
+        </li>
+      </ul>
+    </li>
+  </ul>  
+  
+</div> 
+
+
+
+</body>
+</html>
+
+<script>
+	let btns = document.querySelectorAll(".list > ul");
+
+	[...btns].forEach(btn=>btn.addEventListener("click", btnClick));
+	   
+
+	function btnClick(){
+		let tab = this.querySelectorAll("li");
+		for (let i  = 0; i < tab.length; i++){
+		  console.log(tab[i].classList);
+		  tab[i].classList.toggle("tabs");
+		};
+	}
+</script> 
+
+<style>
+	html,body{
+		margin: 0;
+		padding: 0;
+	}
+  
+	.list{
+		width: 300px;
+		width: 300px;
+	}
+  
+	ul > li {
+    display: none;
+	}
+
+	ul > li.hide {
+	  display: none;
+	}
+  
+	.tabs1{
+	  display: block;
+	  animation: fadeIn 1s ease;
+	}
+  
+	.tabs{
+	  display: block;
+	  animation: fadeIn 1s ease;  
+	}
+
+
+	@keyframes fadeIn {
+	  from {
+      opacity: 0;
+	  }
+
+	  to {
+      opacity: 1;
+	  }
+	}
+</style>
