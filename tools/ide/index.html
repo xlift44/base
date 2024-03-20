@@ -78,7 +78,6 @@ OpenJDK 11.0.2
 https://aka.ms/download-jdk/microsoft-jdk-11.0.10.9-windows-x64.msi
 
 <hr><h2>Adobe Flash CS6</h2>
-
 properties: CTRL + F3
 library: CTRL + L
 
@@ -94,9 +93,32 @@ https://www.oracle.com/java/technologies/javase-java-archive-javase6-downloads.h
 JAVA_HOME
 C:\Program Files (x86)\Java\jre6
 
-<hr>
+<hr><h2>Golang</h2>
+Установка: https://go.dev/dl/
+Версия: go version
+Переменные окружения: go env
 
+Расширение VSCode:
+Go
+Code Runner
 
+ctrl+shift+P:
+goinstall , делаем update всего
+user , Open User Settings (JSON) , добавляем:
+"go.useLanguageServer": true, // при наборе кода, активирует подсказки, навигацию по коду, форматирование
+"editor.codeActionsOnSave": {}, // действия при сохранении файла, ничего не указываем чтобы не было конфликтов при сохранении go файлов
+"go.formatTool": "gofumpt", // утилита для форматирования go файлов.https://github.com/mvdan/gofumpt
+"[go]": {
+    "editor.formatOnSave": true, // при сохранении файла, будет выполняться форматирование при помощи утилиты gofumpt
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true // при сохранении файла, будет осуществляться организация, группировка, сортировка импортированных пакетов из раздела import
+    }
+},
+"code-runner.saveFileBeforeRun": true, // сохраняет файл перед запуском
+"code-runner.clearPreviousOutput": true, // очищает результат предыдущего запуска перез запуском
+"code-runner.runInTerminal": true // запуск в терминале VSCode
+
+ставим gofumpt
 
 </pre>
 <a href="../../index.html" class="previous">&laquo; back &laquo;</a>
