@@ -9,5 +9,4 @@ func main(){
 	fmt.Println(x - float64(k))
 }
 
-// с float32 результат будет неверен
-
+// с float32 результат будет неверный
