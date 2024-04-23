@@ -31,33 +31,44 @@ git log
 git push
 
 <hr><h2>Стандартные действия</h6>
-сбросить все локальные изменения: git reset --hard HEAD
+- сбросить все локальные изменения: 
+git reset --hard HEAD
 
-отменить добавление файлов в коммит без отмены изменений в них: git reset --soft HEAD
+- отменить добавление файлов в коммит без отмены изменений в них: 
+git reset --soft HEAD
 
-переназвать коммит: git commit --amend -m 'новое сообщение'
+- переназвать коммит: 
+git commit --amend -m 'новое сообщение'
 
-отменить коммит: git reset HEAD~
+- отменить коммит: 
+git reset HEAD~
 
-отменить пуш
+- отменить пуш
 
-запушить предыдущий коммит
+- запушить предыдущий коммит
 git reset --hard HEAD~1
 git push --force
 
 
-просмотр предыдущих коммитов
-переключиться на коммит
-переключиться на последний коммит
+- просмотр предыдущих коммитов
+git log
 
-создать новую рабочую ветку
+- переключиться на коммит
+git checkout commit
+(где commit это хэш)
+
+- вернуться на последний коммит
+git checkout - 
+
+- создать новую рабочую ветку
 возможные действия
-слить рабочую ветку с основной
+- слить рабочую ветку с основной
 
-уничтожение коммитов
+- уничтожение коммитов
 
-создание ключа на github
 
+GitHub.com - создание ключей:
+settings - developer settings - personal access tokens
 
 <hr><h2>Установка и настройка </h6>
 https://git-scm.com/download/win
@@ -72,10 +83,6 @@ git config --global user.email "xlift44@gmail.com"
 локальные настройки для другого аккаунта Git
 git config --local user.name "msnytkov"
 git config --local user.email "msnytkov@iriysoft.ru"
-
-
-[includeIf "gitdir:/e/WorkX/"]
-    path = /e/WorkX/.gitconfig
 
 <hr>
 
@@ -230,6 +237,8 @@ cat link_to_keys/.ssh/id_rsa.pub
 git remote add origin xlift44@gmail.com:xlift44/projectname.git
 git push -u origin master
 запросит пароль к ключу
+
+
 </pre>
 
 <a href="../../index.html" class="previous">&laquo; back &laquo;</a>
