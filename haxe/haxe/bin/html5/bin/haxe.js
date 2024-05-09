@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "1";
+	app.meta.h["build"] = "64";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "haxe";
 	app.meta.h["name"] = "haxe";
@@ -3374,94 +3374,94 @@ var Main = function() {
 	var myFloat = 10.45;
 	var myBool = true;
 	var myString = "Моя строка";
-	haxe_Log.trace("--- Простые типы данных:",{ fileName : "src/Main.hx", lineNumber : 41, className : "Main", methodName : "new"});
-	haxe_Log.trace(myInt,{ fileName : "src/Main.hx", lineNumber : 42, className : "Main", methodName : "new", customParams : ["(Int)",Type.typeof(myInt)]});
-	haxe_Log.trace(myFloat,{ fileName : "src/Main.hx", lineNumber : 43, className : "Main", methodName : "new", customParams : ["(Float)",Type.typeof(myFloat)]});
-	haxe_Log.trace(myString,{ fileName : "src/Main.hx", lineNumber : 44, className : "Main", methodName : "new", customParams : ["(String)",Type.typeof(myString)]});
-	haxe_Log.trace("--- Приведение типов:",{ fileName : "src/Main.hx", lineNumber : 49, className : "Main", methodName : "new"});
-	haxe_Log.trace("Float->Int:",{ fileName : "src/Main.hx", lineNumber : 50, className : "Main", methodName : "new", customParams : [myFloat | 0]});
-	haxe_Log.trace("Float->String:",{ fileName : "src/Main.hx", lineNumber : 51, className : "Main", methodName : "new", customParams : [myFloat == null ? "null" : "" + myFloat]});
-	haxe_Log.trace("--- Строки:",{ fileName : "src/Main.hx", lineNumber : 56, className : "Main", methodName : "new"});
-	haxe_Log.trace("интерполяция строк (вывод 100 и 103):",{ fileName : "src/Main.hx", lineNumber : 59, className : "Main", methodName : "new", customParams : ["вывод " + myInt + " и " + (myInt + 3)]});
+	haxe_Log.trace("--- Простые типы данных:",{ fileName : "src/Main.hx", lineNumber : 51, className : "Main", methodName : "new"});
+	haxe_Log.trace(myInt,{ fileName : "src/Main.hx", lineNumber : 52, className : "Main", methodName : "new", customParams : ["(Int)",Type.typeof(myInt)]});
+	haxe_Log.trace(myFloat,{ fileName : "src/Main.hx", lineNumber : 53, className : "Main", methodName : "new", customParams : ["(Float)",Type.typeof(myFloat)]});
+	haxe_Log.trace(myString,{ fileName : "src/Main.hx", lineNumber : 54, className : "Main", methodName : "new", customParams : ["(String)",Type.typeof(myString)]});
+	haxe_Log.trace("--- Приведение типов:",{ fileName : "src/Main.hx", lineNumber : 59, className : "Main", methodName : "new"});
+	haxe_Log.trace("Float->Int:",{ fileName : "src/Main.hx", lineNumber : 60, className : "Main", methodName : "new", customParams : [myFloat | 0]});
+	haxe_Log.trace("Float->String:",{ fileName : "src/Main.hx", lineNumber : 61, className : "Main", methodName : "new", customParams : [myFloat == null ? "null" : "" + myFloat]});
+	haxe_Log.trace("--- Строки:",{ fileName : "src/Main.hx", lineNumber : 66, className : "Main", methodName : "new"});
+	haxe_Log.trace("интерполяция строк (вывод 100 и 103):",{ fileName : "src/Main.hx", lineNumber : 69, className : "Main", methodName : "new", customParams : ["вывод " + myInt + " и " + (myInt + 3)]});
 	var myStr = new String("Строка для методов");
-	haxe_Log.trace("myStr:",{ fileName : "src/Main.hx", lineNumber : 63, className : "Main", methodName : "new", customParams : [myStr]});
-	haxe_Log.trace("длина строки:",{ fileName : "src/Main.hx", lineNumber : 65, className : "Main", methodName : "new", customParams : [myStr.length]});
-	haxe_Log.trace("отдельный знак по индексу [0], [1], [100]:",{ fileName : "src/Main.hx", lineNumber : 68, className : "Main", methodName : "new", customParams : [myStr.charAt(0),myStr.charAt(1),myStr.charAt(100)]});
-	haxe_Log.trace("цифровой код для символа [0], [1], [100]:",{ fileName : "src/Main.hx", lineNumber : 71, className : "Main", methodName : "new", customParams : [HxOverrides.cca(myStr,0),HxOverrides.cca(myStr,1),HxOverrides.cca(myStr,100)]});
-	haxe_Log.trace("цифровой код для символа W, я, <,>:",{ fileName : "src/Main.hx", lineNumber : 73, className : "Main", methodName : "new", customParams : [87,1103,44]});
-	haxe_Log.trace("получение символа по коду (ф)",{ fileName : "src/Main.hx", lineNumber : 74, className : "Main", methodName : "new", customParams : [String.fromCodePoint(1092)]});
-	haxe_Log.trace("узнать индекс указанного символа 'о' (3):",{ fileName : "src/Main.hx", lineNumber : 77, className : "Main", methodName : "new", customParams : [myStr.indexOf("о")]});
-	haxe_Log.trace("индекс указанного символа 'о' с указанием места начала поиска (14):",{ fileName : "src/Main.hx", lineNumber : 78, className : "Main", methodName : "new", customParams : [myStr.indexOf("о",5)]});
-	haxe_Log.trace("узнать индекс указанного символа 'о', поиск с конца (16):",{ fileName : "src/Main.hx", lineNumber : 80, className : "Main", methodName : "new", customParams : [myStr.lastIndexOf("о")]});
-	haxe_Log.trace("преобразовать строку в массив, разбив по символу 'о' ([Стр,ка для мет,д,в]):",{ fileName : "src/Main.hx", lineNumber : 84, className : "Main", methodName : "new", customParams : [myStr.split("о")]});
-	haxe_Log.trace("извлечь подстроку [начало подстроки, длина подстроки] (ока дл):",{ fileName : "src/Main.hx", lineNumber : 87, className : "Main", methodName : "new", customParams : [HxOverrides.substr(myStr,3,6)]});
-	haxe_Log.trace("извлечь подстроку только с указанием начала: (ока для методов)",{ fileName : "src/Main.hx", lineNumber : 88, className : "Main", methodName : "new", customParams : [HxOverrides.substr(myStr,3,null)]});
-	haxe_Log.trace("извлечь подстроку [начало подстроки, до какого индекса, без него] (ока дл):",{ fileName : "src/Main.hx", lineNumber : 91, className : "Main", methodName : "new", customParams : [myStr.substring(3,9)]});
-	haxe_Log.trace("в нижний регистр:",{ fileName : "src/Main.hx", lineNumber : 93, className : "Main", methodName : "new", customParams : [myStr.toLowerCase()]});
-	haxe_Log.trace("в верхний регистр:",{ fileName : "src/Main.hx", lineNumber : 94, className : "Main", methodName : "new", customParams : [myStr.toUpperCase()]});
+	haxe_Log.trace("myStr:",{ fileName : "src/Main.hx", lineNumber : 73, className : "Main", methodName : "new", customParams : [myStr]});
+	haxe_Log.trace("длина строки:",{ fileName : "src/Main.hx", lineNumber : 75, className : "Main", methodName : "new", customParams : [myStr.length]});
+	haxe_Log.trace("отдельный знак по индексу [0], [1], [100]:",{ fileName : "src/Main.hx", lineNumber : 78, className : "Main", methodName : "new", customParams : [myStr.charAt(0),myStr.charAt(1),myStr.charAt(100)]});
+	haxe_Log.trace("цифровой код для символа [0], [1], [100]:",{ fileName : "src/Main.hx", lineNumber : 81, className : "Main", methodName : "new", customParams : [HxOverrides.cca(myStr,0),HxOverrides.cca(myStr,1),HxOverrides.cca(myStr,100)]});
+	haxe_Log.trace("цифровой код для символа W, я, <,>:",{ fileName : "src/Main.hx", lineNumber : 83, className : "Main", methodName : "new", customParams : [87,1103,44]});
+	haxe_Log.trace("получение символа по коду (ф)",{ fileName : "src/Main.hx", lineNumber : 84, className : "Main", methodName : "new", customParams : [String.fromCodePoint(1092)]});
+	haxe_Log.trace("узнать индекс указанного символа 'о' (3):",{ fileName : "src/Main.hx", lineNumber : 87, className : "Main", methodName : "new", customParams : [myStr.indexOf("о")]});
+	haxe_Log.trace("индекс указанного символа 'о' с указанием места начала поиска (14):",{ fileName : "src/Main.hx", lineNumber : 88, className : "Main", methodName : "new", customParams : [myStr.indexOf("о",5)]});
+	haxe_Log.trace("узнать индекс указанного символа 'о', поиск с конца (16):",{ fileName : "src/Main.hx", lineNumber : 90, className : "Main", methodName : "new", customParams : [myStr.lastIndexOf("о")]});
+	haxe_Log.trace("преобразовать строку в массив, разбив по символу 'о' ([Стр,ка для мет,д,в]):",{ fileName : "src/Main.hx", lineNumber : 94, className : "Main", methodName : "new", customParams : [myStr.split("о")]});
+	haxe_Log.trace("извлечь подстроку [начало подстроки, длина подстроки] (ока дл):",{ fileName : "src/Main.hx", lineNumber : 97, className : "Main", methodName : "new", customParams : [HxOverrides.substr(myStr,3,6)]});
+	haxe_Log.trace("извлечь подстроку только с указанием начала: (ока для методов)",{ fileName : "src/Main.hx", lineNumber : 98, className : "Main", methodName : "new", customParams : [HxOverrides.substr(myStr,3,null)]});
+	haxe_Log.trace("извлечь подстроку [начало подстроки, до какого индекса, без него] (ока дл):",{ fileName : "src/Main.hx", lineNumber : 101, className : "Main", methodName : "new", customParams : [myStr.substring(3,9)]});
+	haxe_Log.trace("в нижний регистр:",{ fileName : "src/Main.hx", lineNumber : 103, className : "Main", methodName : "new", customParams : [myStr.toLowerCase()]});
+	haxe_Log.trace("в верхний регистр:",{ fileName : "src/Main.hx", lineNumber : 104, className : "Main", methodName : "new", customParams : [myStr.toUpperCase()]});
 	var myStringBuf = new StringBuf();
-	haxe_Log.trace("myStringBuf:",{ fileName : "src/Main.hx", lineNumber : 101, className : "Main", methodName : "new", customParams : [myStringBuf]});
+	haxe_Log.trace("myStringBuf:",{ fileName : "src/Main.hx", lineNumber : 111, className : "Main", methodName : "new", customParams : [myStringBuf]});
 	myStringBuf.b += "Добавляем текст";
-	haxe_Log.trace("myStringBuf:",{ fileName : "src/Main.hx", lineNumber : 104, className : "Main", methodName : "new", customParams : [myStringBuf]});
-	haxe_Log.trace("длина myStringBuf:",{ fileName : "src/Main.hx", lineNumber : 106, className : "Main", methodName : "new", customParams : [myStringBuf.b.length]});
+	haxe_Log.trace("myStringBuf:",{ fileName : "src/Main.hx", lineNumber : 114, className : "Main", methodName : "new", customParams : [myStringBuf]});
+	haxe_Log.trace("длина myStringBuf:",{ fileName : "src/Main.hx", lineNumber : 116, className : "Main", methodName : "new", customParams : [myStringBuf.b.length]});
 	myStringBuf.b += String.fromCodePoint(44);
-	haxe_Log.trace("добавляем символ по коду (,):",{ fileName : "src/Main.hx", lineNumber : 109, className : "Main", methodName : "new", customParams : [myStringBuf]});
+	haxe_Log.trace("добавляем символ по коду (,):",{ fileName : "src/Main.hx", lineNumber : 119, className : "Main", methodName : "new", customParams : [myStringBuf]});
 	myStringBuf.b += HxOverrides.substr("ххх и другой текст ххх",3,16);
-	haxe_Log.trace("добавляем подстроку из заданной строки:",{ fileName : "src/Main.hx", lineNumber : 112, className : "Main", methodName : "new", customParams : [myStringBuf]});
-	haxe_Log.trace("--- Math:",{ fileName : "src/Main.hx", lineNumber : 116, className : "Main", methodName : "new"});
+	haxe_Log.trace("добавляем подстроку из заданной строки:",{ fileName : "src/Main.hx", lineNumber : 122, className : "Main", methodName : "new", customParams : [myStringBuf]});
+	haxe_Log.trace("--- Math:",{ fileName : "src/Main.hx", lineNumber : 126, className : "Main", methodName : "new"});
 	var myRandom1 = Math.random();
 	var myRandom2 = Std.random(100);
-	haxe_Log.trace("случайное число 0-1 Math.random()",{ fileName : "src/Main.hx", lineNumber : 121, className : "Main", methodName : "new", customParams : [myRandom1]});
-	haxe_Log.trace("случайное целое число 0-99 Std.random(100)",{ fileName : "src/Main.hx", lineNumber : 122, className : "Main", methodName : "new", customParams : [myRandom2]});
-	haxe_Log.trace("--- Регулярные выражения:",{ fileName : "src/Main.hx", lineNumber : 129, className : "Main", methodName : "new"});
+	haxe_Log.trace("случайное число 0-1 Math.random()",{ fileName : "src/Main.hx", lineNumber : 131, className : "Main", methodName : "new", customParams : [myRandom1]});
+	haxe_Log.trace("случайное целое число 0-99 Std.random(100)",{ fileName : "src/Main.hx", lineNumber : 132, className : "Main", methodName : "new", customParams : [myRandom2]});
+	haxe_Log.trace("--- Регулярные выражения:",{ fileName : "src/Main.hx", lineNumber : 139, className : "Main", methodName : "new"});
 	var myReg = new EReg("слово","");
-	haxe_Log.trace("myReg и тип:",{ fileName : "src/Main.hx", lineNumber : 132, className : "Main", methodName : "new", customParams : [myReg,Type.typeof(myReg)]});
+	haxe_Log.trace("myReg и тип:",{ fileName : "src/Main.hx", lineNumber : 142, className : "Main", methodName : "new", customParams : [myReg,Type.typeof(myReg)]});
 	var myReg2 = new EReg("слово","i");
-	haxe_Log.trace("myReg и тип:",{ fileName : "src/Main.hx", lineNumber : 135, className : "Main", methodName : "new", customParams : [myReg2,Type.typeof(myReg2)]});
+	haxe_Log.trace("myReg и тип:",{ fileName : "src/Main.hx", lineNumber : 145, className : "Main", methodName : "new", customParams : [myReg2,Type.typeof(myReg2)]});
 	var myStringForReg = "Например первое слово, второе слово, третье слово, четвертое слово, пятое слово";
-	haxe_Log.trace(myReg.match(myStringForReg),{ fileName : "src/Main.hx", lineNumber : 138, className : "Main", methodName : "new"});
+	haxe_Log.trace(myReg.match(myStringForReg),{ fileName : "src/Main.hx", lineNumber : 148, className : "Main", methodName : "new"});
 	var myReg2_r = new RegExp("foo","i".split("u").join(""));
 	var myReg3 = new EReg("(первое).+?(второе).+?(третье).+?","");
 	if(myReg3.match(myStringForReg)) {
-		haxe_Log.trace(myReg3.matched(1),{ fileName : "src/Main.hx", lineNumber : 167, className : "Main", methodName : "new"});
-		haxe_Log.trace(myReg3.matched(2),{ fileName : "src/Main.hx", lineNumber : 168, className : "Main", methodName : "new"});
-		haxe_Log.trace(myReg3.matched(3),{ fileName : "src/Main.hx", lineNumber : 169, className : "Main", methodName : "new"});
-		haxe_Log.trace(myReg3.matchedLeft(),{ fileName : "src/Main.hx", lineNumber : 170, className : "Main", methodName : "new"});
-		haxe_Log.trace(myReg3.matchedRight(),{ fileName : "src/Main.hx", lineNumber : 171, className : "Main", methodName : "new"});
+		haxe_Log.trace(myReg3.matched(1),{ fileName : "src/Main.hx", lineNumber : 177, className : "Main", methodName : "new"});
+		haxe_Log.trace(myReg3.matched(2),{ fileName : "src/Main.hx", lineNumber : 178, className : "Main", methodName : "new"});
+		haxe_Log.trace(myReg3.matched(3),{ fileName : "src/Main.hx", lineNumber : 179, className : "Main", methodName : "new"});
+		haxe_Log.trace(myReg3.matchedLeft(),{ fileName : "src/Main.hx", lineNumber : 180, className : "Main", methodName : "new"});
+		haxe_Log.trace(myReg3.matchedRight(),{ fileName : "src/Main.hx", lineNumber : 181, className : "Main", methodName : "new"});
 	}
-	haxe_Log.trace("--- Ветвления:",{ fileName : "src/Main.hx", lineNumber : 204, className : "Main", methodName : "new"});
+	haxe_Log.trace("--- Ветвления:",{ fileName : "src/Main.hx", lineNumber : 214, className : "Main", methodName : "new"});
 	var myCondition1 = false;
 	var myCondition2 = false;
 	var myCondition3 = true;
 	if(myCondition1) {
-		haxe_Log.trace("соблюдение условия 1",{ fileName : "src/Main.hx", lineNumber : 207, className : "Main", methodName : "new"});
+		haxe_Log.trace("соблюдение условия 1",{ fileName : "src/Main.hx", lineNumber : 217, className : "Main", methodName : "new"});
 	} else if(myCondition2) {
-		haxe_Log.trace("соблюдение условия 2",{ fileName : "src/Main.hx", lineNumber : 209, className : "Main", methodName : "new"});
+		haxe_Log.trace("соблюдение условия 2",{ fileName : "src/Main.hx", lineNumber : 219, className : "Main", methodName : "new"});
 	} else if(myCondition3) {
-		haxe_Log.trace("соблюдение условия 3",{ fileName : "src/Main.hx", lineNumber : 211, className : "Main", methodName : "new"});
+		haxe_Log.trace("соблюдение условия 3",{ fileName : "src/Main.hx", lineNumber : 221, className : "Main", methodName : "new"});
 	} else {
-		haxe_Log.trace("ни одно из условий не выполнено",{ fileName : "src/Main.hx", lineNumber : 213, className : "Main", methodName : "new"});
+		haxe_Log.trace("ни одно из условий не выполнено",{ fileName : "src/Main.hx", lineNumber : 223, className : "Main", methodName : "new"});
 	}
 	var myIfResult = myCondition1 ? "соблюдение условия 1" : "соблюдение условия 2+";
-	haxe_Log.trace(myIfResult,{ fileName : "src/Main.hx", lineNumber : 225, className : "Main", methodName : "new"});
-	haxe_Log.trace(myCondition1 ? "соблюдение условия 1" : "соблюдение условия 2+",{ fileName : "src/Main.hx", lineNumber : 227, className : "Main", methodName : "new"});
+	haxe_Log.trace(myIfResult,{ fileName : "src/Main.hx", lineNumber : 235, className : "Main", methodName : "new"});
+	haxe_Log.trace(myCondition1 ? "соблюдение условия 1" : "соблюдение условия 2+",{ fileName : "src/Main.hx", lineNumber : 237, className : "Main", methodName : "new"});
 	var MyTernarCondition = false;
 	var myTernarResult1 = "соблюдение условия 1";
 	var myTernarResult2 = "соблюдение условия 2";
 	var myTernarResult = MyTernarCondition ? myTernarResult1 : myTernarResult2;
-	haxe_Log.trace("тернарный оператор:",{ fileName : "src/Main.hx", lineNumber : 234, className : "Main", methodName : "new"});
-	haxe_Log.trace(myTernarResult,{ fileName : "src/Main.hx", lineNumber : 235, className : "Main", methodName : "new"});
-	haxe_Log.trace("switch-case:",{ fileName : "src/Main.hx", lineNumber : 239, className : "Main", methodName : "new"});
+	haxe_Log.trace("тернарный оператор:",{ fileName : "src/Main.hx", lineNumber : 244, className : "Main", methodName : "new"});
+	haxe_Log.trace(myTernarResult,{ fileName : "src/Main.hx", lineNumber : 245, className : "Main", methodName : "new"});
+	haxe_Log.trace("switch-case:",{ fileName : "src/Main.hx", lineNumber : 249, className : "Main", methodName : "new"});
 	var myChoice = 4;
 	switch(myChoice) {
 	case 1:
-		haxe_Log.trace("выбран вариант 1",{ fileName : "src/Main.hx", lineNumber : 244, className : "Main", methodName : "new"});
+		haxe_Log.trace("выбран вариант 1",{ fileName : "src/Main.hx", lineNumber : 254, className : "Main", methodName : "new"});
 		break;
 	case 2:case 3:
-		haxe_Log.trace("выбран вариант 2, 3",{ fileName : "src/Main.hx", lineNumber : 245, className : "Main", methodName : "new"});
+		haxe_Log.trace("выбран вариант 2, 3",{ fileName : "src/Main.hx", lineNumber : 255, className : "Main", methodName : "new"});
 		break;
 	default:
-		haxe_Log.trace("выбран вариант default",{ fileName : "src/Main.hx", lineNumber : 247, className : "Main", methodName : "new"});
+		haxe_Log.trace("выбран вариант default",{ fileName : "src/Main.hx", lineNumber : 257, className : "Main", methodName : "new"});
 	}
 	var tmp;
 	switch(myChoice) {
@@ -3474,8 +3474,8 @@ var Main = function() {
 	default:
 		tmp = "выбран вариант default";
 	}
-	haxe_Log.trace(tmp,{ fileName : "src/Main.hx", lineNumber : 252, className : "Main", methodName : "new"});
-	haxe_Log.trace("--- Циклы:",{ fileName : "src/Main.hx", lineNumber : 264, className : "Main", methodName : "new"});
+	haxe_Log.trace(tmp,{ fileName : "src/Main.hx", lineNumber : 262, className : "Main", methodName : "new"});
+	haxe_Log.trace("--- Циклы:",{ fileName : "src/Main.hx", lineNumber : 274, className : "Main", methodName : "new"});
 	var myLoop = ["Элемент0","Элемент1","Элемент2","Элемент3"];
 	var outLoop1 = "while: ";
 	var i = 0;
@@ -3483,7 +3483,7 @@ var Main = function() {
 		outLoop1 += "" + myLoop[i] + " ";
 		++i;
 	}
-	haxe_Log.trace(outLoop1,{ fileName : "src/Main.hx", lineNumber : 274, className : "Main", methodName : "new"});
+	haxe_Log.trace(outLoop1,{ fileName : "src/Main.hx", lineNumber : 284, className : "Main", methodName : "new"});
 	var outLoop2 = "do-while: ";
 	i = 0;
 	while(true) {
@@ -3493,13 +3493,13 @@ var Main = function() {
 			break;
 		}
 	}
-	haxe_Log.trace(outLoop2,{ fileName : "src/Main.hx", lineNumber : 283, className : "Main", methodName : "new"});
+	haxe_Log.trace(outLoop2,{ fileName : "src/Main.hx", lineNumber : 293, className : "Main", methodName : "new"});
 	var outLoop3 = "for: ";
 	outLoop3 += "" + myLoop[0] + " ";
 	outLoop3 += "" + myLoop[1] + " ";
 	outLoop3 += "" + myLoop[2] + " ";
 	outLoop3 += "" + myLoop[3] + " ";
-	haxe_Log.trace(outLoop3,{ fileName : "src/Main.hx", lineNumber : 291, className : "Main", methodName : "new"});
+	haxe_Log.trace(outLoop3,{ fileName : "src/Main.hx", lineNumber : 301, className : "Main", methodName : "new"});
 	var outLoop4 = "for: ";
 	var i = 0;
 	outLoop4 += "" + myLoop[i] + " ";
@@ -3509,7 +3509,7 @@ var Main = function() {
 	outLoop4 += "" + myLoop[i] + " ";
 	var i = 3;
 	outLoop4 += "" + myLoop[i] + " ";
-	haxe_Log.trace(outLoop4,{ fileName : "src/Main.hx", lineNumber : 297, className : "Main", methodName : "new"});
+	haxe_Log.trace(outLoop4,{ fileName : "src/Main.hx", lineNumber : 307, className : "Main", methodName : "new"});
 	var outLoop5 = "for: ";
 	var _g = 0;
 	while(_g < myLoop.length) {
@@ -3517,7 +3517,7 @@ var Main = function() {
 		++_g;
 		outLoop5 += "" + i + " ";
 	}
-	haxe_Log.trace(outLoop5,{ fileName : "src/Main.hx", lineNumber : 303, className : "Main", methodName : "new"});
+	haxe_Log.trace(outLoop5,{ fileName : "src/Main.hx", lineNumber : 313, className : "Main", methodName : "new"});
 	var outLoop6 = "for +continue +break (0,1,3): ";
 	var _g = 0;
 	var _g1 = [0,1,2,3,4,5,6];
@@ -3532,24 +3532,24 @@ var Main = function() {
 		}
 		outLoop6 += "" + myLoop[i] + " ";
 	}
-	haxe_Log.trace(outLoop6,{ fileName : "src/Main.hx", lineNumber : 311, className : "Main", methodName : "new"});
+	haxe_Log.trace(outLoop6,{ fileName : "src/Main.hx", lineNumber : 321, className : "Main", methodName : "new"});
 	var myRank = new IntIterator(0,4);
-	haxe_Log.trace("ранг (0...4) в цикле for (перебор 0,1,2,3): ",{ fileName : "src/Main.hx", lineNumber : 314, className : "Main", methodName : "new", customParams : [myRank]});
-	haxe_Log.trace("--- Массивы:",{ fileName : "src/Main.hx", lineNumber : 326, className : "Main", methodName : "new"});
+	haxe_Log.trace("ранг (0...4) в цикле for (перебор 0,1,2,3): ",{ fileName : "src/Main.hx", lineNumber : 324, className : "Main", methodName : "new", customParams : [myRank]});
+	haxe_Log.trace("--- Массивы:",{ fileName : "src/Main.hx", lineNumber : 336, className : "Main", methodName : "new"});
 	var myArray = [1,2,3,4,5];
-	haxe_Log.trace("myArray, тип:",{ fileName : "src/Main.hx", lineNumber : 330, className : "Main", methodName : "new", customParams : [myArray,Type.typeof(myArray)]});
-	haxe_Log.trace("myArray[2] (3):",{ fileName : "src/Main.hx", lineNumber : 331, className : "Main", methodName : "new", customParams : [myArray[2]]});
+	haxe_Log.trace("myArray, тип:",{ fileName : "src/Main.hx", lineNumber : 340, className : "Main", methodName : "new", customParams : [myArray,Type.typeof(myArray)]});
+	haxe_Log.trace("myArray[2] (3):",{ fileName : "src/Main.hx", lineNumber : 341, className : "Main", methodName : "new", customParams : [myArray[2]]});
 	myArray[2] = 8;
-	haxe_Log.trace("myArray[2] (8):",{ fileName : "src/Main.hx", lineNumber : 334, className : "Main", methodName : "new", customParams : [myArray[2]]});
+	haxe_Log.trace("myArray[2] (8):",{ fileName : "src/Main.hx", lineNumber : 344, className : "Main", methodName : "new", customParams : [myArray[2]]});
 	myArray[7] = 8;
-	haxe_Log.trace("myArray:",{ fileName : "src/Main.hx", lineNumber : 337, className : "Main", methodName : "new", customParams : [myArray]});
-	haxe_Log.trace("myArray[10] (null):",{ fileName : "src/Main.hx", lineNumber : 339, className : "Main", methodName : "new", customParams : [myArray[10]]});
+	haxe_Log.trace("myArray:",{ fileName : "src/Main.hx", lineNumber : 347, className : "Main", methodName : "new", customParams : [myArray]});
+	haxe_Log.trace("myArray[10] (null):",{ fileName : "src/Main.hx", lineNumber : 349, className : "Main", methodName : "new", customParams : [myArray[10]]});
 	var myDynamicArray = [1,2.2,"строка",true];
-	haxe_Log.trace("myDynamicArray:",{ fileName : "src/Main.hx", lineNumber : 342, className : "Main", methodName : "new", customParams : [myDynamicArray]});
+	haxe_Log.trace("myDynamicArray:",{ fileName : "src/Main.hx", lineNumber : 352, className : "Main", methodName : "new", customParams : [myDynamicArray]});
 	var myDynamicArray2 = [];
 	myDynamicArray2 = [myArray,myDynamicArray];
-	haxe_Log.trace("myDynamicArray2:",{ fileName : "src/Main.hx", lineNumber : 346, className : "Main", methodName : "new", customParams : [myDynamicArray2]});
-	haxe_Log.trace("myDynamicArray2[0][4] (5):",{ fileName : "src/Main.hx", lineNumber : 347, className : "Main", methodName : "new", customParams : [myDynamicArray2[0][4]]});
+	haxe_Log.trace("myDynamicArray2:",{ fileName : "src/Main.hx", lineNumber : 356, className : "Main", methodName : "new", customParams : [myDynamicArray2]});
+	haxe_Log.trace("myDynamicArray2[0][4] (5):",{ fileName : "src/Main.hx", lineNumber : 357, className : "Main", methodName : "new", customParams : [myDynamicArray2[0][4]]});
 	var _g = [];
 	_g.push(0);
 	_g.push(1);
@@ -3557,33 +3557,33 @@ var Main = function() {
 	_g.push(3);
 	_g.push(4);
 	var myArray2 = _g;
-	haxe_Log.trace("myArray2 for (x in 0...5) ([0,1,2,3,4]):",{ fileName : "src/Main.hx", lineNumber : 350, className : "Main", methodName : "new", customParams : [myArray2]});
-	haxe_Log.trace("Методы массивов:",{ fileName : "src/Main.hx", lineNumber : 355, className : "Main", methodName : "new", customParams : [myArray]});
-	haxe_Log.trace(".length:",{ fileName : "src/Main.hx", lineNumber : 357, className : "Main", methodName : "new", customParams : [myArray.length]});
+	haxe_Log.trace("myArray2 for (x in 0...5) ([0,1,2,3,4]):",{ fileName : "src/Main.hx", lineNumber : 360, className : "Main", methodName : "new", customParams : [myArray2]});
+	haxe_Log.trace("Методы массивов:",{ fileName : "src/Main.hx", lineNumber : 365, className : "Main", methodName : "new", customParams : [myArray]});
+	haxe_Log.trace(".length:",{ fileName : "src/Main.hx", lineNumber : 367, className : "Main", methodName : "new", customParams : [myArray.length]});
 	myArray.reverse();
-	haxe_Log.trace(".reverse():",{ fileName : "src/Main.hx", lineNumber : 360, className : "Main", methodName : "new", customParams : [myArray]});
+	haxe_Log.trace(".reverse():",{ fileName : "src/Main.hx", lineNumber : 370, className : "Main", methodName : "new", customParams : [myArray]});
 	var mySplittedArray = myString.split("о");
-	haxe_Log.trace(".split() к строке",{ fileName : "src/Main.hx", lineNumber : 368, className : "Main", methodName : "new", customParams : [myString,": ",mySplittedArray]});
-	haxe_Log.trace("--- Списки:",{ fileName : "src/Main.hx", lineNumber : 375, className : "Main", methodName : "new"});
+	haxe_Log.trace(".split() к строке",{ fileName : "src/Main.hx", lineNumber : 378, className : "Main", methodName : "new", customParams : [myString,": ",mySplittedArray]});
+	haxe_Log.trace("--- Списки:",{ fileName : "src/Main.hx", lineNumber : 385, className : "Main", methodName : "new"});
 	var myList = new haxe_ds_List();
 	var myList2 = Object.create(haxe_ds_List.prototype);
-	haxe_Log.trace("создание пустого списка через Type.createEmptyInstance:",{ fileName : "src/Main.hx", lineNumber : 382, className : "Main", methodName : "new", customParams : [myList2]});
+	haxe_Log.trace("создание пустого списка через Type.createEmptyInstance:",{ fileName : "src/Main.hx", lineNumber : 392, className : "Main", methodName : "new", customParams : [myList2]});
 	var myList3 = Lambda.list(["элемент 1","элемент 2","элемент 3"]);
-	haxe_Log.trace("создание списка через Lambda.list:",{ fileName : "src/Main.hx", lineNumber : 385, className : "Main", methodName : "new", customParams : [myList3]});
-	haxe_Log.trace("Методы списков:",{ fileName : "src/Main.hx", lineNumber : 387, className : "Main", methodName : "new", customParams : [myList]});
+	haxe_Log.trace("создание списка через Lambda.list:",{ fileName : "src/Main.hx", lineNumber : 395, className : "Main", methodName : "new", customParams : [myList3]});
+	haxe_Log.trace("Методы списков:",{ fileName : "src/Main.hx", lineNumber : 397, className : "Main", methodName : "new", customParams : [myList]});
 	myList.add("элемент 1");
-	haxe_Log.trace(".add():",{ fileName : "src/Main.hx", lineNumber : 389, className : "Main", methodName : "new", customParams : [myList]});
+	haxe_Log.trace(".add():",{ fileName : "src/Main.hx", lineNumber : 399, className : "Main", methodName : "new", customParams : [myList]});
 	myList.add("элемент 2");
-	haxe_Log.trace(".add():",{ fileName : "src/Main.hx", lineNumber : 391, className : "Main", methodName : "new", customParams : [myList]});
-	haxe_Log.trace("for (l in myList):",{ fileName : "src/Main.hx", lineNumber : 393, className : "Main", methodName : "new"});
+	haxe_Log.trace(".add():",{ fileName : "src/Main.hx", lineNumber : 401, className : "Main", methodName : "new", customParams : [myList]});
+	haxe_Log.trace("for (l in myList):",{ fileName : "src/Main.hx", lineNumber : 403, className : "Main", methodName : "new"});
 	var _g4_head = myList.h;
 	while(_g4_head != null) {
 		var val = _g4_head.item;
 		_g4_head = _g4_head.next;
 		var l = val;
-		haxe_Log.trace(l,{ fileName : "src/Main.hx", lineNumber : 394, className : "Main", methodName : "new"});
+		haxe_Log.trace(l,{ fileName : "src/Main.hx", lineNumber : 404, className : "Main", methodName : "new"});
 	}
-	haxe_Log.trace("--- Векторы:",{ fileName : "src/Main.hx", lineNumber : 402, className : "Main", methodName : "new"});
+	haxe_Log.trace("--- Векторы:",{ fileName : "src/Main.hx", lineNumber : 412, className : "Main", methodName : "new"});
 	var this1 = new Array(10);
 	var myVector = this1;
 	var _g = 0;
@@ -3592,31 +3592,31 @@ var Main = function() {
 		var i = _g++;
 		myVector[i] = i + 10;
 	}
-	haxe_Log.trace("myVector:",{ fileName : "src/Main.hx", lineNumber : 408, className : "Main", methodName : "new", customParams : [myVector]});
-	haxe_Log.trace("myVector[0]:",{ fileName : "src/Main.hx", lineNumber : 409, className : "Main", methodName : "new", customParams : [myVector[0]]});
-	haxe_Log.trace("myVector[2]:",{ fileName : "src/Main.hx", lineNumber : 410, className : "Main", methodName : "new", customParams : [myVector[2]]});
-	haxe_Log.trace("--- Map:",{ fileName : "src/Main.hx", lineNumber : 416, className : "Main", methodName : "new"});
+	haxe_Log.trace("myVector:",{ fileName : "src/Main.hx", lineNumber : 418, className : "Main", methodName : "new", customParams : [myVector]});
+	haxe_Log.trace("myVector[0]:",{ fileName : "src/Main.hx", lineNumber : 419, className : "Main", methodName : "new", customParams : [myVector[0]]});
+	haxe_Log.trace("myVector[2]:",{ fileName : "src/Main.hx", lineNumber : 420, className : "Main", methodName : "new", customParams : [myVector[2]]});
+	haxe_Log.trace("--- Map:",{ fileName : "src/Main.hx", lineNumber : 426, className : "Main", methodName : "new"});
 	var _g = new haxe_ds_IntMap();
 	_g.h[1] = "элемент 1";
 	_g.h[2] = "элемент 2";
 	_g.h[3] = "элемент 3";
 	var myMap = _g;
-	haxe_Log.trace("myMap и тип:",{ fileName : "src/Main.hx", lineNumber : 419, className : "Main", methodName : "new", customParams : [myMap == null ? "null" : myMap.toString(),Type.typeof(myMap)]});
-	haxe_Log.trace("myMap[2]:",{ fileName : "src/Main.hx", lineNumber : 420, className : "Main", methodName : "new", customParams : [myMap.h[2]]});
+	haxe_Log.trace("myMap и тип:",{ fileName : "src/Main.hx", lineNumber : 429, className : "Main", methodName : "new", customParams : [myMap == null ? "null" : myMap.toString(),Type.typeof(myMap)]});
+	haxe_Log.trace("myMap[2]:",{ fileName : "src/Main.hx", lineNumber : 430, className : "Main", methodName : "new", customParams : [myMap.h[2]]});
 	var _g = new haxe_ds_StringMap();
 	_g.h["индекс 1"] = 1;
 	_g.h["индекс 2"] = 2;
 	_g.h["индекс 3"] = 3;
 	var myMap2 = _g;
-	haxe_Log.trace("myMap2 и тип:",{ fileName : "src/Main.hx", lineNumber : 423, className : "Main", methodName : "new", customParams : [myMap2 == null ? "null" : haxe_ds_StringMap.stringify(myMap2.h),Type.typeof(myMap2)]});
-	haxe_Log.trace("myMap2[\"индекс 2\"]:",{ fileName : "src/Main.hx", lineNumber : 424, className : "Main", methodName : "new", customParams : [myMap2.h["индекс 2"]]});
+	haxe_Log.trace("myMap2 и тип:",{ fileName : "src/Main.hx", lineNumber : 433, className : "Main", methodName : "new", customParams : [myMap2 == null ? "null" : haxe_ds_StringMap.stringify(myMap2.h),Type.typeof(myMap2)]});
+	haxe_Log.trace("myMap2[\"индекс 2\"]:",{ fileName : "src/Main.hx", lineNumber : 434, className : "Main", methodName : "new", customParams : [myMap2.h["индекс 2"]]});
 	var _g = new haxe_ds_StringMap();
 	_g.h["индекс 1"] = "элемент 1";
 	_g.h["индекс 2"] = "элемент 2";
 	_g.h["индекс 3"] = "элемент 3";
 	var myMap3 = _g;
-	haxe_Log.trace("myMap3:",{ fileName : "src/Main.hx", lineNumber : 427, className : "Main", methodName : "new", customParams : [myMap3 == null ? "null" : haxe_ds_StringMap.stringify(myMap3.h),Type.typeof(myMap)]});
-	haxe_Log.trace("for(x in myMap3):",{ fileName : "src/Main.hx", lineNumber : 429, className : "Main", methodName : "new"});
+	haxe_Log.trace("myMap3:",{ fileName : "src/Main.hx", lineNumber : 437, className : "Main", methodName : "new", customParams : [myMap3 == null ? "null" : haxe_ds_StringMap.stringify(myMap3.h),Type.typeof(myMap)]});
+	haxe_Log.trace("for(x in myMap3):",{ fileName : "src/Main.hx", lineNumber : 439, className : "Main", methodName : "new"});
 	var h = myMap3.h;
 	var x_h = h;
 	var x_keys = Object.keys(h);
@@ -3624,9 +3624,9 @@ var Main = function() {
 	var x_current = 0;
 	while(x_current < x_length) {
 		var x = x_h[x_keys[x_current++]];
-		haxe_Log.trace(x,{ fileName : "src/Main.hx", lineNumber : 430, className : "Main", methodName : "new"});
+		haxe_Log.trace(x,{ fileName : "src/Main.hx", lineNumber : 440, className : "Main", methodName : "new"});
 	}
-	haxe_Log.trace("for(x in myMap3.keys()):",{ fileName : "src/Main.hx", lineNumber : 432, className : "Main", methodName : "new"});
+	haxe_Log.trace("for(x in myMap3.keys()):",{ fileName : "src/Main.hx", lineNumber : 442, className : "Main", methodName : "new"});
 	var h = myMap3.h;
 	var x_h = h;
 	var x_keys = Object.keys(h);
@@ -3634,21 +3634,21 @@ var Main = function() {
 	var x_current = 0;
 	while(x_current < x_length) {
 		var x = x_keys[x_current++];
-		haxe_Log.trace(x,{ fileName : "src/Main.hx", lineNumber : 433, className : "Main", methodName : "new"});
+		haxe_Log.trace(x,{ fileName : "src/Main.hx", lineNumber : 443, className : "Main", methodName : "new"});
 	}
 	var _g = new haxe_ds_StringMap();
 	_g.h["индекс 1"] = 1;
 	_g.h["индекс 2"] = true;
 	_g.h["индекс 3"] = "элемент строка";
 	var myMap4 = _g;
-	haxe_Log.trace("myMap4 и тип:",{ fileName : "src/Main.hx", lineNumber : 436, className : "Main", methodName : "new", customParams : [myMap4 == null ? "null" : haxe_ds_StringMap.stringify(myMap4.h),Type.typeof(myMap4)]});
+	haxe_Log.trace("myMap4 и тип:",{ fileName : "src/Main.hx", lineNumber : 446, className : "Main", methodName : "new", customParams : [myMap4 == null ? "null" : haxe_ds_StringMap.stringify(myMap4.h),Type.typeof(myMap4)]});
 	var objMap = { elem1 : "Элемент 1", elem2 : "Элемент 2", elem3 : 3};
-	haxe_Log.trace(objMap,{ fileName : "src/Main.hx", lineNumber : 440, className : "Main", methodName : "new", customParams : [Type.typeof(objMap)]});
+	haxe_Log.trace(objMap,{ fileName : "src/Main.hx", lineNumber : 450, className : "Main", methodName : "new", customParams : [Type.typeof(objMap)]});
 	var arrMapFields = Reflect.fields(objMap);
-	haxe_Log.trace(arrMapFields,{ fileName : "src/Main.hx", lineNumber : 443, className : "Main", methodName : "new", customParams : [Type.typeof(arrMapFields)]});
-	haxe_Log.trace("--- Сортировка коллекций:",{ fileName : "src/Main.hx", lineNumber : 448, className : "Main", methodName : "new"});
+	haxe_Log.trace(arrMapFields,{ fileName : "src/Main.hx", lineNumber : 453, className : "Main", methodName : "new", customParams : [Type.typeof(arrMapFields)]});
+	haxe_Log.trace("--- Сортировка коллекций:",{ fileName : "src/Main.hx", lineNumber : 458, className : "Main", methodName : "new"});
 	var myArray3 = [7,5,3,1,0,2,8,4,6];
-	haxe_Log.trace("myArray3 несорт:",{ fileName : "src/Main.hx", lineNumber : 451, className : "Main", methodName : "new", customParams : [myArray3]});
+	haxe_Log.trace("myArray3 несорт:",{ fileName : "src/Main.hx", lineNumber : 461, className : "Main", methodName : "new", customParams : [myArray3]});
 	myArray3.sort(function(a,b) {
 		if(a > b) {
 			return 1;
@@ -3656,7 +3656,7 @@ var Main = function() {
 			return -1;
 		}
 	});
-	haxe_Log.trace("myArray3 сорт:",{ fileName : "src/Main.hx", lineNumber : 453, className : "Main", methodName : "new", customParams : [myArray3]});
+	haxe_Log.trace("myArray3 сорт:",{ fileName : "src/Main.hx", lineNumber : 463, className : "Main", methodName : "new", customParams : [myArray3]});
 	var myFunc = function(x,y,z) {
 		if(z == null) {
 			z = 1;
@@ -3670,19 +3670,19 @@ var Main = function() {
 		return x * y * z;
 	};
 	myFunc(3,3);
-	haxe_Log.trace("--- Функции:",{ fileName : "src/Main.hx", lineNumber : 465, className : "Main", methodName : "new"});
-	haxe_Log.trace("(27)",{ fileName : "src/Main.hx", lineNumber : 466, className : "Main", methodName : "new", customParams : [myFunc(3,3,3)]});
-	haxe_Log.trace("Анонимные функции:",{ fileName : "src/Main.hx", lineNumber : 470, className : "Main", methodName : "new"});
+	haxe_Log.trace("--- Функции:",{ fileName : "src/Main.hx", lineNumber : 475, className : "Main", methodName : "new"});
+	haxe_Log.trace("(27)",{ fileName : "src/Main.hx", lineNumber : 476, className : "Main", methodName : "new", customParams : [myFunc(3,3,3)]});
+	haxe_Log.trace("Анонимные функции:",{ fileName : "src/Main.hx", lineNumber : 480, className : "Main", methodName : "new"});
 	var myAnonimFunc = function(x,y) {
 		return x * y;
 	};
-	haxe_Log.trace("(9)",{ fileName : "src/Main.hx", lineNumber : 475, className : "Main", methodName : "new", customParams : [myAnonimFunc(3,3)]});
-	haxe_Log.trace("--- Исключения:",{ fileName : "src/Main.hx", lineNumber : 483, className : "Main", methodName : "new"});
+	haxe_Log.trace("(9)",{ fileName : "src/Main.hx", lineNumber : 485, className : "Main", methodName : "new", customParams : [myAnonimFunc(3,3)]});
+	haxe_Log.trace("--- Исключения:",{ fileName : "src/Main.hx", lineNumber : 493, className : "Main", methodName : "new"});
 	var f = function(x) {
 		if(x == 0) {
 			throw haxe_Exception.thrown(new String("Деление на ноль"));
 		} else {
-			haxe_Log.trace(1 / x,{ fileName : "src/Main.hx", lineNumber : 489, className : "Main", methodName : "new"});
+			haxe_Log.trace(1 / x,{ fileName : "src/Main.hx", lineNumber : 499, className : "Main", methodName : "new"});
 		}
 	};
 	try {
@@ -3692,30 +3692,30 @@ var Main = function() {
 		var _g1 = haxe_Exception.caught(_g).unwrap();
 		if(typeof(_g1) == "string") {
 			var e = _g1;
-			haxe_Log.trace(e,{ fileName : "src/Main.hx", lineNumber : 499, className : "Main", methodName : "new"});
+			haxe_Log.trace(e,{ fileName : "src/Main.hx", lineNumber : 509, className : "Main", methodName : "new"});
 		} else {
 			throw _g;
 		}
 	}
-	haxe_Log.trace("--- Анонимные объекты:",{ fileName : "src/Main.hx", lineNumber : 505, className : "Main", methodName : "new"});
+	haxe_Log.trace("--- Анонимные объекты:",{ fileName : "src/Main.hx", lineNumber : 515, className : "Main", methodName : "new"});
 	var myAnonObj = { a : 1, b : 2.5, c : true, xx : this.get_x() * this.get_x()};
-	haxe_Log.trace(myAnonObj,{ fileName : "src/Main.hx", lineNumber : 507, className : "Main", methodName : "new"});
-	haxe_Log.trace("--- Классы:",{ fileName : "src/Main.hx", lineNumber : 515, className : "Main", methodName : "new"});
+	haxe_Log.trace(myAnonObj,{ fileName : "src/Main.hx", lineNumber : 517, className : "Main", methodName : "new"});
+	haxe_Log.trace("--- Классы:",{ fileName : "src/Main.hx", lineNumber : 525, className : "Main", methodName : "new"});
 	var myObj = new MyClass("myObj");
-	haxe_Log.trace(myObj.xx(3.1),{ fileName : "src/Main.hx", lineNumber : 519, className : "Main", methodName : "new"});
-	haxe_Log.trace(MyClass.xx2(3.1),{ fileName : "src/Main.hx", lineNumber : 521, className : "Main", methodName : "new"});
+	haxe_Log.trace(myObj.xx(3.1),{ fileName : "src/Main.hx", lineNumber : 529, className : "Main", methodName : "new"});
+	haxe_Log.trace(MyClass.xx2(3.1),{ fileName : "src/Main.hx", lineNumber : 531, className : "Main", methodName : "new"});
 	var myObj2 = new MyClass2();
-	haxe_Log.trace(myObj2.xx(3.1),{ fileName : "src/Main.hx", lineNumber : 526, className : "Main", methodName : "new"});
-	haxe_Log.trace(myObj2.xx3(3.1),{ fileName : "src/Main.hx", lineNumber : 528, className : "Main", methodName : "new"});
-	haxe_Log.trace("--- Интерфейсы:",{ fileName : "src/Main.hx", lineNumber : 535, className : "Main", methodName : "new"});
+	haxe_Log.trace(myObj2.xx(3.1),{ fileName : "src/Main.hx", lineNumber : 536, className : "Main", methodName : "new"});
+	haxe_Log.trace(myObj2.xx3(3.1),{ fileName : "src/Main.hx", lineNumber : 538, className : "Main", methodName : "new"});
+	haxe_Log.trace("--- Интерфейсы:",{ fileName : "src/Main.hx", lineNumber : 545, className : "Main", methodName : "new"});
 	var myObj3 = new MyClass3();
 	myObj3.out("метод out");
-	haxe_Log.trace("свойство a=0.111",{ fileName : "src/Main.hx", lineNumber : 540, className : "Main", methodName : "new", customParams : [myObj3.a]});
-	haxe_Log.trace("--- Динамические методы:",{ fileName : "src/Main.hx", lineNumber : 544, className : "Main", methodName : "new"});
+	haxe_Log.trace("свойство a=0.111",{ fileName : "src/Main.hx", lineNumber : 550, className : "Main", methodName : "new", customParams : [myObj3.a]});
+	haxe_Log.trace("--- Динамические методы:",{ fileName : "src/Main.hx", lineNumber : 554, className : "Main", methodName : "new"});
 	var myObj4 = new MyClass4();
 	myObj4.myDynamicFunc();
 	myObj4.myDynamicFunc = function() {
-		haxe_Log.trace("Динамическая функция после изменения",{ fileName : "src/Main.hx", lineNumber : 549, className : "Main", methodName : "new"});
+		haxe_Log.trace("Динамическая функция после изменения",{ fileName : "src/Main.hx", lineNumber : 559, className : "Main", methodName : "new"});
 	};
 	myObj4.myDynamicFunc();
 };
@@ -3917,7 +3917,7 @@ Lambda.list = function(it) {
 	return l;
 };
 var MyClass = function(s) {
-	haxe_Log.trace("Вызов конструктора класса: ",{ fileName : "src/Main.hx", lineNumber : 560, className : "MyClass", methodName : "new", customParams : [s]});
+	haxe_Log.trace("Вызов конструктора класса: ",{ fileName : "src/Main.hx", lineNumber : 570, className : "MyClass", methodName : "new", customParams : [s]});
 };
 $hxClasses["MyClass"] = MyClass;
 MyClass.__name__ = "MyClass";
@@ -23556,7 +23556,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 391501;
+	this.version = 805282;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -27520,6 +27520,7 @@ openfl_display_BitmapData.prototype = {
 			}
 			var renderer = new openfl_display_OpenGLRenderer(openfl_Lib.get_current().stage.context3D,this);
 			renderer.__allowSmoothing = smoothing;
+			renderer.__pixelRatio = openfl_Lib.get_current().stage.window.__scale;
 			renderer.__overrideBlendMode = blendMode;
 			renderer.__worldTransform = transform;
 			renderer.__worldAlpha = 1 / source.__worldAlpha;
@@ -34690,10 +34691,10 @@ openfl_display_OpenGLRenderer.prototype = $extend(openfl_display_DisplayObjectRe
 			var width = clipRect.width > 0 ? Math.ceil(clipRect.get_right()) - x : 0;
 			var height = clipRect.height > 0 ? Math.ceil(clipRect.get_bottom()) - y : 0;
 			if(this.__context3D.__backBufferWantsBestResolution) {
-				x = Math.floor(clipRect.x / this.__stage.window.__scale);
-				y = Math.floor(clipRect.y / this.__stage.window.__scale);
-				width = clipRect.width > 0 ? Math.ceil(clipRect.get_right() / this.__stage.window.__scale) - x : 0;
-				height = clipRect.height > 0 ? Math.ceil(clipRect.get_bottom() / this.__stage.window.__scale) - y : 0;
+				x = Math.floor(clipRect.x / this.__pixelRatio);
+				y = Math.floor(clipRect.y / this.__pixelRatio);
+				width = clipRect.width > 0 ? Math.ceil(clipRect.get_right() / this.__pixelRatio) - x : 0;
+				height = clipRect.height > 0 ? Math.ceil(clipRect.get_bottom() / this.__pixelRatio) - y : 0;
 			}
 			if(width < 0) {
 				width = 0;
@@ -65551,8 +65552,8 @@ openfl_media_ID3Info.prototype = {
 	__class__: openfl_media_ID3Info
 };
 var openfl_media_Sound = function(stream,context) {
-	this.__firstRun = true;
-	this.__audioContext = null;
+	this.__webAudioContext = null;
+	this.__urlLoading = false;
 	openfl_events_EventDispatcher.call(this,this);
 	this.bytesLoaded = 0;
 	this.bytesTotal = 0;
@@ -65563,7 +65564,7 @@ var openfl_media_Sound = function(stream,context) {
 	}
 	if(stream == null && lime_media_AudioManager.context != null) {
 		if(lime_media_AudioManager.context.type == "web") {
-			this.__audioContext = lime_media_AudioManager.context.web;
+			this.__webAudioContext = lime_media_AudioManager.context.web;
 		}
 	}
 };
@@ -65575,7 +65576,11 @@ openfl_media_Sound.fromAudioBuffer = function(buffer) {
 	return sound;
 };
 openfl_media_Sound.fromFile = function(path) {
-	return openfl_media_Sound.fromAudioBuffer(lime_media_AudioBuffer.fromFile(path));
+	var buffer = lime_media_AudioBuffer.fromFile(path);
+	if(buffer == null) {
+		throw new openfl_errors_IOError("Error loading sound from file: " + path);
+	}
+	return openfl_media_Sound.fromAudioBuffer(buffer);
 };
 openfl_media_Sound.loadFromFile = function(path) {
 	return lime_media_AudioBuffer.loadFromFile(path).then(function(audioBuffer) {
@@ -65598,6 +65603,7 @@ openfl_media_Sound.prototype = $extend(openfl_events_EventDispatcher.prototype,{
 	,load: function(stream,context) {
 		var _gthis = this;
 		this.url = stream.url;
+		this.__urlLoading = true;
 		var defaultLibrary = lime_utils_Assets.getLibrary("default");
 		if(defaultLibrary != null && Object.prototype.hasOwnProperty.call(defaultLibrary.cachedAudioBuffers.h,this.url)) {
 			this.AudioBuffer_onURLLoad(defaultLibrary.cachedAudioBuffers.h[this.url]);
@@ -65727,47 +65733,29 @@ openfl_media_Sound.prototype = $extend(openfl_events_EventDispatcher.prototype,{
 			pan = -1;
 		}
 		var volume = openfl_media_SoundMixer.__soundTransform.volume * sndTransform.volume;
-		var source = new lime_media_AudioSource(this.__buffer);
-		source.offset = startTime | 0;
+		var audioSource = new lime_media_AudioSource(this.__buffer);
+		audioSource.offset = startTime | 0;
 		if(loops > 1) {
-			source.set_loops(loops - 1);
+			audioSource.set_loops(loops - 1);
 		}
-		source.set_gain(volume);
-		var position = source.get_position();
+		audioSource.set_gain(volume);
+		var position = audioSource.get_position();
 		position.x = pan;
 		position.z = -1 * Math.sqrt(1 - Math.pow(pan,2));
-		source.set_position(position);
-		if(this.__audioContext != null && this.__buffer == null) {
-			this.__sampleData = new openfl_events_SampleDataEvent("sampleData");
-			this.dispatchEvent(this.__sampleData);
-			this.__processor = this.__audioContext.createScriptProcessor(this.__sampleData.getBufferSize(),0,2);
-			this.__processor.connect(this.__audioContext.destination);
-			this.__processor.onaudioprocess = $bind(this,this.onSample);
-			this.__audioContext.resume();
+		audioSource.set_position(position);
+		var soundChannel = new openfl_media_SoundChannel(this,this.__urlLoading ? null : audioSource,sndTransform);
+		if(this.__urlLoading) {
+			this.__pendingAudioSource = audioSource;
+			this.__pendingSoundChannel = soundChannel;
+		} else if(this.__buffer == null) {
+			if(this.__webAudioContext != null) {
+				soundChannel.__startSampleData();
+			}
 		}
-		return new openfl_media_SoundChannel(source,sndTransform);
-	}
-	,onSample: function(event) {
-		if(this.__firstRun) {
-			this.__firstRun = false;
-		} else {
-			this.dispatchEvent(this.__sampleData);
-		}
-		this.__sampleData.getSamples(event);
-	}
-	,removeEventListener: function(type,listener,useCapture) {
-		if(useCapture == null) {
-			useCapture = false;
-		}
-		openfl_events_EventDispatcher.prototype.removeEventListener.call(this,type,listener,useCapture);
-		if(type == "sampleData" && this.__processor != null) {
-			this.__processor.disconnect();
-			this.__processor.onaudioprocess = null;
-			this.__processor = null;
-		}
+		return soundChannel;
 	}
 	,get_sampleRate: function() {
-		return this.__audioContext.sampleRate | 0;
+		return this.__webAudioContext.sampleRate | 0;
 	}
 	,get_id3: function() {
 		return new openfl_media_ID3Info();
@@ -65779,18 +65767,28 @@ openfl_media_Sound.prototype = $extend(openfl_events_EventDispatcher.prototype,{
 		return 0;
 	}
 	,AudioBuffer_onURLLoad: function(buffer) {
+		this.__urlLoading = false;
 		if(buffer == null) {
 			this.dispatchEvent(new openfl_events_IOErrorEvent("ioError"));
 		} else {
 			this.__buffer = buffer;
 			this.dispatchEvent(new openfl_events_Event("complete"));
+			if(this.__pendingSoundChannel != null) {
+				this.__pendingAudioSource.buffer = this.__buffer;
+				this.__pendingAudioSource.init();
+				this.__pendingSoundChannel.__initAudioSource(this.__pendingAudioSource);
+			}
 		}
+		this.__pendingSoundChannel = null;
+		this.__pendingAudioSource = null;
 	}
 	,__class__: openfl_media_Sound
 	,__properties__: {get_sampleRate:"get_sampleRate",get_length:"get_length",get_id3:"get_id3"}
 });
-var openfl_media_SoundChannel = function(source,soundTransform) {
+var openfl_media_SoundChannel = function(sound,audioSource,soundTransform) {
+	this.__firstRun = true;
 	openfl_events_EventDispatcher.call(this,this);
+	this.__sound = sound;
 	this.leftPeak = 1;
 	this.rightPeak = 1;
 	if(soundTransform != null) {
@@ -65798,12 +65796,7 @@ var openfl_media_SoundChannel = function(source,soundTransform) {
 	} else {
 		this.__soundTransform = new openfl_media_SoundTransform();
 	}
-	if(source != null) {
-		this.__source = source;
-		this.__source.onComplete.add($bind(this,this.source_onComplete));
-		this.__isValid = true;
-		this.__source.play();
-	}
+	this.__initAudioSource(audioSource);
 	openfl_media_SoundMixer.__registerSoundChannel(this);
 };
 $hxClasses["openfl.media.SoundChannel"] = openfl_media_SoundChannel;
@@ -65815,32 +65808,66 @@ openfl_media_SoundChannel.prototype = $extend(openfl_events_EventDispatcher.prot
 		if(!this.__isValid) {
 			return;
 		}
-		this.__source.stop();
+		if(this.__processor != null) {
+			this.__processor.disconnect();
+			this.__processor.onaudioprocess = null;
+			this.__processor = null;
+		}
+		this.__audioSource.stop();
 		this.__dispose();
 	}
 	,__dispose: function() {
 		if(!this.__isValid) {
 			return;
 		}
-		this.__source.onComplete.remove($bind(this,this.source_onComplete));
-		this.__source.dispose();
-		this.__source = null;
+		this.__audioSource.onComplete.remove($bind(this,this.audioSource_onComplete));
+		this.__audioSource.dispose();
+		this.__audioSource = null;
 		this.__isValid = false;
+	}
+	,__startSampleData: function() {
+		var _gthis = this;
+		var webAudioContext = this.__sound.__webAudioContext;
+		if(webAudioContext != null) {
+			this.__sampleDataEvent = new openfl_events_SampleDataEvent("sampleData");
+			this.__sound.dispatchEvent(this.__sampleDataEvent);
+			var bufferSize = this.__sampleDataEvent.getBufferSize();
+			if(bufferSize == 0) {
+				openfl_Lib.setTimeout(function() {
+					_gthis.stop();
+					_gthis.dispatchEvent(new openfl_events_Event("soundComplete"));
+				},1);
+			} else {
+				this.__processor = webAudioContext.createScriptProcessor(bufferSize,0,2);
+				this.__processor.connect(webAudioContext.destination);
+				this.__processor.onaudioprocess = $bind(this,this.onSample);
+				webAudioContext.resume();
+			}
+		}
 	}
 	,__updateTransform: function() {
 		this.set_soundTransform(this.get_soundTransform());
+	}
+	,__initAudioSource: function(audioSource) {
+		this.__audioSource = audioSource;
+		if(this.__audioSource == null) {
+			return;
+		}
+		this.__audioSource.onComplete.add($bind(this,this.audioSource_onComplete));
+		this.__isValid = true;
+		this.__audioSource.play();
 	}
 	,get_position: function() {
 		if(!this.__isValid) {
 			return 0;
 		}
-		return this.__source.get_currentTime() + this.__source.offset;
+		return this.__audioSource.get_currentTime() + this.__audioSource.offset;
 	}
 	,set_position: function(value) {
 		if(!this.__isValid) {
 			return 0;
 		}
-		this.__source.set_currentTime((value | 0) - this.__source.offset);
+		this.__audioSource.set_currentTime((value | 0) - this.__audioSource.offset);
 		return value;
 	}
 	,get_soundTransform: function() {
@@ -65859,20 +65886,37 @@ openfl_media_SoundChannel.prototype = $extend(openfl_events_EventDispatcher.prot
 			}
 			var volume = openfl_media_SoundMixer.__soundTransform.volume * this.__soundTransform.volume;
 			if(this.__isValid) {
-				this.__source.set_gain(volume);
-				var position = this.__source.get_position();
+				this.__audioSource.set_gain(volume);
+				var position = this.__audioSource.get_position();
 				position.x = pan;
 				position.z = -1 * Math.sqrt(1 - Math.pow(pan,2));
-				this.__source.set_position(position);
+				this.__audioSource.set_position(position);
 				return value;
 			}
 		}
 		return value;
 	}
-	,source_onComplete: function() {
+	,audioSource_onComplete: function() {
 		openfl_media_SoundMixer.__unregisterSoundChannel(this);
 		this.__dispose();
 		this.dispatchEvent(new openfl_events_Event("soundComplete"));
+	}
+	,onSample: function(event) {
+		var hasSampleData = false;
+		if(this.__firstRun) {
+			hasSampleData = true;
+			this.__firstRun = false;
+		} else {
+			openfl_utils_ByteArray.set_length(this.__sampleDataEvent.data,0);
+			this.__sound.dispatchEvent(this.__sampleDataEvent);
+			hasSampleData = UInt.gt(openfl_utils_ByteArray.get_length(this.__sampleDataEvent.data),0);
+		}
+		if(hasSampleData) {
+			this.__sampleDataEvent.getSamples(event);
+		} else {
+			this.stop();
+			this.dispatchEvent(new openfl_events_Event("soundComplete"));
+		}
 	}
 	,__class__: openfl_media_SoundChannel
 	,__properties__: {set_soundTransform:"set_soundTransform",get_soundTransform:"get_soundTransform",set_position:"set_position",get_position:"get_position"}
@@ -73260,6 +73304,10 @@ openfl_utils_Assets.loadLibrary = function(name) {
 			if(((library) instanceof openfl_utils_AssetLibrary)) {
 				_library = library;
 			} else {
+				var _this = lime_utils_Assets.libraries;
+				if(Object.prototype.hasOwnProperty.call(_this.h,name)) {
+					delete(_this.h[name]);
+				}
 				_library = new openfl_utils_AssetLibrary();
 				_library.__proxy = library;
 				lime_utils_Assets.registerLibrary(name,_library);
