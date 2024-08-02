@@ -35,7 +35,7 @@ class ApplicationMain
 		ManifestResources.init(config);
 		#end
 
-		app.meta["build"] = "64";
+		app.meta["build"] = "2";
 		app.meta["company"] = "xlift44";
 		app.meta["file"] = "haxe";
 		app.meta["name"] = "haxe";
