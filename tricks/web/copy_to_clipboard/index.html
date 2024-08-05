@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>base</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+
+<body>
+
+<!-- кнопка -->
+<button id="copyText">Copy</button>
+
+<!-- текстовое поле -->
+<input id="inputText" type="text" value="Достаточно длинный текст для копирования">
+
+</body>
+</html>
+
+<script>
+  /* сохраняем текстовое поле в переменную text */
+  var text = document.getElementById("inputText");
+
+  /* сохраняем кнопку в переменную btn */
+  var btn = document.getElementById("copyText");
+
+  /* вызываем функцию при нажатии на кнопку */
+  btn.onclick = function() {
+    text.select();
+    document.execCommand("copy");
+  }
+</script>
+
+<style>
+  /* стили текстового поля */
+  #inputText {
+    padding: 6px 7px;
+    font-size: 15px;
+  }
+
+  /* стили кнопки */
+  #copyText {
+    padding: 6px 11px;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: #121212;
+    color: #efefef;
+  }
+</style>
