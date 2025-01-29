@@ -19,7 +19,7 @@ class ApplicationMain
 		lime.system.System.__registerEntryPoint("openfl", create);
 
 		#if (js && html5)
-		#if (munit || utest)
+		#if (munit || (utest && openfl_enable_utest_legacy_mode))
 		lime.system.System.embed("openfl", null, 1600, 900);
 		#end
 		#else
@@ -35,7 +35,7 @@ class ApplicationMain
 		ManifestResources.init(config);
 		#end
 
-		app.meta["build"] = "2";
+		app.meta["build"] = "91";
 		app.meta["company"] = "xlift44";
 		app.meta["file"] = "openfl";
 		app.meta["name"] = "openfl";

@@ -1,4 +1,4 @@
-(function ($hx_exports, $global) { "use strict"; var $hx_script = (function (exports, global) { (function ($hx_exports, $global) { "use strict";
+var $lime_init = (function ($hx_exports, $global) { "use strict"; var $hx_script = (function (exports, global) { (function ($hx_exports, $global) { "use strict";
 $hx_exports["lime"] = $hx_exports["lime"] || {};
 var $hxClasses = {},$estr = function() { return js_Boot.__string_rec(this,''); },$hxEnums = $hxEnums || {},$_;
 function $extend(from, fields) {
@@ -621,8 +621,6 @@ lime_app_Application.prototype = $extend(lime_app_Module.prototype,{
 	}
 	,onJoystickHatMove: function(joystick,hat,position) {
 	}
-	,onJoystickTrackballMove: function(joystick,trackball,x,y) {
-	}
 	,onKeyDown: function(keyCode,modifier) {
 	}
 	,onKeyUp: function(keyCode,modifier) {
@@ -844,12 +842,6 @@ lime_app_Application.prototype = $extend(lime_app_Module.prototype,{
 			_g4(joystick5,hat,position);
 		};
 		joystick.onHatMove.add(tmp);
-		var _g5 = $bind(this,this.onJoystickTrackballMove);
-		var joystick6 = joystick;
-		var tmp = function(trackball,x,y) {
-			_g5(joystick6,trackball,x,y);
-		};
-		joystick.onTrackballMove.add(tmp);
 	}
 	,__onModuleExit: function(code) {
 		if(this.onExit.canceled) {
@@ -899,7 +891,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "2";
+	app.meta.h["build"] = "91";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "openfl";
 	app.meta.h["name"] = "openfl";
@@ -1154,8 +1146,28 @@ openfl_events_EventDispatcher.prototype = {
 						var indexToRemove = iterator.index - 1;
 						list.splice(indexToRemove,1);
 						iterator.remove(listener1,indexToRemove);
+					} else if(openfl_Lib.get_current() != null && openfl_Lib.get_current().stage != null && openfl_Lib.get_current().stage.__uncaughtErrorEvents.__enabled) {
+						try {
+							weakCallback(event);
+						} catch( _g ) {
+							haxe_NativeStackTrace.lastError = _g;
+							var e = haxe_Exception.caught(_g).unwrap();
+							if(!((event) instanceof openfl_events_UncaughtErrorEvent)) {
+								openfl_Lib.get_current().stage.__handleError(e);
+							}
+						}
 					} else {
 						weakCallback(event);
+					}
+				} else if(openfl_Lib.get_current() != null && openfl_Lib.get_current().stage != null && openfl_Lib.get_current().stage.__uncaughtErrorEvents.__enabled) {
+					try {
+						listener1.callback(event);
+					} catch( _g1 ) {
+						haxe_NativeStackTrace.lastError = _g1;
+						var e1 = haxe_Exception.caught(_g1).unwrap();
+						if(!((event) instanceof openfl_events_UncaughtErrorEvent)) {
+							openfl_Lib.get_current().stage.__handleError(e1);
+						}
 					}
 				} else {
 					listener1.callback(event);
@@ -1691,6 +1703,9 @@ haxe_ds_List.prototype = {
 		this.length--;
 		return x;
 	}
+	,isEmpty: function() {
+		return this.h == null;
+	}
 	,clear: function() {
 		this.h = null;
 		this.q = null;
@@ -2132,12 +2147,10 @@ openfl_display_DisplayObject.prototype = $extend(openfl_events_EventDispatcher.p
 					var worldVisible = renderParent.__worldVisible && this.__visible;
 					this.__worldVisibleChanged = this.__worldVisible != worldVisible;
 					this.__worldVisible = worldVisible;
-					var worldAlpha = this.get_alpha() * renderParent.__worldAlpha;
-					this.__worldAlphaChanged = this.__worldAlpha != worldAlpha;
-					this.__worldAlpha = worldAlpha;
-				} else {
-					this.__worldAlpha = this.get_alpha() * renderParent.__worldAlpha;
 				}
+				var worldAlpha = this.get_alpha() * renderParent.__worldAlpha;
+				this.__worldAlphaChanged = this.__worldAlpha != worldAlpha;
+				this.__worldAlpha = worldAlpha;
 				if(this.__objectTransform != null) {
 					this.__worldColorTransform.__copyFrom(this.__objectTransform.__colorTransform);
 					this.__worldColorTransform.__combine(renderParent.__worldColorTransform);
@@ -2164,8 +2177,8 @@ openfl_display_DisplayObject.prototype = $extend(openfl_events_EventDispatcher.p
 				if(openfl_display_DisplayObject.__supportDOM) {
 					this.__worldVisibleChanged = this.__worldVisible != this.__visible;
 					this.__worldVisible = this.__visible;
-					this.__worldAlphaChanged = this.__worldAlpha != this.get_alpha();
 				}
+				this.__worldAlphaChanged = this.__worldAlpha != this.get_alpha();
 				if(this.__objectTransform != null) {
 					this.__worldColorTransform.__copyFrom(this.__objectTransform.__colorTransform);
 				} else {
@@ -2413,6 +2426,12 @@ openfl_display_DisplayObject.prototype = $extend(openfl_events_EventDispatcher.p
 	}
 	,set_rotation: function(value) {
 		if(value != this.__rotation) {
+			value %= 360.0;
+			if(value > 180.0) {
+				value -= 360.0;
+			} else if(value < -180.0) {
+				value += 360.0;
+			}
 			this.__rotation = value;
 			var radians = this.__rotation * (Math.PI / 180);
 			this.__rotationSine = Math.sin(radians);
@@ -2630,7 +2649,7 @@ openfl_display_InteractiveObject.__name__ = "openfl.display.InteractiveObject";
 openfl_display_InteractiveObject.__super__ = openfl_display_DisplayObject;
 openfl_display_InteractiveObject.prototype = $extend(openfl_display_DisplayObject.prototype,{
 	requestSoftKeyboard: function() {
-		openfl_utils__$internal_Lib.notImplemented({ fileName : "openfl/display/InteractiveObject.hx", lineNumber : 1251, className : "openfl.display.InteractiveObject", methodName : "requestSoftKeyboard"});
+		openfl_utils__$internal_Lib.notImplemented({ fileName : "openfl/display/InteractiveObject.hx", lineNumber : 1255, className : "openfl.display.InteractiveObject", methodName : "requestSoftKeyboard"});
 		return false;
 	}
 	,__allowMouseFocus: function() {
@@ -3264,7 +3283,7 @@ openfl_display_Sprite.prototype = $extend(openfl_display_DisplayObjectContainer.
 			this.__pendingBindLibrary = library;
 			this.__pendingBindClassName = className;
 		} else if(library == null || className == null || !library.bind(className,this)) {
-			lime_utils_Log.error("Cannot bind class name \"" + className + "\"",{ fileName : "openfl/display/Sprite.hx", lineNumber : 290, className : "openfl.display.Sprite", methodName : "__bind"});
+			lime_utils_Log.error("Cannot bind class name \"" + className + "\"",{ fileName : "openfl/display/Sprite.hx", lineNumber : 297, className : "openfl.display.Sprite", methodName : "__bind"});
 		}
 	}
 	,__getCursor: function() {
@@ -3714,6 +3733,25 @@ Lambda.array = function(it) {
 	}
 	return a;
 };
+Lambda.count = function(it,pred) {
+	var n = 0;
+	if(pred == null) {
+		var _ = $getIterator(it);
+		while(_.hasNext()) {
+			var _1 = _.next();
+			++n;
+		}
+	} else {
+		var x = $getIterator(it);
+		while(x.hasNext()) {
+			var x1 = x.next();
+			if(pred(x1)) {
+				++n;
+			}
+		}
+	}
+	return n;
+};
 var ManifestResources = function() { };
 $hxClasses["ManifestResources"] = ManifestResources;
 ManifestResources.__name__ = "ManifestResources";
@@ -4111,6 +4149,136 @@ UInt.toFloat = function(this1) {
 	} else {
 		return int + 0.0;
 	}
+};
+var XmlType = {};
+XmlType.toString = function(this1) {
+	switch(this1) {
+	case 0:
+		return "Element";
+	case 1:
+		return "PCData";
+	case 2:
+		return "CData";
+	case 3:
+		return "Comment";
+	case 4:
+		return "DocType";
+	case 5:
+		return "ProcessingInstruction";
+	case 6:
+		return "Document";
+	}
+};
+var Xml = function(nodeType) {
+	this.nodeType = nodeType;
+	this.children = [];
+	this.attributeMap = new haxe_ds_StringMap();
+};
+$hxClasses["Xml"] = Xml;
+Xml.__name__ = "Xml";
+Xml.parse = function(str) {
+	return haxe_xml_Parser.parse(str);
+};
+Xml.createElement = function(name) {
+	var xml = new Xml(Xml.Element);
+	if(xml.nodeType != Xml.Element) {
+		throw haxe_Exception.thrown("Bad node type, expected Element but found " + (xml.nodeType == null ? "null" : XmlType.toString(xml.nodeType)));
+	}
+	xml.nodeName = name;
+	return xml;
+};
+Xml.createPCData = function(data) {
+	var xml = new Xml(Xml.PCData);
+	if(xml.nodeType == Xml.Document || xml.nodeType == Xml.Element) {
+		throw haxe_Exception.thrown("Bad node type, unexpected " + (xml.nodeType == null ? "null" : XmlType.toString(xml.nodeType)));
+	}
+	xml.nodeValue = data;
+	return xml;
+};
+Xml.createCData = function(data) {
+	var xml = new Xml(Xml.CData);
+	if(xml.nodeType == Xml.Document || xml.nodeType == Xml.Element) {
+		throw haxe_Exception.thrown("Bad node type, unexpected " + (xml.nodeType == null ? "null" : XmlType.toString(xml.nodeType)));
+	}
+	xml.nodeValue = data;
+	return xml;
+};
+Xml.createComment = function(data) {
+	var xml = new Xml(Xml.Comment);
+	if(xml.nodeType == Xml.Document || xml.nodeType == Xml.Element) {
+		throw haxe_Exception.thrown("Bad node type, unexpected " + (xml.nodeType == null ? "null" : XmlType.toString(xml.nodeType)));
+	}
+	xml.nodeValue = data;
+	return xml;
+};
+Xml.createDocType = function(data) {
+	var xml = new Xml(Xml.DocType);
+	if(xml.nodeType == Xml.Document || xml.nodeType == Xml.Element) {
+		throw haxe_Exception.thrown("Bad node type, unexpected " + (xml.nodeType == null ? "null" : XmlType.toString(xml.nodeType)));
+	}
+	xml.nodeValue = data;
+	return xml;
+};
+Xml.createProcessingInstruction = function(data) {
+	var xml = new Xml(Xml.ProcessingInstruction);
+	if(xml.nodeType == Xml.Document || xml.nodeType == Xml.Element) {
+		throw haxe_Exception.thrown("Bad node type, unexpected " + (xml.nodeType == null ? "null" : XmlType.toString(xml.nodeType)));
+	}
+	xml.nodeValue = data;
+	return xml;
+};
+Xml.createDocument = function() {
+	return new Xml(Xml.Document);
+};
+Xml.prototype = {
+	get: function(att) {
+		if(this.nodeType != Xml.Element) {
+			throw haxe_Exception.thrown("Bad node type, expected Element but found " + (this.nodeType == null ? "null" : XmlType.toString(this.nodeType)));
+		}
+		return this.attributeMap.h[att];
+	}
+	,set: function(att,value) {
+		if(this.nodeType != Xml.Element) {
+			throw haxe_Exception.thrown("Bad node type, expected Element but found " + (this.nodeType == null ? "null" : XmlType.toString(this.nodeType)));
+		}
+		this.attributeMap.h[att] = value;
+	}
+	,exists: function(att) {
+		if(this.nodeType != Xml.Element) {
+			throw haxe_Exception.thrown("Bad node type, expected Element but found " + (this.nodeType == null ? "null" : XmlType.toString(this.nodeType)));
+		}
+		return Object.prototype.hasOwnProperty.call(this.attributeMap.h,att);
+	}
+	,attributes: function() {
+		if(this.nodeType != Xml.Element) {
+			throw haxe_Exception.thrown("Bad node type, expected Element but found " + (this.nodeType == null ? "null" : XmlType.toString(this.nodeType)));
+		}
+		return new haxe_ds__$StringMap_StringMapKeyIterator(this.attributeMap.h);
+	}
+	,addChild: function(x) {
+		if(this.nodeType != Xml.Document && this.nodeType != Xml.Element) {
+			throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (this.nodeType == null ? "null" : XmlType.toString(this.nodeType)));
+		}
+		if(x.parent != null) {
+			x.parent.removeChild(x);
+		}
+		this.children.push(x);
+		x.parent = this;
+	}
+	,removeChild: function(x) {
+		if(this.nodeType != Xml.Document && this.nodeType != Xml.Element) {
+			throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (this.nodeType == null ? "null" : XmlType.toString(this.nodeType)));
+		}
+		if(HxOverrides.remove(this.children,x)) {
+			x.parent = null;
+			return true;
+		}
+		return false;
+	}
+	,toString: function() {
+		return haxe_xml_Printer.print(this);
+	}
+	,__class__: Xml
 };
 var haxe_StackItem = $hxEnums["haxe.StackItem"] = { __ename__:"haxe.StackItem",__constructs__:null
 	,CFunction: {_hx_name:"CFunction",_hx_index:0,__enum__:"haxe.StackItem",toString:$estr}
@@ -6251,6 +6419,10 @@ haxe_io_Input.prototype = {
 		}
 		return len - k;
 	}
+	,set_bigEndian: function(b) {
+		this.bigEndian = b;
+		return b;
+	}
 	,readFullBytes: function(s,pos,len) {
 		while(len > 0) {
 			var k = this.readBytes(s,pos,len);
@@ -6273,6 +6445,18 @@ haxe_io_Input.prototype = {
 			nbytes -= k;
 		}
 		return s;
+	}
+	,readFloat: function() {
+		return haxe_io_FPHelper.i32ToFloat(this.readInt32());
+	}
+	,readDouble: function() {
+		var i1 = this.readInt32();
+		var i2 = this.readInt32();
+		if(this.bigEndian) {
+			return haxe_io_FPHelper.i64ToDouble(i2,i1);
+		} else {
+			return haxe_io_FPHelper.i64ToDouble(i1,i2);
+		}
 	}
 	,readInt16: function() {
 		var ch1 = this.readByte();
@@ -6309,6 +6493,7 @@ haxe_io_Input.prototype = {
 		return b.getString(0,len,encoding);
 	}
 	,__class__: haxe_io_Input
+	,__properties__: {set_bigEndian:"set_bigEndian"}
 };
 var haxe_io_BytesInput = function(b,pos,len) {
 	if(pos == null) {
@@ -6359,6 +6544,110 @@ haxe_io_BytesInput.prototype = $extend(haxe_io_Input.prototype,{
 		return len;
 	}
 	,__class__: haxe_io_BytesInput
+});
+var haxe_io_Output = function() { };
+$hxClasses["haxe.io.Output"] = haxe_io_Output;
+haxe_io_Output.__name__ = "haxe.io.Output";
+haxe_io_Output.prototype = {
+	writeByte: function(c) {
+		throw new haxe_exceptions_NotImplementedException(null,null,{ fileName : "haxe/io/Output.hx", lineNumber : 47, className : "haxe.io.Output", methodName : "writeByte"});
+	}
+	,writeBytes: function(s,pos,len) {
+		if(pos < 0 || len < 0 || pos + len > s.length) {
+			throw haxe_Exception.thrown(haxe_io_Error.OutsideBounds);
+		}
+		var b = s.b;
+		var k = len;
+		while(k > 0) {
+			this.writeByte(b[pos]);
+			++pos;
+			--k;
+		}
+		return len;
+	}
+	,set_bigEndian: function(b) {
+		this.bigEndian = b;
+		return b;
+	}
+	,write: function(s) {
+		var l = s.length;
+		var p = 0;
+		while(l > 0) {
+			var k = this.writeBytes(s,p,l);
+			if(k == 0) {
+				throw haxe_Exception.thrown(haxe_io_Error.Blocked);
+			}
+			p += k;
+			l -= k;
+		}
+	}
+	,writeFullBytes: function(s,pos,len) {
+		while(len > 0) {
+			var k = this.writeBytes(s,pos,len);
+			pos += k;
+			len -= k;
+		}
+	}
+	,writeDouble: function(x) {
+		var i64 = haxe_io_FPHelper.doubleToI64(x);
+		if(this.bigEndian) {
+			this.writeInt32(i64.high);
+			this.writeInt32(i64.low);
+		} else {
+			this.writeInt32(i64.low);
+			this.writeInt32(i64.high);
+		}
+	}
+	,writeUInt16: function(x) {
+		if(x < 0 || x >= 65536) {
+			throw haxe_Exception.thrown(haxe_io_Error.Overflow);
+		}
+		if(this.bigEndian) {
+			this.writeByte(x >> 8);
+			this.writeByte(x & 255);
+		} else {
+			this.writeByte(x & 255);
+			this.writeByte(x >> 8);
+		}
+	}
+	,writeInt32: function(x) {
+		if(this.bigEndian) {
+			this.writeByte(x >>> 24);
+			this.writeByte(x >> 16 & 255);
+			this.writeByte(x >> 8 & 255);
+			this.writeByte(x & 255);
+		} else {
+			this.writeByte(x & 255);
+			this.writeByte(x >> 8 & 255);
+			this.writeByte(x >> 16 & 255);
+			this.writeByte(x >>> 24);
+		}
+	}
+	,writeString: function(s,encoding) {
+		var b = haxe_io_Bytes.ofString(s,encoding);
+		this.writeFullBytes(b,0,b.length);
+	}
+	,__class__: haxe_io_Output
+	,__properties__: {set_bigEndian:"set_bigEndian"}
+};
+var haxe_io_BytesOutput = function() {
+	this.b = new haxe_io_BytesBuffer();
+};
+$hxClasses["haxe.io.BytesOutput"] = haxe_io_BytesOutput;
+haxe_io_BytesOutput.__name__ = "haxe.io.BytesOutput";
+haxe_io_BytesOutput.__super__ = haxe_io_Output;
+haxe_io_BytesOutput.prototype = $extend(haxe_io_Output.prototype,{
+	writeByte: function(c) {
+		this.b.addByte(c);
+	}
+	,writeBytes: function(buf,pos,len) {
+		this.b.addBytes(buf,pos,len);
+		return len;
+	}
+	,getBytes: function() {
+		return this.b.getBytes();
+	}
+	,__class__: haxe_io_BytesOutput
 });
 var haxe_io_Encoding = $hxEnums["haxe.io.Encoding"] = { __ename__:"haxe.io.Encoding",__constructs__:null
 	,UTF8: {_hx_name:"UTF8",_hx_index:0,__enum__:"haxe.io.Encoding",toString:$estr}
@@ -6485,6 +6774,538 @@ haxe_iterators_MapKeyValueIterator.prototype = {
 		return { value : this.map.get(key), key : key};
 	}
 	,__class__: haxe_iterators_MapKeyValueIterator
+};
+var haxe_xml_XmlParserException = function(message,xml,position) {
+	this.xml = xml;
+	this.message = message;
+	this.position = position;
+	this.lineNumber = 1;
+	this.positionAtLine = 0;
+	var _g = 0;
+	var _g1 = position;
+	while(_g < _g1) {
+		var i = _g++;
+		var c = xml.charCodeAt(i);
+		if(c == 10) {
+			this.lineNumber++;
+			this.positionAtLine = 0;
+		} else if(c != 13) {
+			this.positionAtLine++;
+		}
+	}
+};
+$hxClasses["haxe.xml.XmlParserException"] = haxe_xml_XmlParserException;
+haxe_xml_XmlParserException.__name__ = "haxe.xml.XmlParserException";
+haxe_xml_XmlParserException.prototype = {
+	toString: function() {
+		var c = js_Boot.getClass(this);
+		return c.__name__ + ": " + this.message + " at line " + this.lineNumber + " char " + this.positionAtLine;
+	}
+	,__class__: haxe_xml_XmlParserException
+};
+var haxe_xml_Parser = function() { };
+$hxClasses["haxe.xml.Parser"] = haxe_xml_Parser;
+haxe_xml_Parser.__name__ = "haxe.xml.Parser";
+haxe_xml_Parser.parse = function(str,strict) {
+	if(strict == null) {
+		strict = false;
+	}
+	var doc = Xml.createDocument();
+	haxe_xml_Parser.doParse(str,strict,0,doc);
+	return doc;
+};
+haxe_xml_Parser.doParse = function(str,strict,p,parent) {
+	if(p == null) {
+		p = 0;
+	}
+	var xml = null;
+	var state = 1;
+	var next = 1;
+	var aname = null;
+	var start = 0;
+	var nsubs = 0;
+	var nbrackets = 0;
+	var buf = new StringBuf();
+	var escapeNext = 1;
+	var attrValQuote = -1;
+	while(p < str.length) {
+		var c = str.charCodeAt(p);
+		switch(state) {
+		case 0:
+			switch(c) {
+			case 9:case 10:case 13:case 32:
+				break;
+			default:
+				state = next;
+				continue;
+			}
+			break;
+		case 1:
+			if(c == 60) {
+				state = 0;
+				next = 2;
+			} else {
+				start = p;
+				state = 13;
+				continue;
+			}
+			break;
+		case 2:
+			switch(c) {
+			case 33:
+				if(str.charCodeAt(p + 1) == 91) {
+					p += 2;
+					if(HxOverrides.substr(str,p,6).toUpperCase() != "CDATA[") {
+						throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected <![CDATA[",str,p));
+					}
+					p += 5;
+					state = 17;
+					start = p + 1;
+				} else if(str.charCodeAt(p + 1) == 68 || str.charCodeAt(p + 1) == 100) {
+					if(HxOverrides.substr(str,p + 2,6).toUpperCase() != "OCTYPE") {
+						throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected <!DOCTYPE",str,p));
+					}
+					p += 8;
+					state = 16;
+					start = p + 1;
+				} else if(str.charCodeAt(p + 1) != 45 || str.charCodeAt(p + 2) != 45) {
+					throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected <!--",str,p));
+				} else {
+					p += 2;
+					state = 15;
+					start = p + 1;
+				}
+				break;
+			case 47:
+				if(parent == null) {
+					throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected node name",str,p));
+				}
+				start = p + 1;
+				state = 0;
+				next = 10;
+				break;
+			case 63:
+				state = 14;
+				start = p;
+				break;
+			default:
+				state = 3;
+				start = p;
+				continue;
+			}
+			break;
+		case 3:
+			if(!(c >= 97 && c <= 122 || c >= 65 && c <= 90 || c >= 48 && c <= 57 || c == 58 || c == 46 || c == 95 || c == 45)) {
+				if(p == start) {
+					throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected node name",str,p));
+				}
+				xml = Xml.createElement(HxOverrides.substr(str,start,p - start));
+				parent.addChild(xml);
+				++nsubs;
+				state = 0;
+				next = 4;
+				continue;
+			}
+			break;
+		case 4:
+			switch(c) {
+			case 47:
+				state = 11;
+				break;
+			case 62:
+				state = 9;
+				break;
+			default:
+				state = 5;
+				start = p;
+				continue;
+			}
+			break;
+		case 5:
+			if(!(c >= 97 && c <= 122 || c >= 65 && c <= 90 || c >= 48 && c <= 57 || c == 58 || c == 46 || c == 95 || c == 45)) {
+				if(start == p) {
+					throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected attribute name",str,p));
+				}
+				var tmp = HxOverrides.substr(str,start,p - start);
+				aname = tmp;
+				if(xml.exists(aname)) {
+					throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Duplicate attribute [" + aname + "]",str,p));
+				}
+				state = 0;
+				next = 6;
+				continue;
+			}
+			break;
+		case 6:
+			if(c == 61) {
+				state = 0;
+				next = 7;
+			} else {
+				throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected =",str,p));
+			}
+			break;
+		case 7:
+			switch(c) {
+			case 34:case 39:
+				buf = new StringBuf();
+				state = 8;
+				start = p + 1;
+				attrValQuote = c;
+				break;
+			default:
+				throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected \"",str,p));
+			}
+			break;
+		case 8:
+			switch(c) {
+			case 38:
+				var len = p - start;
+				buf.b += len == null ? HxOverrides.substr(str,start,null) : HxOverrides.substr(str,start,len);
+				state = 18;
+				escapeNext = 8;
+				start = p + 1;
+				break;
+			case 60:case 62:
+				if(strict) {
+					throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Invalid unescaped " + String.fromCodePoint(c) + " in attribute value",str,p));
+				} else if(c == attrValQuote) {
+					var len1 = p - start;
+					buf.b += len1 == null ? HxOverrides.substr(str,start,null) : HxOverrides.substr(str,start,len1);
+					var val = buf.b;
+					buf = new StringBuf();
+					xml.set(aname,val);
+					state = 0;
+					next = 4;
+				}
+				break;
+			default:
+				if(c == attrValQuote) {
+					var len2 = p - start;
+					buf.b += len2 == null ? HxOverrides.substr(str,start,null) : HxOverrides.substr(str,start,len2);
+					var val1 = buf.b;
+					buf = new StringBuf();
+					xml.set(aname,val1);
+					state = 0;
+					next = 4;
+				}
+			}
+			break;
+		case 9:
+			p = haxe_xml_Parser.doParse(str,strict,p,xml);
+			start = p;
+			state = 1;
+			break;
+		case 10:
+			if(!(c >= 97 && c <= 122 || c >= 65 && c <= 90 || c >= 48 && c <= 57 || c == 58 || c == 46 || c == 95 || c == 45)) {
+				if(start == p) {
+					throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected node name",str,p));
+				}
+				var v = HxOverrides.substr(str,start,p - start);
+				if(parent == null || parent.nodeType != 0) {
+					throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Unexpected </" + v + ">, tag is not open",str,p));
+				}
+				if(parent.nodeType != Xml.Element) {
+					throw haxe_Exception.thrown("Bad node type, expected Element but found " + (parent.nodeType == null ? "null" : XmlType.toString(parent.nodeType)));
+				}
+				if(v != parent.nodeName) {
+					if(parent.nodeType != Xml.Element) {
+						throw haxe_Exception.thrown("Bad node type, expected Element but found " + (parent.nodeType == null ? "null" : XmlType.toString(parent.nodeType)));
+					}
+					throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected </" + parent.nodeName + ">",str,p));
+				}
+				state = 0;
+				next = 12;
+				continue;
+			}
+			break;
+		case 11:
+			if(c == 62) {
+				state = 1;
+			} else {
+				throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected >",str,p));
+			}
+			break;
+		case 12:
+			if(c == 62) {
+				if(nsubs == 0) {
+					parent.addChild(Xml.createPCData(""));
+				}
+				return p;
+			} else {
+				throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Expected >",str,p));
+			}
+			break;
+		case 13:
+			if(c == 60) {
+				var len3 = p - start;
+				buf.b += len3 == null ? HxOverrides.substr(str,start,null) : HxOverrides.substr(str,start,len3);
+				var child = Xml.createPCData(buf.b);
+				buf = new StringBuf();
+				parent.addChild(child);
+				++nsubs;
+				state = 0;
+				next = 2;
+			} else if(c == 38) {
+				var len4 = p - start;
+				buf.b += len4 == null ? HxOverrides.substr(str,start,null) : HxOverrides.substr(str,start,len4);
+				state = 18;
+				escapeNext = 13;
+				start = p + 1;
+			}
+			break;
+		case 14:
+			if(c == 63 && str.charCodeAt(p + 1) == 62) {
+				++p;
+				var str1 = HxOverrides.substr(str,start + 1,p - start - 2);
+				parent.addChild(Xml.createProcessingInstruction(str1));
+				++nsubs;
+				state = 1;
+			}
+			break;
+		case 15:
+			if(c == 45 && str.charCodeAt(p + 1) == 45 && str.charCodeAt(p + 2) == 62) {
+				parent.addChild(Xml.createComment(HxOverrides.substr(str,start,p - start)));
+				++nsubs;
+				p += 2;
+				state = 1;
+			}
+			break;
+		case 16:
+			if(c == 91) {
+				++nbrackets;
+			} else if(c == 93) {
+				--nbrackets;
+			} else if(c == 62 && nbrackets == 0) {
+				parent.addChild(Xml.createDocType(HxOverrides.substr(str,start,p - start)));
+				++nsubs;
+				state = 1;
+			}
+			break;
+		case 17:
+			if(c == 93 && str.charCodeAt(p + 1) == 93 && str.charCodeAt(p + 2) == 62) {
+				var child1 = Xml.createCData(HxOverrides.substr(str,start,p - start));
+				parent.addChild(child1);
+				++nsubs;
+				p += 2;
+				state = 1;
+			}
+			break;
+		case 18:
+			if(c == 59) {
+				var s = HxOverrides.substr(str,start,p - start);
+				if(s.charCodeAt(0) == 35) {
+					var c1 = s.charCodeAt(1) == 120 ? Std.parseInt("0" + HxOverrides.substr(s,1,s.length - 1)) : Std.parseInt(HxOverrides.substr(s,1,s.length - 1));
+					buf.b += String.fromCodePoint(c1);
+				} else if(!Object.prototype.hasOwnProperty.call(haxe_xml_Parser.escapes.h,s)) {
+					if(strict) {
+						throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Undefined entity: " + s,str,p));
+					}
+					buf.b += Std.string("&" + s + ";");
+				} else {
+					buf.b += Std.string(haxe_xml_Parser.escapes.h[s]);
+				}
+				start = p + 1;
+				state = escapeNext;
+			} else if(!(c >= 97 && c <= 122 || c >= 65 && c <= 90 || c >= 48 && c <= 57 || c == 58 || c == 46 || c == 95 || c == 45) && c != 35) {
+				if(strict) {
+					throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Invalid character in entity: " + String.fromCodePoint(c),str,p));
+				}
+				buf.b += String.fromCodePoint(38);
+				var len5 = p - start;
+				buf.b += len5 == null ? HxOverrides.substr(str,start,null) : HxOverrides.substr(str,start,len5);
+				--p;
+				start = p + 1;
+				state = escapeNext;
+			}
+			break;
+		}
+		++p;
+	}
+	if(state == 1) {
+		start = p;
+		state = 13;
+	}
+	if(state == 13) {
+		if(parent.nodeType == 0) {
+			if(parent.nodeType != Xml.Element) {
+				throw haxe_Exception.thrown("Bad node type, expected Element but found " + (parent.nodeType == null ? "null" : XmlType.toString(parent.nodeType)));
+			}
+			throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Unclosed node <" + parent.nodeName + ">",str,p));
+		}
+		if(p != start || nsubs == 0) {
+			var len = p - start;
+			buf.b += len == null ? HxOverrides.substr(str,start,null) : HxOverrides.substr(str,start,len);
+			parent.addChild(Xml.createPCData(buf.b));
+			++nsubs;
+		}
+		return p;
+	}
+	if(!strict && state == 18 && escapeNext == 13) {
+		buf.b += String.fromCodePoint(38);
+		var len = p - start;
+		buf.b += len == null ? HxOverrides.substr(str,start,null) : HxOverrides.substr(str,start,len);
+		parent.addChild(Xml.createPCData(buf.b));
+		++nsubs;
+		return p;
+	}
+	throw haxe_Exception.thrown(new haxe_xml_XmlParserException("Unexpected end",str,p));
+};
+var haxe_xml_Printer = function(pretty) {
+	this.output = new StringBuf();
+	this.pretty = pretty;
+};
+$hxClasses["haxe.xml.Printer"] = haxe_xml_Printer;
+haxe_xml_Printer.__name__ = "haxe.xml.Printer";
+haxe_xml_Printer.print = function(xml,pretty) {
+	if(pretty == null) {
+		pretty = false;
+	}
+	var printer = new haxe_xml_Printer(pretty);
+	printer.writeNode(xml,"");
+	return printer.output.b;
+};
+haxe_xml_Printer.prototype = {
+	writeNode: function(value,tabs) {
+		switch(value.nodeType) {
+		case 0:
+			this.output.b += Std.string(tabs + "<");
+			if(value.nodeType != Xml.Element) {
+				throw haxe_Exception.thrown("Bad node type, expected Element but found " + (value.nodeType == null ? "null" : XmlType.toString(value.nodeType)));
+			}
+			this.output.b += Std.string(value.nodeName);
+			var attribute = value.attributes();
+			while(attribute.hasNext()) {
+				var attribute1 = attribute.next();
+				this.output.b += Std.string(" " + attribute1 + "=\"");
+				var input = StringTools.htmlEscape(value.get(attribute1),true);
+				this.output.b += Std.string(input);
+				this.output.b += "\"";
+			}
+			if(this.hasChildren(value)) {
+				this.output.b += ">";
+				if(this.pretty) {
+					this.output.b += "\n";
+				}
+				if(value.nodeType != Xml.Document && value.nodeType != Xml.Element) {
+					throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (value.nodeType == null ? "null" : XmlType.toString(value.nodeType)));
+				}
+				var _g_current = 0;
+				var _g_array = value.children;
+				while(_g_current < _g_array.length) {
+					var child = _g_array[_g_current++];
+					this.writeNode(child,this.pretty ? tabs + "\t" : tabs);
+				}
+				this.output.b += Std.string(tabs + "</");
+				if(value.nodeType != Xml.Element) {
+					throw haxe_Exception.thrown("Bad node type, expected Element but found " + (value.nodeType == null ? "null" : XmlType.toString(value.nodeType)));
+				}
+				this.output.b += Std.string(value.nodeName);
+				this.output.b += ">";
+				if(this.pretty) {
+					this.output.b += "\n";
+				}
+			} else {
+				this.output.b += "/>";
+				if(this.pretty) {
+					this.output.b += "\n";
+				}
+			}
+			break;
+		case 1:
+			if(value.nodeType == Xml.Document || value.nodeType == Xml.Element) {
+				throw haxe_Exception.thrown("Bad node type, unexpected " + (value.nodeType == null ? "null" : XmlType.toString(value.nodeType)));
+			}
+			var nodeValue = value.nodeValue;
+			if(nodeValue.length != 0) {
+				var input = tabs + StringTools.htmlEscape(nodeValue);
+				this.output.b += Std.string(input);
+				if(this.pretty) {
+					this.output.b += "\n";
+				}
+			}
+			break;
+		case 2:
+			this.output.b += Std.string(tabs + "<![CDATA[");
+			if(value.nodeType == Xml.Document || value.nodeType == Xml.Element) {
+				throw haxe_Exception.thrown("Bad node type, unexpected " + (value.nodeType == null ? "null" : XmlType.toString(value.nodeType)));
+			}
+			this.output.b += Std.string(value.nodeValue);
+			this.output.b += "]]>";
+			if(this.pretty) {
+				this.output.b += "\n";
+			}
+			break;
+		case 3:
+			if(value.nodeType == Xml.Document || value.nodeType == Xml.Element) {
+				throw haxe_Exception.thrown("Bad node type, unexpected " + (value.nodeType == null ? "null" : XmlType.toString(value.nodeType)));
+			}
+			var commentContent = value.nodeValue;
+			var _this_r = new RegExp("[\n\r\t]+","g".split("u").join(""));
+			commentContent = commentContent.replace(_this_r,"");
+			commentContent = "<!--" + commentContent + "-->";
+			this.output.b += tabs == null ? "null" : "" + tabs;
+			var input = StringTools.trim(commentContent);
+			this.output.b += Std.string(input);
+			if(this.pretty) {
+				this.output.b += "\n";
+			}
+			break;
+		case 4:
+			if(value.nodeType == Xml.Document || value.nodeType == Xml.Element) {
+				throw haxe_Exception.thrown("Bad node type, unexpected " + (value.nodeType == null ? "null" : XmlType.toString(value.nodeType)));
+			}
+			this.output.b += Std.string("<!DOCTYPE " + value.nodeValue + ">");
+			if(this.pretty) {
+				this.output.b += "\n";
+			}
+			break;
+		case 5:
+			if(value.nodeType == Xml.Document || value.nodeType == Xml.Element) {
+				throw haxe_Exception.thrown("Bad node type, unexpected " + (value.nodeType == null ? "null" : XmlType.toString(value.nodeType)));
+			}
+			this.output.b += Std.string("<?" + value.nodeValue + "?>");
+			if(this.pretty) {
+				this.output.b += "\n";
+			}
+			break;
+		case 6:
+			if(value.nodeType != Xml.Document && value.nodeType != Xml.Element) {
+				throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (value.nodeType == null ? "null" : XmlType.toString(value.nodeType)));
+			}
+			var _g_current = 0;
+			var _g_array = value.children;
+			while(_g_current < _g_array.length) {
+				var child = _g_array[_g_current++];
+				this.writeNode(child,tabs);
+			}
+			break;
+		}
+	}
+	,hasChildren: function(value) {
+		if(value.nodeType != Xml.Document && value.nodeType != Xml.Element) {
+			throw haxe_Exception.thrown("Bad node type, expected Element or Document but found " + (value.nodeType == null ? "null" : XmlType.toString(value.nodeType)));
+		}
+		var _g_current = 0;
+		var _g_array = value.children;
+		while(_g_current < _g_array.length) {
+			var child = _g_array[_g_current++];
+			switch(child.nodeType) {
+			case 0:case 1:
+				return true;
+			case 2:case 3:
+				if(child.nodeType == Xml.Document || child.nodeType == Xml.Element) {
+					throw haxe_Exception.thrown("Bad node type, unexpected " + (child.nodeType == null ? "null" : XmlType.toString(child.nodeType)));
+				}
+				if(StringTools.ltrim(child.nodeValue).length != 0) {
+					return true;
+				}
+				break;
+			default:
+			}
+		}
+		return false;
+	}
+	,__class__: haxe_xml_Printer
 };
 var haxe_zip_ExtraField = $hxEnums["haxe.zip.ExtraField"] = { __ename__:"haxe.zip.ExtraField",__constructs__:null
 	,FUnknown: ($_=function(tag,bytes) { return {_hx_index:0,tag:tag,bytes:bytes,__enum__:"haxe.zip.ExtraField",toString:$estr}; },$_._hx_name="FUnknown",$_.__params__ = ["tag","bytes"],$_)
@@ -7891,6 +8712,296 @@ lime__$internal_backend_html5_HTML5HTTPRequest.prototype = {
 	}
 	,__class__: lime__$internal_backend_html5_HTML5HTTPRequest
 };
+var lime_app__$Event_$Dynamic_$Void = function() {
+	this.canceled = false;
+	this.__listeners = [];
+	this.__priorities = [];
+	this.__repeat = [];
+};
+$hxClasses["lime.app._Event_Dynamic_Void"] = lime_app__$Event_$Dynamic_$Void;
+lime_app__$Event_$Dynamic_$Void.__name__ = "lime.app._Event_Dynamic_Void";
+lime_app__$Event_$Dynamic_$Void.prototype = {
+	add: function(listener,once,priority) {
+		if(priority == null) {
+			priority = 0;
+		}
+		if(once == null) {
+			once = false;
+		}
+		var _g = 0;
+		var _g1 = this.__priorities.length;
+		while(_g < _g1) {
+			var i = _g++;
+			if(priority > this.__priorities[i]) {
+				this.__listeners.splice(i,0,listener);
+				this.__priorities.splice(i,0,priority);
+				this.__repeat.splice(i,0,!once);
+				return;
+			}
+		}
+		this.__listeners.push(listener);
+		this.__priorities.push(priority);
+		this.__repeat.push(!once);
+	}
+	,cancel: function() {
+		this.canceled = true;
+	}
+	,has: function(listener) {
+		var _g = 0;
+		var _g1 = this.__listeners;
+		while(_g < _g1.length) {
+			var l = _g1[_g];
+			++_g;
+			if(Reflect.compareMethods(l,listener)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	,remove: function(listener) {
+		var i = this.__listeners.length;
+		while(--i >= 0) if(Reflect.compareMethods(this.__listeners[i],listener)) {
+			this.__listeners.splice(i,1);
+			this.__priorities.splice(i,1);
+			this.__repeat.splice(i,1);
+		}
+	}
+	,removeAll: function() {
+		var len = this.__listeners.length;
+		this.__listeners.splice(0,len);
+		this.__priorities.splice(0,len);
+		this.__repeat.splice(0,len);
+	}
+	,dispatch: function(a) {
+		this.canceled = false;
+		var listeners = this.__listeners;
+		var repeat = this.__repeat;
+		var i = 0;
+		while(i < listeners.length) {
+			listeners[i](a);
+			if(!repeat[i]) {
+				this.remove(listeners[i]);
+			} else {
+				++i;
+			}
+			if(this.canceled) {
+				break;
+			}
+		}
+	}
+	,__class__: lime_app__$Event_$Dynamic_$Void
+};
+var lime__$internal_backend_html5_Message = {};
+lime__$internal_backend_html5_Message.skip = function(object) {
+	if(!(object == null || !((object) instanceof Object) || Reflect.field(object,"__skipPrototype__") == true)) {
+		if(object.byteLength != null && object.byteOffset != null && object.buffer != null) {
+			return ((object.buffer) instanceof ArrayBuffer);
+		} else {
+			return false;
+		}
+	} else {
+		return true;
+	}
+};
+lime__$internal_backend_html5_Message.disablePreserveClasses = function(object) {
+	if(object == null || !((object) instanceof Object) || Reflect.field(object,"__skipPrototype__") == true || object.byteLength != null && object.byteOffset != null && object.buffer != null && ((object.buffer) instanceof ArrayBuffer)) {
+		return;
+	}
+	object["__skipPrototype__"] = true;
+};
+lime__$internal_backend_html5_Message.preserveClasses = function(this1) {
+	if(this1 == null || !((this1) instanceof Object) || Reflect.field(this1,"__skipPrototype__") == true || this1.byteLength != null && this1.byteOffset != null && this1.buffer != null && ((this1.buffer) instanceof ArrayBuffer) || Object.prototype.hasOwnProperty.call(this1,"__prototype__")) {
+		return;
+	}
+	if(!((this1) instanceof Array)) {
+		try {
+			if(this1.__class__ != null) {
+				this1["__prototype__"] = this1.__class__.__name__;
+			} else {
+				this1["__prototype__"] = null;
+			}
+		} catch( _g ) {
+			haxe_NativeStackTrace.lastError = _g;
+			return;
+		}
+		if(typeof this1.toString == "function") {
+			Reflect.deleteField(this1,"toString");
+		}
+	}
+	var _g = 0;
+	var _g1 = Object.values(this1);
+	while(_g < _g1.length) {
+		var child = _g1[_g];
+		++_g;
+		lime__$internal_backend_html5_Message.preserveClasses(child);
+	}
+};
+lime__$internal_backend_html5_Message.restoreClasses = function(this1,flag) {
+	if(flag == null) {
+		flag = Math.random() * 2147483647 | 0;
+		if(Reflect.field(this1,"__restoreFlag__") == flag) {
+			++flag;
+		}
+	}
+	if(this1 == null || !((this1) instanceof Object) || Reflect.field(this1,"__skipPrototype__") == true || this1.byteLength != null && this1.byteOffset != null && this1.buffer != null && ((this1.buffer) instanceof ArrayBuffer) || Reflect.field(this1,"__restoreFlag__") == flag) {
+		return;
+	}
+	try {
+		this1["__restoreFlag__"] = flag;
+	} catch( _g ) {
+		haxe_NativeStackTrace.lastError = _g;
+		return;
+	}
+	if(Reflect.field(this1,"__prototype__") != null) {
+		try {
+			Object.setPrototypeOf(this1,$hxClasses[Reflect.field(this1,"__prototype__")].prototype);
+		} catch( _g ) {
+			haxe_NativeStackTrace.lastError = _g;
+		}
+	}
+	var _g = 0;
+	var _g1 = Object.values(this1);
+	while(_g < _g1.length) {
+		var child = _g1[_g];
+		++_g;
+		lime__$internal_backend_html5_Message.restoreClasses(child,flag);
+	}
+};
+var lime__$internal_backend_html5_WorkFunction = {};
+lime__$internal_backend_html5_WorkFunction.__properties__ = {get_portable:"get_portable"};
+lime__$internal_backend_html5_WorkFunction.toFunction = function(this1) {
+	if(this1.func != null) {
+		return this1.func;
+	} else if(this1.classPath != null && this1.functionName != null) {
+		this1.func = $hxClasses[this1.classPath][this1.functionName];
+		return this1.func;
+	} else if(this1.sourceCode != null) {
+		this1.func = new Function("return " + this1.sourceCode)();
+		return this1.func;
+	}
+	throw haxe_Exception.thrown("Object is not a valid WorkFunction: " + Std.string(this1));
+};
+lime__$internal_backend_html5_WorkFunction.makePortable = function(this1,throwError) {
+	if(throwError == null) {
+		throwError = true;
+	}
+	if(this1.func != null) {
+		if(this1.classPath != null || this1.functionName != null) {
+			var func = $hxClasses[this1.classPath] && $hxClasses[this1.classPath][this1.functionName];
+			if(func != this1.func) {
+				throw haxe_Exception.thrown("Could not make " + this1.functionName + " portable. Either " + this1.functionName + " isn't static, or " + this1.classPath + " is something other than a class.");
+			} else {
+				this1.func = null;
+				return true;
+			}
+		} else {
+			this1.sourceCode = this1.func.toString();
+			if(this1.sourceCode.indexOf("[native code]") < 0) {
+				this1.func = null;
+				return true;
+			} else {
+				this1.sourceCode = null;
+			}
+			throw haxe_Exception.thrown("Only static class functions can be made portable. Set -Dlime-warn-portability to see which line caused this.");
+		}
+	}
+	return this1.func == null;
+};
+lime__$internal_backend_html5_WorkFunction.get_portable = function(this1) {
+	return this1.func == null;
+};
+var lime__$internal_backend_html5_HTML5Thread = function(href,worker) {
+	this.__href = href;
+	if(worker != null) {
+		this.__worker = worker;
+		this.__worker.onmessage = $bind(this,this.dispatchMessage);
+		this.onMessage = new lime_app__$Event_$Dynamic_$Void();
+	}
+	lime__$internal_backend_html5_Message.disablePreserveClasses(this);
+};
+$hxClasses["lime._internal.backend.html5.HTML5Thread"] = lime__$internal_backend_html5_HTML5Thread;
+lime__$internal_backend_html5_HTML5Thread.__name__ = "lime._internal.backend.html5.HTML5Thread";
+lime__$internal_backend_html5_HTML5Thread.current = function() {
+	return lime__$internal_backend_html5_HTML5Thread.__current;
+};
+lime__$internal_backend_html5_HTML5Thread.create = function(job) {
+	var url = new URL(lime__$internal_backend_html5_HTML5Thread.__current.__href);
+	url.pathname = HxOverrides.substr(url.pathname,0,url.pathname.lastIndexOf("/") + 1) + lime_app_Application.current.meta.h["file"] + ".js";
+	if(url.hash.length > 0) {
+		url.hash += "_";
+	}
+	url.hash += lime__$internal_backend_html5_HTML5Thread.__workerCount;
+	lime__$internal_backend_html5_HTML5Thread.__workerCount++;
+	lime__$internal_backend_html5_WorkFunction.makePortable(job);
+	var thread = new lime__$internal_backend_html5_HTML5Thread(url.href,new Worker(url.href));
+	thread.sendMessage(job);
+	return thread;
+};
+lime__$internal_backend_html5_HTML5Thread.zeroDelay = function() {
+	return new Promise(function(resolve,_) {
+		$global.setTimeout(resolve);
+	});
+};
+lime__$internal_backend_html5_HTML5Thread.returnMessage = function(message,transferList,preserveClasses) {
+	if(preserveClasses == null) {
+		preserveClasses = true;
+	}
+	if(lime__$internal_backend_html5_HTML5Thread.__isWorker) {
+		if(preserveClasses) {
+			lime__$internal_backend_html5_Message.preserveClasses(message);
+		}
+		$global.postMessage(message,transferList);
+	}
+};
+lime__$internal_backend_html5_HTML5Thread.equals = function(a,b) {
+	return a.__href == b.__href;
+};
+lime__$internal_backend_html5_HTML5Thread.prototype = {
+	sendMessage: function(message,transferList,preserveClasses) {
+		if(preserveClasses == null) {
+			preserveClasses = true;
+		}
+		if(this.__worker != null) {
+			if(preserveClasses) {
+				lime__$internal_backend_html5_Message.preserveClasses(message);
+			}
+			this.__worker.postMessage(message,transferList);
+		} else {
+			lime__$internal_backend_html5_HTML5Thread.__messages.add(message);
+		}
+	}
+	,dispatchMessage: function(event) {
+		var message = event.data;
+		lime__$internal_backend_html5_Message.restoreClasses(message);
+		if(this.onMessage != null) {
+			this.onMessage.dispatch(message);
+		}
+		if(lime__$internal_backend_html5_HTML5Thread.__resolveMethods.isEmpty()) {
+			lime__$internal_backend_html5_HTML5Thread.__messages.add(message);
+		} else {
+			(lime__$internal_backend_html5_HTML5Thread.__resolveMethods.pop())(message);
+		}
+	}
+	,destroy: function() {
+		if(this.__worker != null) {
+			this.__worker.terminate();
+		} else if(lime__$internal_backend_html5_HTML5Thread.__isWorker) {
+			try {
+				$global.close();
+			} catch( _g ) {
+				haxe_NativeStackTrace.lastError = _g;
+			}
+		}
+	}
+	,isWorker: function() {
+		if(this.__worker == null) {
+			return lime__$internal_backend_html5_HTML5Thread.__isWorker;
+		} else {
+			return true;
+		}
+	}
+	,__class__: lime__$internal_backend_html5_HTML5Thread
+};
 var lime__$internal_backend_html5_HTML5Window = function(parent) {
 	this.imeCompositionActive = false;
 	this.unusedTouchesPool = new haxe_ds_List();
@@ -8058,7 +9169,8 @@ lime__$internal_backend_html5_HTML5Window.prototype = {
 				var options = Object.prototype.hasOwnProperty.call(contextAttributes,"antialiasing") && contextAttributes.antialiasing > 0;
 				var options1 = Object.prototype.hasOwnProperty.call(contextAttributes,"depth") ? contextAttributes.depth : true;
 				var options2 = Object.prototype.hasOwnProperty.call(contextAttributes,"stencil") && contextAttributes.stencil;
-				var options3 = { alpha : transparentBackground || colorDepth > 16, antialias : options, depth : options1, premultipliedAlpha : true, stencil : options2, preserveDrawingBuffer : false, failIfMajorPerformanceCaveat : false};
+				var options3 = Object.prototype.hasOwnProperty.call(contextAttributes,"preserveDrawingBuffer") && contextAttributes.preserveDrawingBuffer;
+				var options4 = { alpha : transparentBackground || colorDepth > 16, antialias : options, depth : options1, premultipliedAlpha : true, stencil : options2, preserveDrawingBuffer : options3, failIfMajorPerformanceCaveat : false};
 				var glContextType = ["webgl","experimental-webgl"];
 				if(allowWebGL2) {
 					glContextType.unshift("webgl2");
@@ -8067,7 +9179,7 @@ lime__$internal_backend_html5_HTML5Window.prototype = {
 				while(_g < glContextType.length) {
 					var name = glContextType[_g];
 					++_g;
-					webgl = this.canvas.getContext(name,options3);
+					webgl = this.canvas.getContext(name,options4);
 					if(webgl != null && name == "webgl2") {
 						isWebGL2 = true;
 					}
@@ -9079,10 +10191,70 @@ var lime__$internal_format_LZMA = function() { };
 $hxClasses["lime._internal.format.LZMA"] = lime__$internal_format_LZMA;
 lime__$internal_format_LZMA.__name__ = "lime._internal.format.LZMA";
 lime__$internal_format_LZMA.compress = function(bytes) {
-	return null;
+	var data = LZMA.compress;
+	var elements = null;
+	var array = null;
+	var vector = null;
+	var view = null;
+	var buffer = bytes.b.bufferValue;
+	var len = null;
+	var this1;
+	if(elements != null) {
+		this1 = new Uint8Array(elements);
+	} else if(array != null) {
+		this1 = new Uint8Array(array);
+	} else if(vector != null) {
+		this1 = new Uint8Array(vector.__array);
+	} else if(view != null) {
+		this1 = new Uint8Array(view);
+	} else if(buffer != null) {
+		if(len == null) {
+			this1 = new Uint8Array(buffer,0);
+		} else {
+			this1 = new Uint8Array(buffer,0,len);
+		}
+	} else {
+		this1 = null;
+	}
+	var data1 = data(this1,5);
+	if(typeof(data1) == "string") {
+		return haxe_io_Bytes.ofString(data1);
+	} else {
+		return haxe_io_Bytes.ofData(data1);
+	}
 };
 lime__$internal_format_LZMA.decompress = function(bytes) {
-	return null;
+	var data = LZMA.decompress;
+	var elements = null;
+	var array = null;
+	var vector = null;
+	var view = null;
+	var buffer = bytes.b.bufferValue;
+	var len = null;
+	var this1;
+	if(elements != null) {
+		this1 = new Uint8Array(elements);
+	} else if(array != null) {
+		this1 = new Uint8Array(array);
+	} else if(vector != null) {
+		this1 = new Uint8Array(vector.__array);
+	} else if(view != null) {
+		this1 = new Uint8Array(view);
+	} else if(buffer != null) {
+		if(len == null) {
+			this1 = new Uint8Array(buffer,0);
+		} else {
+			this1 = new Uint8Array(buffer,0,len);
+		}
+	} else {
+		this1 = null;
+	}
+	var data1 = data(this1);
+	if(typeof(data1) == "string") {
+		return haxe_io_Bytes.ofString(data1);
+	} else {
+		return haxe_io_Bytes.ofData(data1);
+	}
 };
 var lime__$internal_format_PNG = function() { };
 $hxClasses["lime._internal.format.PNG"] = lime__$internal_format_PNG;
@@ -13004,25 +14176,19 @@ lime_app_Event.prototype = {
 	}
 	,__class__: lime_app_Event
 };
-var lime_app_Future = function(work,async) {
-	if(async == null) {
-		async = false;
+var lime_app_Future = function(work,useThreads) {
+	if(useThreads == null) {
+		useThreads = false;
 	}
 	if(work != null) {
-		if(async) {
-			var promise = new lime_app_Promise();
-			promise.future = this;
-			lime_app__$Future_FutureWork.queue({ promise : promise, work : work});
-		} else {
-			try {
-				this.value = work();
-				this.isComplete = true;
-			} catch( _g ) {
-				haxe_NativeStackTrace.lastError = _g;
-				var e = haxe_Exception.caught(_g).unwrap();
-				this.error = e;
-				this.isError = true;
-			}
+		try {
+			this.value = work();
+			this.isComplete = true;
+		} catch( _g ) {
+			haxe_NativeStackTrace.lastError = _g;
+			var e = haxe_Exception.caught(_g).unwrap();
+			this.error = e;
+			this.isError = true;
 		}
 	}
 };
@@ -13030,18 +14196,12 @@ $hxClasses["lime.app.Future"] = lime_app_Future;
 lime_app_Future.__name__ = "lime.app.Future";
 lime_app_Future.ofEvents = function(onComplete,onError,onProgress) {
 	var promise = new lime_app_Promise();
-	onComplete.add(function(data) {
-		promise.complete(data);
-	},true);
+	onComplete.add($bind(promise,promise.complete),true);
 	if(onError != null) {
-		onError.add(function(error) {
-			promise.error(error);
-		},true);
+		onError.add($bind(promise,promise.error),true);
 	}
 	if(onProgress != null) {
-		onProgress.add(function(progress,total) {
-			promise.progress(progress,total);
-		},true);
+		onProgress.add($bind(promise,promise.progress),true);
 	}
 	return promise.future;
 };
@@ -13097,12 +14257,7 @@ lime_app_Future.prototype = {
 		if(waitTime == null) {
 			waitTime = -1;
 		}
-		if(this.isComplete || this.isError) {
-			return this;
-		} else {
-			lime_utils_Log.warn("Cannot block thread in JavaScript",{ fileName : "lime/app/Future.hx", lineNumber : 208, className : "lime.app.Future", methodName : "ready"});
-			return this;
-		}
+		return this;
 	}
 	,result: function(waitTime) {
 		if(waitTime == null) {
@@ -13136,34 +14291,6 @@ lime_app_Future.prototype = {
 		}
 	}
 	,__class__: lime_app_Future
-};
-var lime_app__$Future_FutureWork = function() { };
-$hxClasses["lime.app._Future.FutureWork"] = lime_app__$Future_FutureWork;
-lime_app__$Future_FutureWork.__name__ = "lime.app._Future.FutureWork";
-lime_app__$Future_FutureWork.queue = function(state) {
-	if(lime_app__$Future_FutureWork.threadPool == null) {
-		lime_app__$Future_FutureWork.threadPool = new lime_system_ThreadPool();
-		lime_app__$Future_FutureWork.threadPool.doWork.add(lime_app__$Future_FutureWork.threadPool_doWork);
-		lime_app__$Future_FutureWork.threadPool.onComplete.add(lime_app__$Future_FutureWork.threadPool_onComplete);
-		lime_app__$Future_FutureWork.threadPool.onError.add(lime_app__$Future_FutureWork.threadPool_onError);
-	}
-	lime_app__$Future_FutureWork.threadPool.queue(state);
-};
-lime_app__$Future_FutureWork.threadPool_doWork = function(state) {
-	try {
-		var result = state.work();
-		lime_app__$Future_FutureWork.threadPool.sendComplete({ promise : state.promise, result : result});
-	} catch( _g ) {
-		haxe_NativeStackTrace.lastError = _g;
-		var e = haxe_Exception.caught(_g).unwrap();
-		lime_app__$Future_FutureWork.threadPool.sendError({ promise : state.promise, error : e});
-	}
-};
-lime_app__$Future_FutureWork.threadPool_onComplete = function(state) {
-	state.promise.complete(state.result);
-};
-lime_app__$Future_FutureWork.threadPool_onError = function(state) {
-	state.promise.error(state.error);
 };
 var lime_app_Promise = function() {
 	this.future = new lime_app_Future();
@@ -13233,85 +14360,6 @@ lime_app_Promise.prototype = {
 	}
 	,__class__: lime_app_Promise
 	,__properties__: {get_isError:"get_isError",get_isComplete:"get_isComplete"}
-};
-var lime_app__$Event_$Dynamic_$Void = function() {
-	this.canceled = false;
-	this.__listeners = [];
-	this.__priorities = [];
-	this.__repeat = [];
-};
-$hxClasses["lime.app._Event_Dynamic_Void"] = lime_app__$Event_$Dynamic_$Void;
-lime_app__$Event_$Dynamic_$Void.__name__ = "lime.app._Event_Dynamic_Void";
-lime_app__$Event_$Dynamic_$Void.prototype = {
-	add: function(listener,once,priority) {
-		if(priority == null) {
-			priority = 0;
-		}
-		if(once == null) {
-			once = false;
-		}
-		var _g = 0;
-		var _g1 = this.__priorities.length;
-		while(_g < _g1) {
-			var i = _g++;
-			if(priority > this.__priorities[i]) {
-				this.__listeners.splice(i,0,listener);
-				this.__priorities.splice(i,0,priority);
-				this.__repeat.splice(i,0,!once);
-				return;
-			}
-		}
-		this.__listeners.push(listener);
-		this.__priorities.push(priority);
-		this.__repeat.push(!once);
-	}
-	,cancel: function() {
-		this.canceled = true;
-	}
-	,has: function(listener) {
-		var _g = 0;
-		var _g1 = this.__listeners;
-		while(_g < _g1.length) {
-			var l = _g1[_g];
-			++_g;
-			if(Reflect.compareMethods(l,listener)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	,remove: function(listener) {
-		var i = this.__listeners.length;
-		while(--i >= 0) if(Reflect.compareMethods(this.__listeners[i],listener)) {
-			this.__listeners.splice(i,1);
-			this.__priorities.splice(i,1);
-			this.__repeat.splice(i,1);
-		}
-	}
-	,removeAll: function() {
-		var len = this.__listeners.length;
-		this.__listeners.splice(0,len);
-		this.__priorities.splice(0,len);
-		this.__repeat.splice(0,len);
-	}
-	,dispatch: function(a) {
-		this.canceled = false;
-		var listeners = this.__listeners;
-		var repeat = this.__repeat;
-		var i = 0;
-		while(i < listeners.length) {
-			listeners[i](a);
-			if(!repeat[i]) {
-				this.remove(listeners[i]);
-			} else {
-				++i;
-			}
-			if(this.canceled) {
-				break;
-			}
-		}
-	}
-	,__class__: lime_app__$Event_$Dynamic_$Void
 };
 var lime_app__$Event_$Float_$Float_$Float_$Void = function() {
 	this.canceled = false;
@@ -13707,85 +14755,6 @@ lime_app__$Event_$Float_$Float_$lime_$ui_$MouseWheelMode_$Void.prototype = {
 		}
 	}
 	,__class__: lime_app__$Event_$Float_$Float_$lime_$ui_$MouseWheelMode_$Void
-};
-var lime_app__$Event_$Int_$Float_$Float_$Void = function() {
-	this.canceled = false;
-	this.__listeners = [];
-	this.__priorities = [];
-	this.__repeat = [];
-};
-$hxClasses["lime.app._Event_Int_Float_Float_Void"] = lime_app__$Event_$Int_$Float_$Float_$Void;
-lime_app__$Event_$Int_$Float_$Float_$Void.__name__ = "lime.app._Event_Int_Float_Float_Void";
-lime_app__$Event_$Int_$Float_$Float_$Void.prototype = {
-	add: function(listener,once,priority) {
-		if(priority == null) {
-			priority = 0;
-		}
-		if(once == null) {
-			once = false;
-		}
-		var _g = 0;
-		var _g1 = this.__priorities.length;
-		while(_g < _g1) {
-			var i = _g++;
-			if(priority > this.__priorities[i]) {
-				this.__listeners.splice(i,0,listener);
-				this.__priorities.splice(i,0,priority);
-				this.__repeat.splice(i,0,!once);
-				return;
-			}
-		}
-		this.__listeners.push(listener);
-		this.__priorities.push(priority);
-		this.__repeat.push(!once);
-	}
-	,cancel: function() {
-		this.canceled = true;
-	}
-	,has: function(listener) {
-		var _g = 0;
-		var _g1 = this.__listeners;
-		while(_g < _g1.length) {
-			var l = _g1[_g];
-			++_g;
-			if(Reflect.compareMethods(l,listener)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	,remove: function(listener) {
-		var i = this.__listeners.length;
-		while(--i >= 0) if(Reflect.compareMethods(this.__listeners[i],listener)) {
-			this.__listeners.splice(i,1);
-			this.__priorities.splice(i,1);
-			this.__repeat.splice(i,1);
-		}
-	}
-	,removeAll: function() {
-		var len = this.__listeners.length;
-		this.__listeners.splice(0,len);
-		this.__priorities.splice(0,len);
-		this.__repeat.splice(0,len);
-	}
-	,dispatch: function(a,a1,a2) {
-		this.canceled = false;
-		var listeners = this.__listeners;
-		var repeat = this.__repeat;
-		var i = 0;
-		while(i < listeners.length) {
-			listeners[i](a,a1,a2);
-			if(!repeat[i]) {
-				this.remove(listeners[i]);
-			} else {
-				++i;
-			}
-			if(this.canceled) {
-				break;
-			}
-		}
-	}
-	,__class__: lime_app__$Event_$Int_$Float_$Float_$Void
 };
 var lime_app__$Event_$Int_$Float_$Void = function() {
 	this.canceled = false;
@@ -14418,6 +15387,85 @@ lime_app__$Event_$lime_$graphics_$RenderContext_$Void.prototype = {
 		}
 	}
 	,__class__: lime_app__$Event_$lime_$graphics_$RenderContext_$Void
+};
+var lime_app__$Event_$lime_$system_$State_$Void = function() {
+	this.canceled = false;
+	this.__listeners = [];
+	this.__priorities = [];
+	this.__repeat = [];
+};
+$hxClasses["lime.app._Event_lime_system_State_Void"] = lime_app__$Event_$lime_$system_$State_$Void;
+lime_app__$Event_$lime_$system_$State_$Void.__name__ = "lime.app._Event_lime_system_State_Void";
+lime_app__$Event_$lime_$system_$State_$Void.prototype = {
+	add: function(listener,once,priority) {
+		if(priority == null) {
+			priority = 0;
+		}
+		if(once == null) {
+			once = false;
+		}
+		var _g = 0;
+		var _g1 = this.__priorities.length;
+		while(_g < _g1) {
+			var i = _g++;
+			if(priority > this.__priorities[i]) {
+				this.__listeners.splice(i,0,listener);
+				this.__priorities.splice(i,0,priority);
+				this.__repeat.splice(i,0,!once);
+				return;
+			}
+		}
+		this.__listeners.push(listener);
+		this.__priorities.push(priority);
+		this.__repeat.push(!once);
+	}
+	,cancel: function() {
+		this.canceled = true;
+	}
+	,has: function(listener) {
+		var _g = 0;
+		var _g1 = this.__listeners;
+		while(_g < _g1.length) {
+			var l = _g1[_g];
+			++_g;
+			if(Reflect.compareMethods(l,listener)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	,remove: function(listener) {
+		var i = this.__listeners.length;
+		while(--i >= 0) if(Reflect.compareMethods(this.__listeners[i],listener)) {
+			this.__listeners.splice(i,1);
+			this.__priorities.splice(i,1);
+			this.__repeat.splice(i,1);
+		}
+	}
+	,removeAll: function() {
+		var len = this.__listeners.length;
+		this.__listeners.splice(0,len);
+		this.__priorities.splice(0,len);
+		this.__repeat.splice(0,len);
+	}
+	,dispatch: function(a) {
+		this.canceled = false;
+		var listeners = this.__listeners;
+		var repeat = this.__repeat;
+		var i = 0;
+		while(i < listeners.length) {
+			listeners[i](a);
+			if(!repeat[i]) {
+				this.remove(listeners[i]);
+			} else {
+				++i;
+			}
+			if(this.canceled) {
+				break;
+			}
+		}
+	}
+	,__class__: lime_app__$Event_$lime_$system_$State_$Void
 };
 var lime_app__$Event_$lime_$ui_$GamepadAxis_$Float_$Void = function() {
 	this.canceled = false;
@@ -15087,6 +16135,9 @@ var lime_graphics_Image = function(buffer,offsetX,offsetY,width,height,color,typ
 	this.version = 0;
 	if(type == null) {
 		type = lime_graphics_ImageType.CANVAS;
+		if(lime__$internal_backend_html5_HTML5Thread.__current.__worker != null || lime__$internal_backend_html5_HTML5Thread.__isWorker) {
+			type = lime_graphics_ImageType.DATA;
+		}
 	}
 	this.type = type;
 	if(buffer == null) {
@@ -18314,7 +19365,396 @@ lime_math_ColorMatrix.get = function(this1,index) {
 lime_math_ColorMatrix.set = function(this1,index,value) {
 	return this1[index] = value;
 };
-var lime_math_Matrix3 = function(a,b,c,d,tx,ty) {
+var lime_math_Matrix3 = {};
+lime_math_Matrix3.__properties__ = {set_ty:"set_ty",get_ty:"get_ty",set_tx:"set_tx",get_tx:"get_tx",set_d:"set_d",get_d:"get_d",set_c:"set_c",get_c:"get_c",set_b:"set_b",get_b:"get_b",set_a:"set_a",get_a:"get_a"};
+lime_math_Matrix3._new = function(a,b,c,d,tx,ty) {
+	if(ty == null) {
+		ty = 0;
+	}
+	if(tx == null) {
+		tx = 0;
+	}
+	if(d == null) {
+		d = 1;
+	}
+	if(c == null) {
+		c = 0;
+	}
+	if(b == null) {
+		b = 0;
+	}
+	if(a == null) {
+		a = 1;
+	}
+	var elements = null;
+	var array = [a,b,0,c,d,0,tx,ty,1];
+	var vector = null;
+	var view = null;
+	var buffer = null;
+	var len = null;
+	var this1;
+	if(elements != null) {
+		this1 = new Float32Array(elements);
+	} else if(array != null) {
+		this1 = new Float32Array(array);
+	} else if(vector != null) {
+		this1 = new Float32Array(vector.__array);
+	} else if(view != null) {
+		this1 = new Float32Array(view);
+	} else if(buffer != null) {
+		if(len == null) {
+			this1 = new Float32Array(buffer,0);
+		} else {
+			this1 = new Float32Array(buffer,0,len);
+		}
+	} else {
+		this1 = null;
+	}
+	var this2 = this1;
+	return this2;
+};
+lime_math_Matrix3.clone = function(this1) {
+	return lime_math_Matrix3._new(this1[0],this1[1],this1[3],this1[4],this1[6],this1[7]);
+};
+lime_math_Matrix3.concat = function(this1,m) {
+	var a1 = this1[0] * m[0] + this1[1] * m[3];
+	this1[1] = this1[0] * m[1] + this1[1] * m[4];
+	this1[0] = a1;
+	var c1 = this1[3] * m[0] + this1[4] * m[3];
+	this1[4] = this1[3] * m[1] + this1[4] * m[4];
+	this1[3] = c1;
+	var tx1 = this1[6] * m[0] + this1[7] * m[3] + m[6];
+	this1[7] = this1[6] * m[1] + this1[7] * m[4] + m[7];
+	this1[6] = tx1;
+};
+lime_math_Matrix3.copyColumnFrom = function(this1,column,vector4) {
+	if(column > 2) {
+		throw haxe_Exception.thrown("Column " + column + " out of bounds (2)");
+	} else if(column == 0) {
+		this1[0] = vector4.x;
+		this1[1] = vector4.y;
+	} else if(column == 1) {
+		this1[3] = vector4.x;
+		this1[4] = vector4.y;
+	} else {
+		this1[6] = vector4.x;
+		this1[7] = vector4.y;
+	}
+};
+lime_math_Matrix3.copyColumnTo = function(this1,column,vector4) {
+	if(column > 2) {
+		throw haxe_Exception.thrown("Column " + column + " out of bounds (2)");
+	} else if(column == 0) {
+		vector4.x = this1[0];
+		vector4.y = this1[1];
+		vector4.z = 0;
+	} else if(column == 1) {
+		vector4.x = this1[3];
+		vector4.y = this1[4];
+		vector4.z = 0;
+	} else {
+		vector4.x = this1[6];
+		vector4.y = this1[7];
+		vector4.z = 1;
+	}
+};
+lime_math_Matrix3.copyFrom = function(this1,sourceMatrix3) {
+	this1[0] = sourceMatrix3[0];
+	this1[1] = sourceMatrix3[1];
+	this1[3] = sourceMatrix3[3];
+	this1[4] = sourceMatrix3[4];
+	this1[6] = sourceMatrix3[6];
+	this1[7] = sourceMatrix3[7];
+};
+lime_math_Matrix3.copyRowFrom = function(this1,row,vector4) {
+	if(row > 2) {
+		throw haxe_Exception.thrown("Row " + row + " out of bounds (2)");
+	} else if(row == 0) {
+		this1[0] = vector4.x;
+		this1[3] = vector4.y;
+		this1[6] = vector4.z;
+	} else if(row == 1) {
+		this1[1] = vector4.x;
+		this1[4] = vector4.y;
+		this1[7] = vector4.z;
+	}
+};
+lime_math_Matrix3.copyRowTo = function(this1,row,vector4) {
+	if(row > 2) {
+		throw haxe_Exception.thrown("Row " + row + " out of bounds (2)");
+	} else if(row == 0) {
+		vector4.x = this1[0];
+		vector4.y = this1[3];
+		vector4.z = this1[6];
+	} else if(row == 1) {
+		vector4.x = this1[1];
+		vector4.y = this1[4];
+		vector4.z = this1[7];
+	} else {
+		vector4.x = 0;
+		vector4.y = 0;
+		vector4.z = 1;
+	}
+};
+lime_math_Matrix3.createBox = function(this1,scaleX,scaleY,rotation,xTranslate,yTranslate) {
+	if(yTranslate == null) {
+		yTranslate = 0;
+	}
+	if(xTranslate == null) {
+		xTranslate = 0;
+	}
+	if(rotation == null) {
+		rotation = 0;
+	}
+	if(rotation != 0) {
+		var cos = Math.cos(rotation);
+		var sin = Math.sin(rotation);
+		this1[0] = cos * scaleX;
+		this1[1] = sin * scaleY;
+		this1[3] = -sin * scaleX;
+		this1[4] = cos * scaleY;
+	} else {
+		this1[0] = scaleX;
+		this1[1] = 0;
+		this1[3] = 0;
+		this1[4] = scaleY;
+	}
+	this1[6] = xTranslate;
+	this1[7] = yTranslate;
+};
+lime_math_Matrix3.createGradientBox = function(this1,width,height,rotation,xTranslate,yTranslate) {
+	if(yTranslate == null) {
+		yTranslate = 0;
+	}
+	if(xTranslate == null) {
+		xTranslate = 0;
+	}
+	if(rotation == null) {
+		rotation = 0;
+	}
+	this1[0] = width / 1638.4;
+	this1[4] = height / 1638.4;
+	if(rotation != 0) {
+		var cos = Math.cos(rotation);
+		var sin = Math.sin(rotation);
+		this1[1] = sin * this1[4];
+		this1[3] = -sin * this1[0];
+		this1[0] *= cos;
+		this1[4] *= cos;
+	} else {
+		this1[1] = 0;
+		this1[3] = 0;
+	}
+	this1[6] = xTranslate + width / 2;
+	this1[7] = yTranslate + height / 2;
+};
+lime_math_Matrix3.equals = function(this1,matrix3) {
+	if(matrix3 != null && this1[6] == matrix3[6] && this1[7] == matrix3[7] && this1[0] == matrix3[0] && this1[1] == matrix3[1] && this1[3] == matrix3[3]) {
+		return this1[4] == matrix3[4];
+	} else {
+		return false;
+	}
+};
+lime_math_Matrix3.deltaTransformVector = function(this1,Vector2,result) {
+	if(result == null) {
+		result = new lime_math_Vector2();
+	}
+	result.x = Vector2.x * this1[0] + Vector2.y * this1[3];
+	result.y = Vector2.x * this1[1] + Vector2.y * this1[4];
+	return result;
+};
+lime_math_Matrix3.fromCairoMatrix3 = function(matrix) {
+	return lime_math_Matrix3._new(matrix.a,matrix.b,matrix.c,matrix.d,matrix.tx,matrix.ty);
+};
+lime_math_Matrix3.fromFloat32Array = function(array) {
+	if(array.length != 9) {
+		throw haxe_Exception.thrown("Expected array of length 9, got " + array.length);
+	}
+	return array;
+};
+lime_math_Matrix3.identity = function(this1) {
+	this1[0] = 1;
+	this1[1] = 0;
+	this1[3] = 0;
+	this1[4] = 1;
+	this1[6] = 0;
+	this1[7] = 0;
+};
+lime_math_Matrix3.invert = function(this1) {
+	var norm = this1[0] * this1[4] - this1[1] * this1[3];
+	if(norm == 0) {
+		this1[0] = this1[1] = this1[3] = this1[4] = 0;
+		this1[6] = -this1[6];
+		this1[7] = -this1[7];
+	} else {
+		norm = 1.0 / norm;
+		var a1 = this1[4] * norm;
+		this1[4] = this1[0] * norm;
+		this1[0] = a1;
+		this1[1] *= -norm;
+		this1[3] *= -norm;
+		var tx1 = -this1[0] * this1[6] - this1[3] * this1[7];
+		this1[7] = -this1[1] * this1[6] - this1[4] * this1[7];
+		this1[6] = tx1;
+	}
+	if(this1.length != 9) {
+		throw haxe_Exception.thrown("Expected array of length 9, got " + this1.length);
+	}
+	return this1;
+};
+lime_math_Matrix3.rotate = function(this1,theta) {
+	var cos = Math.cos(theta);
+	var sin = Math.sin(theta);
+	var a1 = this1[0] * cos - this1[1] * sin;
+	this1[1] = this1[0] * sin + this1[1] * cos;
+	this1[0] = a1;
+	var c1 = this1[3] * cos - this1[4] * sin;
+	this1[4] = this1[3] * sin + this1[4] * cos;
+	this1[3] = c1;
+	var tx1 = this1[6] * cos - this1[7] * sin;
+	this1[7] = this1[6] * sin + this1[7] * cos;
+	this1[6] = tx1;
+};
+lime_math_Matrix3.scale = function(this1,sx,sy) {
+	this1[0] *= sx;
+	this1[1] *= sy;
+	this1[3] *= sx;
+	this1[4] *= sy;
+	this1[6] *= sx;
+	this1[7] *= sy;
+};
+lime_math_Matrix3.setRotation = function(this1,theta,scale) {
+	if(scale == null) {
+		scale = 1;
+	}
+	this1[0] = Math.cos(theta) * scale;
+	this1[3] = Math.sin(theta) * scale;
+	this1[1] = -this1[3];
+	this1[4] = this1[0];
+};
+lime_math_Matrix3.setTo = function(this1,a,b,c,d,tx,ty) {
+	this1[0] = a;
+	this1[1] = b;
+	this1[3] = c;
+	this1[4] = d;
+	this1[6] = tx;
+	this1[7] = ty;
+};
+lime_math_Matrix3.toCairoMatrix3 = function(this1) {
+	return new lime_math_CairoMatrix3(this1[0],this1[1],this1[3],this1[4],this1[6],this1[7]);
+};
+lime_math_Matrix3.toString = function(this1) {
+	return "matrix(" + this1[0] + ", " + this1[1] + ", " + this1[3] + ", " + this1[4] + ", " + this1[6] + ", " + this1[7] + ")";
+};
+lime_math_Matrix3.transformRect = function(this1,rect,result) {
+	if(result == null) {
+		result = new lime_math_Rectangle();
+	}
+	var tx0 = this1[0] * rect.x + this1[3] * rect.y;
+	var tx1 = tx0;
+	var ty0 = this1[1] * rect.x + this1[4] * rect.y;
+	var ty1 = ty0;
+	var tx = this1[0] * (rect.x + rect.width) + this1[3] * rect.y;
+	var ty = this1[1] * (rect.x + rect.width) + this1[4] * rect.y;
+	if(tx < tx0) {
+		tx0 = tx;
+	}
+	if(ty < ty0) {
+		ty0 = ty;
+	}
+	if(tx > tx1) {
+		tx1 = tx;
+	}
+	if(ty > ty1) {
+		ty1 = ty;
+	}
+	tx = this1[0] * (rect.x + rect.width) + this1[3] * (rect.y + rect.height);
+	ty = this1[1] * (rect.x + rect.width) + this1[4] * (rect.y + rect.height);
+	if(tx < tx0) {
+		tx0 = tx;
+	}
+	if(ty < ty0) {
+		ty0 = ty;
+	}
+	if(tx > tx1) {
+		tx1 = tx;
+	}
+	if(ty > ty1) {
+		ty1 = ty;
+	}
+	tx = this1[0] * rect.x + this1[3] * (rect.y + rect.height);
+	ty = this1[1] * rect.x + this1[4] * (rect.y + rect.height);
+	if(tx < tx0) {
+		tx0 = tx;
+	}
+	if(ty < ty0) {
+		ty0 = ty;
+	}
+	if(tx > tx1) {
+		tx1 = tx;
+	}
+	if(ty > ty1) {
+		ty1 = ty;
+	}
+	result.setTo(tx0 + tx,ty0 + ty,tx1 - tx0,ty1 - ty0);
+	return result;
+};
+lime_math_Matrix3.transformVector = function(this1,pos,result) {
+	if(result == null) {
+		result = new lime_math_Vector2();
+	}
+	result.x = pos.x * this1[0] + pos.y * this1[3] + this1[6];
+	result.y = pos.x * this1[1] + pos.y * this1[4] + this1[7];
+	return result;
+};
+lime_math_Matrix3.translate = function(this1,dx,dy) {
+	this1[6] += dx;
+	this1[7] += dy;
+};
+lime_math_Matrix3.get_a = function(this1) {
+	return this1[0];
+};
+lime_math_Matrix3.set_a = function(this1,value) {
+	return this1[0] = value;
+};
+lime_math_Matrix3.get_b = function(this1) {
+	return this1[1];
+};
+lime_math_Matrix3.set_b = function(this1,value) {
+	return this1[1] = value;
+};
+lime_math_Matrix3.get_c = function(this1) {
+	return this1[3];
+};
+lime_math_Matrix3.set_c = function(this1,value) {
+	return this1[3] = value;
+};
+lime_math_Matrix3.get_d = function(this1) {
+	return this1[4];
+};
+lime_math_Matrix3.set_d = function(this1,value) {
+	return this1[4] = value;
+};
+lime_math_Matrix3.get_tx = function(this1) {
+	return this1[6];
+};
+lime_math_Matrix3.set_tx = function(this1,value) {
+	return this1[6] = value;
+};
+lime_math_Matrix3.get_ty = function(this1) {
+	return this1[7];
+};
+lime_math_Matrix3.set_ty = function(this1,value) {
+	return this1[7] = value;
+};
+lime_math_Matrix3.get = function(this1,index) {
+	return this1[index];
+};
+lime_math_Matrix3.set = function(this1,index,value) {
+	this1[index] = value;
+	return value;
+};
+var lime_math_CairoMatrix3 = function(a,b,c,d,tx,ty) {
 	if(ty == null) {
 		ty = 0;
 	}
@@ -18340,303 +19780,10 @@ var lime_math_Matrix3 = function(a,b,c,d,tx,ty) {
 	this.tx = tx;
 	this.ty = ty;
 };
-$hxClasses["lime.math.Matrix3"] = lime_math_Matrix3;
-lime_math_Matrix3.__name__ = "lime.math.Matrix3";
-lime_math_Matrix3.prototype = {
-	clone: function() {
-		return new lime_math_Matrix3(this.a,this.b,this.c,this.d,this.tx,this.ty);
-	}
-	,concat: function(m) {
-		var a1 = this.a * m.a + this.b * m.c;
-		this.b = this.a * m.b + this.b * m.d;
-		this.a = a1;
-		var c1 = this.c * m.a + this.d * m.c;
-		this.d = this.c * m.b + this.d * m.d;
-		this.c = c1;
-		var tx1 = this.tx * m.a + this.ty * m.c + m.tx;
-		this.ty = this.tx * m.b + this.ty * m.d + m.ty;
-		this.tx = tx1;
-	}
-	,copyColumnFrom: function(column,vector4) {
-		if(column > 2) {
-			throw haxe_Exception.thrown("Column " + column + " out of bounds (2)");
-		} else if(column == 0) {
-			this.a = vector4.x;
-			this.b = vector4.y;
-		} else if(column == 1) {
-			this.c = vector4.x;
-			this.d = vector4.y;
-		} else {
-			this.tx = vector4.x;
-			this.ty = vector4.y;
-		}
-	}
-	,copyColumnTo: function(column,vector4) {
-		if(column > 2) {
-			throw haxe_Exception.thrown("Column " + column + " out of bounds (2)");
-		} else if(column == 0) {
-			vector4.x = this.a;
-			vector4.y = this.b;
-			vector4.z = 0;
-		} else if(column == 1) {
-			vector4.x = this.c;
-			vector4.y = this.d;
-			vector4.z = 0;
-		} else {
-			vector4.x = this.tx;
-			vector4.y = this.ty;
-			vector4.z = 1;
-		}
-	}
-	,copyFrom: function(sourceMatrix3) {
-		this.a = sourceMatrix3.a;
-		this.b = sourceMatrix3.b;
-		this.c = sourceMatrix3.c;
-		this.d = sourceMatrix3.d;
-		this.tx = sourceMatrix3.tx;
-		this.ty = sourceMatrix3.ty;
-	}
-	,copyRowFrom: function(row,vector4) {
-		if(row > 2) {
-			throw haxe_Exception.thrown("Row " + row + " out of bounds (2)");
-		} else if(row == 0) {
-			this.a = vector4.x;
-			this.c = vector4.y;
-			this.tx = vector4.z;
-		} else if(row == 1) {
-			this.b = vector4.x;
-			this.d = vector4.y;
-			this.ty = vector4.z;
-		}
-	}
-	,copyRowTo: function(row,vector4) {
-		if(row > 2) {
-			throw haxe_Exception.thrown("Row " + row + " out of bounds (2)");
-		} else if(row == 0) {
-			vector4.x = this.a;
-			vector4.y = this.c;
-			vector4.z = this.tx;
-		} else if(row == 1) {
-			vector4.x = this.b;
-			vector4.y = this.d;
-			vector4.z = this.ty;
-		} else {
-			vector4.x = 0;
-			vector4.y = 0;
-			vector4.z = 1;
-		}
-	}
-	,createBox: function(scaleX,scaleY,rotation,tx,ty) {
-		if(ty == null) {
-			ty = 0;
-		}
-		if(tx == null) {
-			tx = 0;
-		}
-		if(rotation == null) {
-			rotation = 0;
-		}
-		if(rotation != 0) {
-			var cos = Math.cos(rotation);
-			var sin = Math.sin(rotation);
-			this.a = cos * scaleX;
-			this.b = sin * scaleY;
-			this.c = -sin * scaleX;
-			this.d = cos * scaleY;
-		} else {
-			this.a = scaleX;
-			this.b = 0;
-			this.c = 0;
-			this.d = scaleY;
-		}
-		this.tx = tx;
-		this.ty = ty;
-	}
-	,createGradientBox: function(width,height,rotation,tx,ty) {
-		if(ty == null) {
-			ty = 0;
-		}
-		if(tx == null) {
-			tx = 0;
-		}
-		if(rotation == null) {
-			rotation = 0;
-		}
-		this.a = width / 1638.4;
-		this.d = height / 1638.4;
-		if(rotation != 0) {
-			var cos = Math.cos(rotation);
-			var sin = Math.sin(rotation);
-			this.b = sin * this.d;
-			this.c = -sin * this.a;
-			this.a *= cos;
-			this.d *= cos;
-		} else {
-			this.b = 0;
-			this.c = 0;
-		}
-		this.tx = tx + width / 2;
-		this.ty = ty + height / 2;
-	}
-	,equals: function(matrix3) {
-		if(matrix3 != null && this.tx == matrix3.tx && this.ty == matrix3.ty && this.a == matrix3.a && this.b == matrix3.b && this.c == matrix3.c) {
-			return this.d == matrix3.d;
-		} else {
-			return false;
-		}
-	}
-	,deltaTransformVector: function(Vector2,result) {
-		if(result == null) {
-			result = new lime_math_Vector2();
-		}
-		result.x = Vector2.x * this.a + Vector2.y * this.c;
-		result.y = Vector2.x * this.b + Vector2.y * this.d;
-		return result;
-	}
-	,identity: function() {
-		this.a = 1;
-		this.b = 0;
-		this.c = 0;
-		this.d = 1;
-		this.tx = 0;
-		this.ty = 0;
-	}
-	,invert: function() {
-		var norm = this.a * this.d - this.b * this.c;
-		if(norm == 0) {
-			this.a = this.b = this.c = this.d = 0;
-			this.tx = -this.tx;
-			this.ty = -this.ty;
-		} else {
-			norm = 1.0 / norm;
-			var a1 = this.d * norm;
-			this.d = this.a * norm;
-			this.a = a1;
-			this.b *= -norm;
-			this.c *= -norm;
-			var tx1 = -this.a * this.tx - this.c * this.ty;
-			this.ty = -this.b * this.tx - this.d * this.ty;
-			this.tx = tx1;
-		}
-		return this;
-	}
-	,rotate: function(theta) {
-		var cos = Math.cos(theta);
-		var sin = Math.sin(theta);
-		var a1 = this.a * cos - this.b * sin;
-		this.b = this.a * sin + this.b * cos;
-		this.a = a1;
-		var c1 = this.c * cos - this.d * sin;
-		this.d = this.c * sin + this.d * cos;
-		this.c = c1;
-		var tx1 = this.tx * cos - this.ty * sin;
-		this.ty = this.tx * sin + this.ty * cos;
-		this.tx = tx1;
-	}
-	,scale: function(sx,sy) {
-		this.a *= sx;
-		this.b *= sy;
-		this.c *= sx;
-		this.d *= sy;
-		this.tx *= sx;
-		this.ty *= sy;
-	}
-	,setRotation: function(theta,scale) {
-		if(scale == null) {
-			scale = 1;
-		}
-		this.a = Math.cos(theta) * scale;
-		this.c = Math.sin(theta) * scale;
-		this.b = -this.c;
-		this.d = this.a;
-	}
-	,setTo: function(a,b,c,d,tx,ty) {
-		this.a = a;
-		this.b = b;
-		this.c = c;
-		this.d = d;
-		this.tx = tx;
-		this.ty = ty;
-	}
-	,to3DString: function(roundPixels) {
-		if(roundPixels == null) {
-			roundPixels = false;
-		}
-		if(roundPixels) {
-			return "matrix3d(" + this.a + ", " + this.b + ", " + "0, 0, " + this.c + ", " + this.d + ", " + "0, 0, 0, 0, 1, 0, " + (this.tx | 0) + ", " + (this.ty | 0) + ", 0, 1)";
-		} else {
-			return "matrix3d(" + this.a + ", " + this.b + ", " + "0, 0, " + this.c + ", " + this.d + ", " + "0, 0, 0, 0, 1, 0, " + this.tx + ", " + this.ty + ", 0, 1)";
-		}
-	}
-	,toString: function() {
-		return "matrix(" + this.a + ", " + this.b + ", " + this.c + ", " + this.d + ", " + this.tx + ", " + this.ty + ")";
-	}
-	,transformRect: function(rect,result) {
-		if(result == null) {
-			result = new lime_math_Rectangle();
-		}
-		var tx0 = this.a * rect.x + this.c * rect.y;
-		var tx1 = tx0;
-		var ty0 = this.b * rect.x + this.d * rect.y;
-		var ty1 = ty0;
-		var tx = this.a * (rect.x + rect.width) + this.c * rect.y;
-		var ty = this.b * (rect.x + rect.width) + this.d * rect.y;
-		if(tx < tx0) {
-			tx0 = tx;
-		}
-		if(ty < ty0) {
-			ty0 = ty;
-		}
-		if(tx > tx1) {
-			tx1 = tx;
-		}
-		if(ty > ty1) {
-			ty1 = ty;
-		}
-		tx = this.a * (rect.x + rect.width) + this.c * (rect.y + rect.height);
-		ty = this.b * (rect.x + rect.width) + this.d * (rect.y + rect.height);
-		if(tx < tx0) {
-			tx0 = tx;
-		}
-		if(ty < ty0) {
-			ty0 = ty;
-		}
-		if(tx > tx1) {
-			tx1 = tx;
-		}
-		if(ty > ty1) {
-			ty1 = ty;
-		}
-		tx = this.a * rect.x + this.c * (rect.y + rect.height);
-		ty = this.b * rect.x + this.d * (rect.y + rect.height);
-		if(tx < tx0) {
-			tx0 = tx;
-		}
-		if(ty < ty0) {
-			ty0 = ty;
-		}
-		if(tx > tx1) {
-			tx1 = tx;
-		}
-		if(ty > ty1) {
-			ty1 = ty;
-		}
-		result.setTo(tx0 + tx,ty0 + ty,tx1 - tx0,ty1 - ty0);
-		return result;
-	}
-	,transformVector: function(pos,result) {
-		if(result == null) {
-			result = new lime_math_Vector2();
-		}
-		result.x = pos.x * this.a + pos.y * this.c + this.tx;
-		result.y = pos.x * this.b + pos.y * this.d + this.ty;
-		return result;
-	}
-	,translate: function(dx,dy) {
-		this.tx += dx;
-		this.ty += dy;
-	}
-	,__class__: lime_math_Matrix3
+$hxClasses["lime.math.CairoMatrix3"] = lime_math_CairoMatrix3;
+lime_math_CairoMatrix3.__name__ = "lime.math.CairoMatrix3";
+lime_math_CairoMatrix3.prototype = {
+	__class__: lime_math_CairoMatrix3
 };
 var lime_math_Matrix4 = {};
 lime_math_Matrix4.__properties__ = {set_position:"set_position",get_position:"get_position",get_determinant:"get_determinant"};
@@ -18958,6 +20105,31 @@ lime_math_Matrix4.createOrtho = function(this1,left,right,bottom,top,zNear,zFar)
 	this1[14] = -(zNear + zFar) * sz;
 	this1[15] = 1;
 };
+lime_math_Matrix4.createPerspective = function(this1,fov,aspect,zNear,zFar) {
+	if(aspect > -0.0000001 && aspect < 0.0000001) {
+		throw haxe_Exception.thrown("Aspect ratio may not be 0");
+	}
+	var top = fov * zNear;
+	var bottom = -top;
+	var right = top * aspect;
+	var left = -right;
+	this1[0] = 2.0 * zNear / (right - left);
+	this1[1] = 0;
+	this1[2] = 0;
+	this1[3] = 0;
+	this1[4] = 0;
+	this1[5] = 2.0 * zNear / (top - bottom);
+	this1[6] = 0;
+	this1[7] = 0;
+	this1[8] = (right + left) / (right - left);
+	this1[9] = (top + bottom) / (top - bottom);
+	this1[10] = -(zFar + zNear) / (zFar - zNear);
+	this1[11] = -1.0;
+	this1[12] = 0;
+	this1[13] = 0;
+	this1[14] = -2 * zFar * zNear / (zFar - zNear);
+	this1[15] = 1;
+};
 lime_math_Matrix4.deltaTransformVector = function(this1,v,result) {
 	if(result == null) {
 		result = new lime_math_Vector4();
@@ -18972,7 +20144,7 @@ lime_math_Matrix4.deltaTransformVector = function(this1,v,result) {
 };
 lime_math_Matrix4.fromMatrix3 = function(matrix3) {
 	var mat = lime_math_Matrix4._new();
-	lime_math_Matrix4.create2D(mat,matrix3.a,matrix3.b,matrix3.c,matrix3.d,matrix3.tx,matrix3.ty);
+	lime_math_Matrix4.create2D(mat,matrix3[0],matrix3[1],matrix3[3],matrix3[4],matrix3[6],matrix3[7]);
 	return mat;
 };
 lime_math_Matrix4.identity = function(this1) {
@@ -20062,7 +21234,7 @@ lime_media_AudioBuffer.__getCodec = function(bytes) {
 		default:
 		}
 	}
-	lime_utils_Log.error("Unsupported sound format",{ fileName : "lime/media/AudioBuffer.hx", lineNumber : 362, className : "lime.media.AudioBuffer", methodName : "__getCodec"});
+	lime_utils_Log.error("Unsupported sound format",{ fileName : "lime/media/AudioBuffer.hx", lineNumber : 440, className : "lime.media.AudioBuffer", methodName : "__getCodec"});
 	return null;
 };
 lime_media_AudioBuffer.prototype = {
@@ -21634,6 +22806,9 @@ lime_system_CFFI.load = function(library,method,args,lazy) {
 	var result = null;
 	return result;
 };
+lime_system_CFFI.stringValue = function(value) {
+	return value;
+};
 lime_system_CFFI.__findNDLLFolder = function() {
 	return "";
 };
@@ -22038,59 +23213,595 @@ lime_system_System.get_userDirectory = function() {
 	}
 	return lime_system_System.__userDirectory;
 };
-var lime_system_ThreadPool = function(minThreads,maxThreads) {
+var lime_system_WorkOutput = function(mode) {
+	this.__activeJob = new lime_system_Tls();
+	this.__jobComplete = new lime_system_Tls();
+	var this1 = new haxe_ds_List();
+	this.__jobOutput = this1;
+	this.workIterations = new lime_system_Tls();
+	this.workIterations.value = 0;
+	this.__jobComplete.value = false;
+	this.__mode = mode != null && mode;
+};
+$hxClasses["lime.system.WorkOutput"] = lime_system_WorkOutput;
+lime_system_WorkOutput.__name__ = "lime.system.WorkOutput";
+lime_system_WorkOutput.prototype = {
+	sendComplete: function(message,transferList) {
+		if(!this.__jobComplete.value) {
+			this.__jobComplete.value = true;
+			if(this.__mode == true) {
+				lime__$internal_backend_html5_HTML5Thread.returnMessage({ event : "COMPLETE", message : message, jobID : this.__activeJob.value.id},transferList);
+			} else {
+				this.__jobOutput.add({ event : "COMPLETE", message : message, jobID : this.__activeJob.value.id});
+			}
+		}
+	}
+	,sendError: function(message,transferList) {
+		if(!this.__jobComplete.value) {
+			this.__jobComplete.value = true;
+			if(this.__mode == true) {
+				lime__$internal_backend_html5_HTML5Thread.returnMessage({ event : "ERROR", message : message, jobID : this.__activeJob.value.id},transferList);
+			} else {
+				this.__jobOutput.add({ event : "ERROR", message : message, jobID : this.__activeJob.value.id});
+			}
+		}
+	}
+	,sendProgress: function(message,transferList) {
+		if(!this.__jobComplete.value) {
+			if(this.__mode == true) {
+				lime__$internal_backend_html5_HTML5Thread.returnMessage({ event : "PROGRESS", message : message, jobID : this.__activeJob.value.id},transferList);
+			} else {
+				this.__jobOutput.add({ event : "PROGRESS", message : message, jobID : this.__activeJob.value.id});
+			}
+		}
+	}
+	,resetJobProgress: function() {
+		this.__jobComplete.value = false;
+		this.workIterations.value = 0;
+	}
+	,createThread: function(executeThread) {
+		var _gthis = this;
+		var thread = lime__$internal_backend_html5_HTML5Thread.create(executeThread);
+		thread.onMessage.add(function(event) {
+			_gthis.__jobOutput.add(event);
+		});
+		return thread;
+	}
+	,get_mode: function() {
+		return this.__mode;
+	}
+	,get_activeJob: function() {
+		return this.__activeJob.value;
+	}
+	,set_activeJob: function(value) {
+		return this.__activeJob.value = value;
+	}
+	,__class__: lime_system_WorkOutput
+	,__properties__: {set_activeJob:"set_activeJob",get_activeJob:"get_activeJob",get_mode:"get_mode"}
+};
+var lime_system_ThreadPool = function(minThreads,maxThreads,mode) {
 	if(maxThreads == null) {
 		maxThreads = 1;
 	}
 	if(minThreads == null) {
 		minThreads = 0;
 	}
-	this.onRun = new lime_app__$Event_$Dynamic_$Void();
+	this.__jobQueue = new lime_system_JobList();
+	this.workPriority = 1;
+	this.onRun = new lime_app__$Event_$lime_$system_$State_$Void();
 	this.onProgress = new lime_app__$Event_$Dynamic_$Void();
 	this.onError = new lime_app__$Event_$Dynamic_$Void();
 	this.onComplete = new lime_app__$Event_$Dynamic_$Void();
-	this.doWork = new lime_app__$Event_$Dynamic_$Void();
+	lime_system_WorkOutput.call(this,mode);
+	this.__activeJobs = new lime_system_JobList(this);
 	this.minThreads = minThreads;
 	this.maxThreads = maxThreads;
-	this.currentThreads = 0;
+	if(this.__mode == true) {
+		this.__activeThreads = new haxe_ds_IntMap();
+		this.__idleThreads = [];
+	}
 };
 $hxClasses["lime.system.ThreadPool"] = lime_system_ThreadPool;
 lime_system_ThreadPool.__name__ = "lime.system.ThreadPool";
-lime_system_ThreadPool.prototype = {
-	queue: function(state) {
-		this.runWork(state);
+lime_system_ThreadPool.isMainThread = function() {
+	return lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread;
+};
+lime_system_ThreadPool.__executeThread = function() {
+	(async function() {
+		var output = new lime_system_WorkOutput(true);
+		var event = null;
+		while(true) {
+			if(event == null) {
+				while(true) {
+					event = lime__$internal_backend_html5_HTML5Thread.__messages.isEmpty() ? await new Promise(function(resolve,_) {
+						lime__$internal_backend_html5_HTML5Thread.__resolveMethods.add(resolve);
+					}) : await new Promise(function(resolve,_) {
+						$global.setTimeout(resolve);
+					}).then(function(_) {
+						return lime__$internal_backend_html5_HTML5Thread.__messages.pop();
+					});
+					if(!(event == null || !Object.prototype.hasOwnProperty.call(event,"event"))) {
+						break;
+					}
+				}
+				output.__jobComplete.value = false;
+				output.workIterations.value = 0;
+			}
+			if(event.event == "EXIT") {
+				lime__$internal_backend_html5_HTML5Thread.__current.destroy();
+				return;
+			}
+			if(event.event != "WORK" || event.job == null) {
+				event = null;
+				continue;
+			}
+			output.__activeJob.value = event.job;
+			var interruption = null;
+			try {
+				while(true) {
+					var tmp;
+					if(!output.__jobComplete.value) {
+						interruption = await new Promise(function(resolve,_) {
+							$global.setTimeout(resolve);
+						}).then(function(_) {
+							return lime__$internal_backend_html5_HTML5Thread.__messages.pop();
+						});
+						tmp = interruption == null;
+					} else {
+						tmp = false;
+					}
+					if(!tmp) {
+						break;
+					}
+					output.workIterations.value += 1;
+					(lime__$internal_backend_html5_WorkFunction.toFunction(event.job.doWork))(event.job.state,output);
+				}
+			} catch( _g ) {
+				var e = haxe_Exception.caught(_g);
+				output.sendError(e);
+			}
+			output.__activeJob.value = null;
+			if(interruption == null || output.__jobComplete.value) {
+				event = interruption;
+			} else if(Object.prototype.hasOwnProperty.call(interruption,"event")) {
+				event = interruption;
+				output.__jobComplete.value = false;
+				output.workIterations.value = 0;
+			}
+		}
+	})();
+};
+lime_system_ThreadPool.timestamp = function() {
+	return new Date().getTime() / 1000;
+};
+lime_system_ThreadPool.__super__ = lime_system_WorkOutput;
+lime_system_ThreadPool.prototype = $extend(lime_system_WorkOutput.prototype,{
+	cancel: function(error) {
+		if(lime__$internal_backend_html5_HTML5Thread.__current != lime_system_ThreadPool.__mainThread) {
+			throw haxe_Exception.thrown("Call cancel() only from the main thread.");
+		}
+		lime_app_Application.current.onUpdate.remove($bind(this,this.__update));
+		var _g = this.__activeJobs;
+		while(_g.__jobs.length > 0) {
+			_g.__index++;
+			if(_g.__index >= _g.__jobs.length) {
+				_g.__index = 0;
+			}
+			var job = _g.__jobs[_g.__index];
+			if(this.__mode == true) {
+				var thread = this.__activeThreads.h[job.id];
+				if(this.__idleThreads.length < this.minThreads) {
+					thread.sendMessage({ event : "CANCEL"});
+					this.__idleThreads.push(thread);
+				} else {
+					thread.sendMessage({ event : "EXIT"});
+				}
+			}
+			if(error != null) {
+				if(job.duration == 0) {
+					job.duration = new Date().getTime() / 1000 - job.startTime;
+				}
+				this.__activeJob.value = job;
+				this.onError.dispatch(error);
+				this.__activeJob.value = null;
+			}
+		}
+		var _this = this.__activeJobs;
+		_this.__jobs.length = 0;
+		if(_this.pool != null && _this.__addingWorkPriority != false && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+			lime_system_ThreadPool.__totalWorkPriority -= _this.pool.workPriority;
+			_this.__addingWorkPriority = false;
+		}
+		while(this.__idleThreads.length > this.minThreads) this.__idleThreads.pop().sendMessage({ event : "EXIT"});
+		if(error != null) {
+			var _g = this.__jobQueue;
+			while(_g.__jobs.length > 0) {
+				_g.__index++;
+				if(_g.__index >= _g.__jobs.length) {
+					_g.__index = 0;
+				}
+				var job = _g.__jobs[_g.__index];
+				this.__activeJob.value = job;
+				this.onError.dispatch(error);
+			}
+		}
+		var _this = this.__jobQueue;
+		_this.__jobs.length = 0;
+		if(_this.pool != null && _this.__addingWorkPriority != false && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+			lime_system_ThreadPool.__totalWorkPriority -= _this.pool.workPriority;
+			_this.__addingWorkPriority = false;
+		}
+		this.__jobComplete.value = false;
+		this.__activeJob.value = null;
 	}
-	,sendComplete: function(state) {
-		this.onComplete.dispatch(state);
+	,cancelJob: function(jobID) {
+		var thread = this.__activeThreads.h[jobID];
+		if(thread != null) {
+			thread.sendMessage({ event : "CANCEL"});
+			this.__activeThreads.remove(jobID);
+			this.__idleThreads.push(thread);
+		}
+		if(!this.__activeJobs.remove(this.__activeJobs.get(jobID))) {
+			return this.__jobQueue.remove(this.__jobQueue.get(jobID));
+		} else {
+			return true;
+		}
 	}
-	,sendError: function(state) {
-		this.onError.dispatch(state);
+	,queue: function(doWork,state) {
+		return this.run(doWork,state);
 	}
-	,sendProgress: function(state) {
-		this.onProgress.dispatch(state);
+	,run: function(doWork,state) {
+		if(lime__$internal_backend_html5_HTML5Thread.__current != lime_system_ThreadPool.__mainThread) {
+			throw haxe_Exception.thrown("Call run() only from the main thread.");
+		}
+		if(doWork == null) {
+			if(this.__doWork == null) {
+				throw haxe_Exception.thrown("run() requires doWork argument.");
+			} else {
+				doWork = this.__doWork;
+			}
+		}
+		if(state == null) {
+			state = { };
+		}
+		var job = new lime_system_JobData(doWork,state);
+		var _this = this.__jobQueue;
+		_this.__jobs.push(job);
+		if(_this.pool != null && _this.__addingWorkPriority != true && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+			lime_system_ThreadPool.__totalWorkPriority += _this.pool.workPriority;
+			_this.__addingWorkPriority = true;
+		}
+		if(!lime_app_Application.current.onUpdate.has($bind(this,this.__update))) {
+			lime_app_Application.current.onUpdate.add($bind(this,this.__update));
+		}
+		return job.id;
 	}
-	,runWork: function(state) {
-		this.onRun.dispatch(state);
-		this.doWork.dispatch(state);
+	,__update: function(deltaTime) {
+		if(lime__$internal_backend_html5_HTML5Thread.__current != lime_system_ThreadPool.__mainThread) {
+			return;
+		}
+		while(this.__jobQueue.__jobs.length > 0 && this.__activeJobs.__jobs.length < this.maxThreads) {
+			var _this = this.__jobQueue;
+			var job = _this.__jobs.pop();
+			var value = _this.__jobs.length > 0;
+			if(_this.pool != null && _this.__addingWorkPriority != value && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+				if(value) {
+					lime_system_ThreadPool.__totalWorkPriority += _this.pool.workPriority;
+				} else {
+					lime_system_ThreadPool.__totalWorkPriority -= _this.pool.workPriority;
+				}
+				_this.__addingWorkPriority = value;
+			}
+			var job1 = job;
+			job1.startTime = new Date().getTime() / 1000;
+			var _this1 = this.__activeJobs;
+			_this1.__jobs.push(job1);
+			if(_this1.pool != null && _this1.__addingWorkPriority != true && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+				lime_system_ThreadPool.__totalWorkPriority += _this1.pool.workPriority;
+				_this1.__addingWorkPriority = true;
+			}
+			if(this.__mode == true) {
+				lime__$internal_backend_html5_WorkFunction.makePortable(job1.doWork);
+				var thread = this.__idleThreads.length == 0 ? this.createThread({ func : lime_system_ThreadPool.__executeThread, classPath : "lime.system.ThreadPool", functionName : "__executeThread"}) : this.__idleThreads.pop();
+				this.__activeThreads.h[job1.id] = thread;
+				thread.sendMessage({ event : "WORK", job : job1});
+			}
+		}
+		if(this.__mode == false && this.__activeJobs.__jobs.length > 0) {
+			var _this = this.__activeJobs;
+			_this.__index++;
+			if(_this.__index >= _this.__jobs.length) {
+				_this.__index = 0;
+			}
+			this.__activeJob.value = _this.__jobs[_this.__index];
+			var state = this.__activeJob.value.state;
+			this.__jobComplete.value = false;
+			this.workIterations.value = 0;
+			var maxTimeElapsed = this.workPriority * lime_system_ThreadPool.workLoad / (lime_system_ThreadPool.__totalWorkPriority * lime_app_Application.current.__window.__backend.getFrameRate());
+			var startTime = new Date().getTime() / 1000;
+			var timeElapsed = 0;
+			try {
+				while(true) {
+					this.workIterations.value += 1;
+					(lime__$internal_backend_html5_WorkFunction.toFunction(this.__activeJob.value.doWork))(state,this);
+					timeElapsed = new Date().getTime() / 1000 - startTime;
+					if(!(!this.__jobComplete.value && timeElapsed < maxTimeElapsed)) {
+						break;
+					}
+				}
+			} catch( _g ) {
+				var e = haxe_Exception.caught(_g);
+				this.sendError(e);
+			}
+			this.__activeJob.value.duration += timeElapsed;
+			this.__activeJob.value = null;
+		}
+		var threadEvent;
+		while(true) {
+			threadEvent = this.__jobOutput.pop();
+			if(!(threadEvent != null)) {
+				break;
+			}
+			if(threadEvent.jobID != null) {
+				var value = this.__activeJobs.get(threadEvent.jobID);
+				this.__activeJob.value = value;
+			} else {
+				this.__activeJob.value = threadEvent.job;
+			}
+			if(this.__activeJob.value == null || this.__activeJobs.get(this.__activeJob.value.id) == null) {
+				continue;
+			}
+			if(this.__mode == true) {
+				var tmp = new Date().getTime() / 1000;
+				this.__activeJob.value.duration = tmp - this.__activeJob.value.startTime;
+			}
+			switch(threadEvent.event) {
+			case "COMPLETE":case "ERROR":
+				if(threadEvent.event == "COMPLETE") {
+					this.onComplete.dispatch(threadEvent.message);
+				} else {
+					this.onError.dispatch(threadEvent.message);
+				}
+				this.__activeJobs.remove(this.__activeJob.value);
+				if(this.__mode == true) {
+					var thread = this.__activeThreads.h[this.__activeJob.value.id];
+					this.__activeThreads.remove(this.__activeJob.value.id);
+					if(this.__activeJobs.__jobs.length + this.__idleThreads.length > this.maxThreads || this.__jobQueue.__jobs.length == 0 && this.__activeJobs.__jobs.length + this.__idleThreads.length > this.minThreads) {
+						thread.sendMessage({ event : "EXIT"});
+					} else {
+						this.__idleThreads.push(thread);
+					}
+				}
+				break;
+			case "PROGRESS":
+				this.onProgress.dispatch(threadEvent.message);
+				break;
+			case "WORK":
+				this.onRun.dispatch(threadEvent.message);
+				break;
+			default:
+			}
+			this.__activeJob.value = null;
+		}
+		if(this.__activeJobs.__jobs.length == 0 && this.__jobQueue.__jobs.length == 0) {
+			lime_app_Application.current.onUpdate.remove($bind(this,this.__update));
+		}
+	}
+	,createThread: function(executeThread) {
+		var thread = lime_system_WorkOutput.prototype.createThread.call(this,executeThread);
+		return thread;
+	}
+	,get_activeJobs: function() {
+		return this.__activeJobs.__jobs.length;
+	}
+	,get_idleThreads: function() {
+		return this.__idleThreads.length;
+	}
+	,get_currentThreads: function() {
+		return this.__activeJobs.__jobs.length + this.__idleThreads.length;
+	}
+	,get_doWork: function() {
+		return this;
+	}
+	,set_workPriority: function(value) {
+		if(this.__mode == false && this.__activeJobs.__jobs.length > 0) {
+			lime_system_ThreadPool.__totalWorkPriority += value - this.workPriority;
+		}
+		return this.workPriority = value;
 	}
 	,__class__: lime_system_ThreadPool
+	,__properties__: $extend(lime_system_WorkOutput.prototype.__properties__,{get_doWork:"get_doWork",set_workPriority:"set_workPriority",get_idleThreads:"get_idleThreads",get_activeJobs:"get_activeJobs",get_currentThreads:"get_currentThreads"})
+});
+var lime_system__$ThreadPool_PseudoEvent = {};
+lime_system__$ThreadPool_PseudoEvent.__properties__ = {get___repeat:"get___repeat",get___listeners:"get___listeners"};
+lime_system__$ThreadPool_PseudoEvent.get___listeners = function(this1) {
+	return [];
 };
-var lime_system__$ThreadPool_ThreadPoolMessageType = $hxEnums["lime.system._ThreadPool.ThreadPoolMessageType"] = { __ename__:"lime.system._ThreadPool.ThreadPoolMessageType",__constructs__:null
-	,COMPLETE: {_hx_name:"COMPLETE",_hx_index:0,__enum__:"lime.system._ThreadPool.ThreadPoolMessageType",toString:$estr}
-	,ERROR: {_hx_name:"ERROR",_hx_index:1,__enum__:"lime.system._ThreadPool.ThreadPoolMessageType",toString:$estr}
-	,EXIT: {_hx_name:"EXIT",_hx_index:2,__enum__:"lime.system._ThreadPool.ThreadPoolMessageType",toString:$estr}
-	,PROGRESS: {_hx_name:"PROGRESS",_hx_index:3,__enum__:"lime.system._ThreadPool.ThreadPoolMessageType",toString:$estr}
-	,WORK: {_hx_name:"WORK",_hx_index:4,__enum__:"lime.system._ThreadPool.ThreadPoolMessageType",toString:$estr}
+lime_system__$ThreadPool_PseudoEvent.get___repeat = function(this1) {
+	return [];
 };
-lime_system__$ThreadPool_ThreadPoolMessageType.__constructs__ = [lime_system__$ThreadPool_ThreadPoolMessageType.COMPLETE,lime_system__$ThreadPool_ThreadPoolMessageType.ERROR,lime_system__$ThreadPool_ThreadPoolMessageType.EXIT,lime_system__$ThreadPool_ThreadPoolMessageType.PROGRESS,lime_system__$ThreadPool_ThreadPoolMessageType.WORK];
-var lime_system__$ThreadPool_ThreadPoolMessage = function(type,state) {
-	this.type = type;
+lime_system__$ThreadPool_PseudoEvent.add = function(this1,callback) {
+	var callCallback = function(state,output) {
+		callback(state);
+	};
+	if(this1.__mode == true) {
+		throw haxe_Exception.thrown("Unsupported operation; instead pass the callback to ThreadPool's constructor.");
+	} else {
+		this1.__doWork = { func : callCallback};
+	}
+};
+lime_system__$ThreadPool_PseudoEvent.cancel = function(this1) {
+};
+lime_system__$ThreadPool_PseudoEvent.dispatch = function(this1) {
+};
+lime_system__$ThreadPool_PseudoEvent.has = function(this1,callback) {
+	return this1.__doWork != null;
+};
+lime_system__$ThreadPool_PseudoEvent.remove = function(this1,callback) {
+	this1.__doWork = null;
+};
+lime_system__$ThreadPool_PseudoEvent.removeAll = function(this1) {
+	this1.__doWork = null;
+};
+var lime_system_JobList = function(pool) {
+	this.__jobs = [];
+	this.__index = 0;
+	this.pool = pool;
+	this.__addingWorkPriority = false;
+};
+$hxClasses["lime.system.JobList"] = lime_system_JobList;
+lime_system_JobList.__name__ = "lime.system.JobList";
+lime_system_JobList.prototype = {
+	clear: function() {
+		this.__jobs.length = 0;
+		if(this.pool != null && this.__addingWorkPriority != false && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+			lime_system_ThreadPool.__totalWorkPriority -= this.pool.workPriority;
+			this.__addingWorkPriority = false;
+		}
+	}
+	,exists: function(job) {
+		return this.get(job.id) != null;
+	}
+	,hasNext: function() {
+		return this.__jobs.length > 0;
+	}
+	,next: function() {
+		this.__index++;
+		if(this.__index >= this.__jobs.length) {
+			this.__index = 0;
+		}
+		return this.__jobs[this.__index];
+	}
+	,pop: function() {
+		var job = this.__jobs.pop();
+		var value = this.__jobs.length > 0;
+		if(this.pool != null && this.__addingWorkPriority != value && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+			if(value) {
+				lime_system_ThreadPool.__totalWorkPriority += this.pool.workPriority;
+			} else {
+				lime_system_ThreadPool.__totalWorkPriority -= this.pool.workPriority;
+			}
+			this.__addingWorkPriority = value;
+		}
+		return job;
+	}
+	,remove: function(job) {
+		if(HxOverrides.remove(this.__jobs,job)) {
+			var value = this.__jobs.length > 0;
+			if(this.pool != null && this.__addingWorkPriority != value && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+				if(value) {
+					lime_system_ThreadPool.__totalWorkPriority += this.pool.workPriority;
+				} else {
+					lime_system_ThreadPool.__totalWorkPriority -= this.pool.workPriority;
+				}
+				this.__addingWorkPriority = value;
+			}
+			return true;
+		} else {
+			var tmp;
+			if(HxOverrides.remove(this.__jobs,this.get(job.id))) {
+				var value = this.__jobs.length > 0;
+				if(this.pool != null && this.__addingWorkPriority != value && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+					if(value) {
+						lime_system_ThreadPool.__totalWorkPriority += this.pool.workPriority;
+					} else {
+						lime_system_ThreadPool.__totalWorkPriority -= this.pool.workPriority;
+					}
+					this.__addingWorkPriority = value;
+				}
+				tmp = true;
+			} else {
+				tmp = false;
+			}
+			if(tmp) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+	,removeByID: function(id) {
+		if(HxOverrides.remove(this.__jobs,this.get(id))) {
+			var value = this.__jobs.length > 0;
+			if(this.pool != null && this.__addingWorkPriority != value && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+				if(value) {
+					lime_system_ThreadPool.__totalWorkPriority += this.pool.workPriority;
+				} else {
+					lime_system_ThreadPool.__totalWorkPriority -= this.pool.workPriority;
+				}
+				this.__addingWorkPriority = value;
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	,get: function(id) {
+		var _g = 0;
+		var _g1 = this.__jobs;
+		while(_g < _g1.length) {
+			var job = _g1[_g];
+			++_g;
+			if(job.id == id) {
+				return job;
+			}
+		}
+		return null;
+	}
+	,push: function(job) {
+		this.__jobs.push(job);
+		if(this.pool != null && this.__addingWorkPriority != true && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+			lime_system_ThreadPool.__totalWorkPriority += this.pool.workPriority;
+			this.__addingWorkPriority = true;
+		}
+	}
+	,set___addingWorkPriority: function(value) {
+		if(this.pool != null && this.__addingWorkPriority != value && lime__$internal_backend_html5_HTML5Thread.__current == lime_system_ThreadPool.__mainThread) {
+			if(value) {
+				lime_system_ThreadPool.__totalWorkPriority += this.pool.workPriority;
+			} else {
+				lime_system_ThreadPool.__totalWorkPriority -= this.pool.workPriority;
+			}
+			return this.__addingWorkPriority = value;
+		} else {
+			return this.__addingWorkPriority;
+		}
+	}
+	,get_length: function() {
+		return this.__jobs.length;
+	}
+	,__class__: lime_system_JobList
+	,__properties__: {get_length:"get_length",set___addingWorkPriority:"set___addingWorkPriority"}
+};
+var lime_system_JobData = function(doWork,state) {
+	this.startTime = 0;
+	this.duration = 0;
+	this.id = lime_system_JobData.nextID++;
+	this.doWork = doWork;
 	this.state = state;
 };
-$hxClasses["lime.system._ThreadPool.ThreadPoolMessage"] = lime_system__$ThreadPool_ThreadPoolMessage;
-lime_system__$ThreadPool_ThreadPoolMessage.__name__ = "lime.system._ThreadPool.ThreadPoolMessage";
-lime_system__$ThreadPool_ThreadPoolMessage.prototype = {
-	__class__: lime_system__$ThreadPool_ThreadPoolMessage
+$hxClasses["lime.system.JobData"] = lime_system_JobData;
+lime_system_JobData.__name__ = "lime.system.JobData";
+lime_system_JobData.prototype = {
+	__class__: lime_system_JobData
+};
+var lime_system_JSAsync = function() { };
+$hxClasses["lime.system.JSAsync"] = lime_system_JSAsync;
+lime_system_JSAsync.__name__ = "lime.system.JSAsync";
+var lime_system_Deque = {};
+lime_system_Deque._new = function() {
+	var this1 = new haxe_ds_List();
+	return this1;
+};
+lime_system_Deque.pop = function(this1,block) {
+	return this1.pop();
+};
+var lime_system_Tls = function() {
+};
+$hxClasses["lime.system.Tls"] = lime_system_Tls;
+lime_system_Tls.__name__ = "lime.system.Tls";
+lime_system_Tls.prototype = {
+	__class__: lime_system_Tls
 };
 var lime_text_Font = function(name) {
 	if(name != null) {
@@ -22242,7 +23953,7 @@ lime_text_Font.prototype = {
 			window.document.fonts.load("1em '" + name + "'").then(function(_) {
 				promise.complete(_gthis);
 			},function(_) {
-				lime_utils_Log.warn("Could not load web font \"" + name + "\"",{ fileName : "lime/text/Font.hx", lineNumber : 516, className : "lime.text.Font", methodName : "__loadFromName"});
+				lime_utils_Log.warn("Could not load web font \"" + name + "\"",{ fileName : "lime/text/Font.hx", lineNumber : 640, className : "lime.text.Font", methodName : "__loadFromName"});
 				promise.complete(_gthis);
 			});
 		} else {
@@ -22267,7 +23978,7 @@ lime_text_Font.prototype = {
 					node1 = null;
 					node2 = null;
 					if(timeExpired) {
-						lime_utils_Log.warn("Could not load web font \"" + name + "\"",{ fileName : "lime/text/Font.hx", lineNumber : 551, className : "lime.text.Font", methodName : "__loadFromName"});
+						lime_utils_Log.warn("Could not load web font \"" + name + "\"",{ fileName : "lime/text/Font.hx", lineNumber : 675, className : "lime.text.Font", methodName : "__loadFromName"});
 					}
 					promise.complete(_gthis);
 				}
@@ -22276,7 +23987,10 @@ lime_text_Font.prototype = {
 		}
 		return promise.future;
 	}
-	,__setSize: function(size) {
+	,__setSize: function(size,dpi) {
+		if(dpi == null) {
+			dpi = 72;
+		}
 	}
 	,__class__: lime_text_Font
 };
@@ -22658,7 +24372,6 @@ lime_ui_GamepadButton.toString = function(this1) {
 	}
 };
 var lime_ui_Joystick = function(id) {
-	this.onTrackballMove = new lime_app__$Event_$Int_$Float_$Float_$Void();
 	this.onHatMove = new lime_app__$Event_$Int_$lime_$ui_$JoystickHatPosition_$Void();
 	this.onDisconnect = new lime_app__$Event_$Void_$Void();
 	this.onButtonUp = new lime_app__$Event_$Int_$Void();
@@ -22715,11 +24428,8 @@ lime_ui_Joystick.prototype = {
 	,get_numHats: function() {
 		return 0;
 	}
-	,get_numTrackballs: function() {
-		return 0;
-	}
 	,__class__: lime_ui_Joystick
-	,__properties__: {get_numTrackballs:"get_numTrackballs",get_numHats:"get_numHats",get_numButtons:"get_numButtons",get_numAxes:"get_numAxes",get_name:"get_name",get_guid:"get_guid"}
+	,__properties__: {get_numHats:"get_numHats",get_numButtons:"get_numButtons",get_numAxes:"get_numAxes",get_name:"get_name",get_guid:"get_guid"}
 };
 var lime_ui_JoystickHatPosition = {};
 lime_ui_JoystickHatPosition.__properties__ = {set_up:"set_up",get_up:"get_up",set_right:"set_right",get_right:"get_right",set_left:"set_left",get_left:"get_left",set_down:"set_down",get_down:"get_down",set_center:"set_center",get_center:"get_center"};
@@ -23273,7 +24983,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 561265;
+	this.version = 945977;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -24502,6 +26212,12 @@ lime_utils_Assets.registerLibrary = function(name,library) {
 	lime_utils_Assets.libraries.h[name] = library;
 };
 lime_utils_Assets.unloadLibrary = function(name) {
+	lime_utils_Assets.removeLibrary(name,true);
+};
+lime_utils_Assets.removeLibrary = function(name,unload) {
+	if(unload == null) {
+		unload = true;
+	}
 	if(name == null || name == "") {
 		name = "default";
 	}
@@ -24509,7 +26225,9 @@ lime_utils_Assets.unloadLibrary = function(name) {
 	if(library != null) {
 		lime_utils_Assets.cache.clear(name + ":");
 		library.onChange.remove(lime_utils_Assets.library_onChange);
-		library.unload();
+		if(unload) {
+			library.unload();
+		}
 	}
 	var _this = lime_utils_Assets.libraries;
 	if(Object.prototype.hasOwnProperty.call(_this.h,name)) {
@@ -25533,6 +27251,68 @@ lime_utils_UInt8ClampedArray._clamp = function(_in) {
 		return _out;
 	}
 };
+var openfl_utils_Dictionary = {};
+openfl_utils_Dictionary.exists = function(this1,key) {
+	return this1.exists(key);
+};
+openfl_utils_Dictionary.get = function(this1,key) {
+	return this1.get(key);
+};
+openfl_utils_Dictionary.keyValueIterator = function(this1) {
+	return this1.keyValueIterator();
+};
+openfl_utils_Dictionary.remove = function(this1,key) {
+	return this1.remove(key);
+};
+openfl_utils_Dictionary.set = function(this1,key,value) {
+	this1.set(key,value);
+	return value;
+};
+openfl_utils_Dictionary.iterator = function(this1) {
+	return this1.keys();
+};
+openfl_utils_Dictionary.each = function(this1) {
+	return this1.iterator();
+};
+openfl_utils_Dictionary.toStringMap = function(t,weakKeys) {
+	return new haxe_ds_StringMap();
+};
+openfl_utils_Dictionary.toIntMap = function(t,weakKeys) {
+	return new haxe_ds_IntMap();
+};
+openfl_utils_Dictionary.toFloatMap = function(t,weakKeys) {
+	return new openfl_utils__$Dictionary_FloatMap();
+};
+openfl_utils_Dictionary.toEnumValueMapMap = function(t,weakKeys) {
+	return new haxe_ds_EnumValueMap();
+};
+openfl_utils_Dictionary.toObjectMap = function(t,weakKeys) {
+	return new haxe_ds_ObjectMap();
+};
+openfl_utils_Dictionary.toUtilsObjectMap = function(t,weakKeys) {
+	return new openfl_utils__$Dictionary_UtilsObjectMap();
+};
+openfl_utils_Dictionary.toClassMap = function(t,weakKeys) {
+	return new openfl_utils__$Dictionary_ClassMap();
+};
+openfl_utils_Dictionary.fromStringMap = function(map) {
+	return map;
+};
+openfl_utils_Dictionary.fromIntMap = function(map) {
+	return map;
+};
+openfl_utils_Dictionary.fromFloatMap = function(map) {
+	return map;
+};
+openfl_utils_Dictionary.fromObjectMap = function(map) {
+	return map;
+};
+openfl_utils_Dictionary.fromUtilsObjectMap = function(map) {
+	return map;
+};
+openfl_utils_Dictionary.fromClassMap = function(map) {
+	return map;
+};
 var openfl_Lib = function() { };
 $hxClasses["openfl.Lib"] = openfl_Lib;
 openfl_Lib.__name__ = "openfl.Lib";
@@ -25565,6 +27345,7 @@ openfl_Lib.getDefinitionByName = function(name) {
 	if(name == null) {
 		return null;
 	}
+	name = StringTools.replace(name,"::",".");
 	return $hxClasses[name];
 };
 openfl_Lib.getQualifiedClassName = function(value) {
@@ -25602,6 +27383,10 @@ openfl_Lib.getQualifiedSuperclassName = function(value) {
 openfl_Lib.getTimer = function() {
 	return lime_system_System.getTimer();
 };
+openfl_Lib.describeType = function(value) {
+	openfl_Lib.notImplemented({ fileName : "openfl/Lib.hx", lineNumber : 272, className : "openfl.Lib", methodName : "describeType"});
+	return null;
+};
 openfl_Lib.getURL = function(request,target) {
 	openfl_Lib.navigateToURL(request,target);
 };
@@ -25632,6 +27417,12 @@ openfl_Lib.navigateToURL = function(request,$window) {
 	}
 	lime_system_System.openURL(uri,$window);
 };
+openfl_Lib.encodeURIComponent = function(value) {
+	return encodeURIComponent(value);
+};
+openfl_Lib.decodeURIComponent = function(value) {
+	return decodeURIComponent(value.split("+").join(" "));
+};
 openfl_Lib.notImplemented = function(posInfo) {
 	var api = posInfo.className + "." + posInfo.methodName;
 	if(!Object.prototype.hasOwnProperty.call(openfl_Lib.__sentWarnings.h,api)) {
@@ -25653,7 +27444,17 @@ openfl_Lib.setInterval = function(closure,delay,args) {
 	var timer = new haxe_Timer(delay);
 	openfl_Lib.__timers.h[id] = timer;
 	timer.run = function() {
-		closure.apply(closure,args == null ? [] : args);
+		if(openfl_Lib.get_current() != null && openfl_Lib.get_current().stage != null && openfl_Lib.get_current().stage.__uncaughtErrorEvents.__enabled) {
+			try {
+				closure.apply(closure,args == null ? [] : args);
+			} catch( _g ) {
+				haxe_NativeStackTrace.lastError = _g;
+				var e = haxe_Exception.caught(_g).unwrap();
+				openfl_Lib.get_current().stage.__handleError(e);
+			}
+		} else {
+			closure.apply(closure,args == null ? [] : args);
+		}
 	};
 	return id;
 };
@@ -25662,13 +27463,23 @@ openfl_Lib.setTimeout = function(closure,delay,args) {
 	var this1 = openfl_Lib.__timers;
 	var v = haxe_Timer.delay(function() {
 		openfl_Lib.__timers.remove(id);
-		closure.apply(closure,args == null ? [] : args);
+		if(openfl_Lib.get_current() != null && openfl_Lib.get_current().stage != null && openfl_Lib.get_current().stage.__uncaughtErrorEvents.__enabled) {
+			try {
+				closure.apply(closure,args == null ? [] : args);
+			} catch( _g ) {
+				haxe_NativeStackTrace.lastError = _g;
+				var e = haxe_Exception.caught(_g).unwrap();
+				openfl_Lib.get_current().stage.__handleError(e);
+			}
+		} else {
+			closure.apply(closure,args == null ? [] : args);
+		}
 	},delay);
 	this1.h[id] = v;
 	return id;
 };
 openfl_Lib.trace = function(arg) {
-	haxe_Log.trace(arg,{ fileName : "openfl/Lib.hx", lineNumber : 569, className : "openfl.Lib", methodName : "trace"});
+	haxe_Log.trace(arg,{ fileName : "openfl/Lib.hx", lineNumber : 672, className : "openfl.Lib", methodName : "trace"});
 };
 openfl_Lib.isXMLName = function(name) {
 	if(name == null) {
@@ -25699,6 +27510,7 @@ openfl_Lib.registerClassAlias = function(aliasName,classObject) {
 		throw new openfl_errors_TypeError("Parameter aliasName must be non-null");
 	}
 	openfl_Lib.__registeredClassAliases.h[aliasName] = classObject;
+	openfl_Lib.__registeredClasses.set(classObject,aliasName);
 };
 openfl_Lib.get_application = function() {
 	return openfl_utils__$internal_Lib.application;
@@ -27063,14 +28875,10 @@ openfl_display_BitmapData.prototype = {
 			}
 		}
 		var bitmapData = null;
-		var foundDifference;
+		var foundDifference = false;
 		var pixel;
 		var otherPixel;
 		var comparePixel;
-		var r;
-		var g;
-		var b;
-		var a;
 		var _g = 0;
 		var _g1 = this.height;
 		while(_g < _g1) {
@@ -27084,9 +28892,9 @@ openfl_display_BitmapData.prototype = {
 				otherPixel = otherBitmapData.getPixel32(x,y);
 				comparePixel = 0;
 				if(pixel != otherPixel) {
-					r = (pixel >>> 16 & 255) - (otherPixel >>> 16 & 255);
-					g = (pixel >>> 8 & 255) - (otherPixel >>> 8 & 255);
-					b = (pixel & 255) - (otherPixel & 255);
+					var r = (pixel >>> 16 & 255) - (otherPixel >>> 16 & 255);
+					var g = (pixel >>> 8 & 255) - (otherPixel >>> 8 & 255);
+					var b = (pixel & 255) - (otherPixel & 255);
 					if(r < 0) {
 						r *= -1;
 					}
@@ -27097,7 +28905,7 @@ openfl_display_BitmapData.prototype = {
 						b *= -1;
 					}
 					if(r == 0 && g == 0 && b == 0) {
-						a = (pixel >>> 24 & 255) - (otherPixel >>> 24 & 255);
+						var a = (pixel >>> 24 & 255) - (otherPixel >>> 24 & 255);
 						if(a != 0) {
 							comparePixel = (comparePixel >>> 24 & 255 & 255) << 24 | 16711680 | (comparePixel >>> 8 & 255 & 255) << 8 | comparePixel & 255 & 255;
 							comparePixel = (comparePixel >>> 24 & 255 & 255) << 24 | (comparePixel >>> 16 & 255 & 255) << 16 | 65280 | comparePixel & 255 & 255;
@@ -28932,16 +30740,16 @@ openfl_display_CairoRenderer.prototype = $extend(openfl_display_DisplayObjectRen
 		if(this.cairo == cairo && this.__worldTransform != null) {
 			this.__matrix.concat(this.__worldTransform);
 		}
-		this.__matrix3.a = this.__matrix.a;
-		this.__matrix3.b = this.__matrix.b;
-		this.__matrix3.c = this.__matrix.c;
-		this.__matrix3.d = this.__matrix.d;
+		this.__matrix3[0] = this.__matrix.a;
+		this.__matrix3[1] = this.__matrix.b;
+		this.__matrix3[3] = this.__matrix.c;
+		this.__matrix3[4] = this.__matrix.d;
 		if(this.__roundPixels) {
-			this.__matrix3.tx = Math.round(this.__matrix.tx);
-			this.__matrix3.ty = Math.round(this.__matrix.ty);
+			this.__matrix3[6] = Math.round(this.__matrix.tx);
+			this.__matrix3[7] = Math.round(this.__matrix.ty);
 		} else {
-			this.__matrix3.tx = this.__matrix.tx;
-			this.__matrix3.ty = this.__matrix.ty;
+			this.__matrix3[6] = this.__matrix.tx;
+			this.__matrix3[7] = this.__matrix.ty;
 		}
 		cairo.set_matrix(this.__matrix3);
 	}
@@ -29662,9 +31470,9 @@ openfl_display_Shader.prototype = {
 			message += "\n" + shaderInfoLog;
 			message += "\n" + source;
 			if(compileStatus == 0) {
-				lime_utils_Log.error(message,{ fileName : "openfl/display/Shader.hx", lineNumber : 334, className : "openfl.display.Shader", methodName : "__createGLShader"});
+				lime_utils_Log.error(message,{ fileName : "openfl/display/Shader.hx", lineNumber : 337, className : "openfl.display.Shader", methodName : "__createGLShader"});
 			} else if(hasInfoLog) {
-				lime_utils_Log.debug(message,{ fileName : "openfl/display/Shader.hx", lineNumber : 335, className : "openfl.display.Shader", methodName : "__createGLShader"});
+				lime_utils_Log.debug(message,{ fileName : "openfl/display/Shader.hx", lineNumber : 338, className : "openfl.display.Shader", methodName : "__createGLShader"});
 			}
 		}
 		return shader;
@@ -29690,7 +31498,7 @@ openfl_display_Shader.prototype = {
 		if(gl.getProgramParameter(program,gl.LINK_STATUS) == 0) {
 			var message = "Unable to initialize the shader program";
 			message += "\n" + gl.getProgramInfoLog(program);
-			lime_utils_Log.error(message,{ fileName : "openfl/display/Shader.hx", lineNumber : 368, className : "openfl.display.Shader", methodName : "__createGLProgram"});
+			lime_utils_Log.error(message,{ fileName : "openfl/display/Shader.hx", lineNumber : 371, className : "openfl.display.Shader", methodName : "__createGLProgram"});
 		}
 		return program;
 	}
@@ -30354,10 +32162,6 @@ openfl_display_Graphics.prototype = {
 		}
 		if(repeat == null) {
 			repeat = true;
-		}
-		if(!bitmap.readable) {
-			this.beginFill(0,1.0);
-			return;
 		}
 		this.__commands.beginBitmapFill(bitmap,matrix != null ? matrix.clone() : null,repeat,smooth);
 		this.__visible = true;
@@ -32975,7 +34779,7 @@ openfl_display_Loader.prototype = $extend(openfl_display_DisplayObjectContainer.
 		throw new openfl_errors_Error("Error #2069: The Loader class does not implement this method.",2069);
 	}
 	,close: function() {
-		openfl_utils__$internal_Lib.notImplemented({ fileName : "openfl/display/Loader.hx", lineNumber : 228, className : "openfl.display.Loader", methodName : "close"});
+		openfl_utils__$internal_Lib.notImplemented({ fileName : "openfl/display/Loader.hx", lineNumber : 229, className : "openfl.display.Loader", methodName : "close"});
 	}
 	,load: function(request,context) {
 		this.unload();
@@ -33537,6 +35341,25 @@ openfl_geom_Rectangle.prototype = {
 		}
 		return new openfl_geom_Rectangle(x0,y0,x1 - x0,y1 - y0);
 	}
+	,intersectionToOutput: function(toIntersect,output) {
+		if(output == null) {
+			output = new openfl_geom_Rectangle();
+		}
+		var x0 = this.x < toIntersect.x ? toIntersect.x : this.x;
+		var x1 = this.get_right() > toIntersect.get_right() ? toIntersect.get_right() : this.get_right();
+		if(x1 <= x0) {
+			output.setTo(0.0,0.0,0.0,0.0);
+			return output;
+		}
+		var y0 = this.y < toIntersect.y ? toIntersect.y : this.y;
+		var y1 = this.get_bottom() > toIntersect.get_bottom() ? toIntersect.get_bottom() : this.get_bottom();
+		if(y1 <= y0) {
+			output.setTo(0.0,0.0,0.0,0.0);
+			return output;
+		}
+		output.setTo(x0,y0,x1 - x0,y1 - y0);
+		return output;
+	}
 	,intersects: function(toIntersect) {
 		var x0 = this.x < toIntersect.x ? toIntersect.x : this.x;
 		var x1 = this.get_right() > toIntersect.get_right() ? toIntersect.get_right() : this.get_right();
@@ -33585,6 +35408,24 @@ openfl_geom_Rectangle.prototype = {
 		var y0 = this.y > toUnion.y ? toUnion.y : this.y;
 		var y1 = this.get_bottom() < toUnion.get_bottom() ? toUnion.get_bottom() : this.get_bottom();
 		return new openfl_geom_Rectangle(x0,y0,x1 - x0,y1 - y0);
+	}
+	,unionToOutput: function(toUnion,output) {
+		if(output == null) {
+			output = new openfl_geom_Rectangle();
+		}
+		if(this.width == 0 || this.height == 0) {
+			output.setTo(toUnion.x,toUnion.y,toUnion.width,toUnion.height);
+			return output;
+		} else if(toUnion.width == 0 || toUnion.height == 0) {
+			output.setTo(this.x,this.y,this.width,this.height);
+			return output;
+		}
+		var x0 = this.x > toUnion.x ? toUnion.x : this.x;
+		var x1 = this.get_right() < toUnion.get_right() ? toUnion.get_right() : this.get_right();
+		var y0 = this.y > toUnion.y ? toUnion.y : this.y;
+		var y1 = this.get_bottom() < toUnion.get_bottom() ? toUnion.get_bottom() : this.get_bottom();
+		output.setTo(x0,y0,x1 - x0,y1 - y0);
+		return output;
 	}
 	,__contract: function(x,y,width,height) {
 		if(this.width == 0 && this.height == 0) {
@@ -34416,10 +36257,11 @@ openfl_display_OpenGLRenderer.prototype = $extend(openfl_display_DisplayObjectRe
 			var width = clipRect.width > 0 ? Math.ceil(clipRect.get_right()) - x : 0;
 			var height = clipRect.height > 0 ? Math.ceil(clipRect.get_bottom()) - y : 0;
 			if(this.__context3D.__backBufferWantsBestResolution) {
-				x = Math.floor(clipRect.x / this.__pixelRatio);
-				y = Math.floor(clipRect.y / this.__pixelRatio);
-				width = clipRect.width > 0 ? Math.ceil(clipRect.get_right() / this.__pixelRatio) - x : 0;
-				height = clipRect.height > 0 ? Math.ceil(clipRect.get_bottom() / this.__pixelRatio) - y : 0;
+				var uv = 1.5 / this.__pixelRatio;
+				x = clipRect.x / this.__pixelRatio;
+				y = clipRect.y / this.__pixelRatio;
+				width = clipRect.width > 0 ? clipRect.get_right() / this.__pixelRatio - x + uv : 0;
+				height = clipRect.height > 0 ? clipRect.get_bottom() / this.__pixelRatio - y + uv : 0;
 			}
 			if(width < 0) {
 				width = 0;
@@ -35896,11 +37738,7 @@ openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.p
 	}
 	,__handleError: function(e) {
 		var event = new openfl_events_UncaughtErrorEvent("uncaughtError",true,true,e);
-		try {
-			openfl_Lib.get_current().__loaderInfo.uncaughtErrorEvents.dispatchEvent(event);
-		} catch( _g ) {
-			haxe_NativeStackTrace.lastError = _g;
-		}
+		openfl_Lib.get_current().__loaderInfo.uncaughtErrorEvents.dispatchEvent(event);
 		if(!event.__preventDefault) {
 			var message = haxe_CallStack.toString(haxe_CallStack.exceptionStack());
 			console.log(message);
@@ -36459,6 +38297,28 @@ openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.p
 					}
 					if(cancelTab) {
 						this.window.onKeyDown.cancel();
+					}
+				}
+			} else if(type == "keyDown" && this.get_focus() != null && !((this.get_focus()) instanceof openfl_text_TextField)) {
+				var ctrlKey = this.__macKeyboard ? lime_ui_KeyModifier.get_ctrlKey(modifier) || lime_ui_KeyModifier.get_metaKey(modifier) : lime_ui_KeyModifier.get_ctrlKey(modifier);
+				if(ctrlKey && !lime_ui_KeyModifier.get_altKey(modifier) && !lime_ui_KeyModifier.get_shiftKey(modifier)) {
+					switch(keyCode1) {
+					case 65:
+						var selectAllEvent = new openfl_events_Event("selectAll",true,true);
+						this.get_focus().dispatchEvent(selectAllEvent);
+						break;
+					case 67:
+						var copyEvent = new openfl_events_Event("copy",true,true);
+						this.get_focus().dispatchEvent(copyEvent);
+						break;
+					case 86:
+						var pasteEvent = new openfl_events_Event("paste",true,true);
+						this.get_focus().dispatchEvent(pasteEvent);
+						break;
+					case 88:
+						var cutEvent = new openfl_events_Event("cut",true,true);
+						this.get_focus().dispatchEvent(cutEvent);
+						break;
 					}
 				}
 			}
@@ -38901,7 +40761,7 @@ openfl_display_Tileset.prototype = {
 		this.rectData.push(rect.y);
 		this.rectData.push(rect.width);
 		this.rectData.push(rect.height);
-		var tileData = new openfl_display__$Tileset_TileData(rect);
+		var tileData = new openfl_display_TileData(rect);
 		tileData.__update(this.__bitmapData);
 		this.__data.push(tileData);
 		return this.__data.length - 1;
@@ -38971,7 +40831,7 @@ openfl_display_Tileset.prototype = {
 	,__class__: openfl_display_Tileset
 	,__properties__: {get_numRects:"get_numRects",set_bitmapData:"set_bitmapData",get_bitmapData:"get_bitmapData"}
 };
-var openfl_display__$Tileset_TileData = function(rect) {
+var openfl_display_TileData = function(rect) {
 	if(rect != null) {
 		this.x = rect.x | 0;
 		this.y = rect.y | 0;
@@ -38979,9 +40839,9 @@ var openfl_display__$Tileset_TileData = function(rect) {
 		this.height = rect.height | 0;
 	}
 };
-$hxClasses["openfl.display._Tileset.TileData"] = openfl_display__$Tileset_TileData;
-openfl_display__$Tileset_TileData.__name__ = "openfl.display._Tileset.TileData";
-openfl_display__$Tileset_TileData.prototype = {
+$hxClasses["openfl.display.TileData"] = openfl_display_TileData;
+openfl_display_TileData.__name__ = "openfl.display.TileData";
+openfl_display_TileData.prototype = {
 	__update: function(bitmapData) {
 		if(bitmapData != null) {
 			var bitmapWidth = bitmapData.width;
@@ -38992,7 +40852,7 @@ openfl_display__$Tileset_TileData.prototype = {
 			this.__uvHeight = (this.y + this.height) / bitmapHeight;
 		}
 	}
-	,__class__: openfl_display__$Tileset_TileData
+	,__class__: openfl_display_TileData
 };
 var openfl_display_Timeline = function() {
 	this.__framesLoaded = 1;
@@ -39507,7 +41367,7 @@ openfl_display__$internal_CairoTilemap.render = function(tilemap,renderer) {
 	var rect = openfl_geom_Rectangle.__pool.get();
 	rect.setTo(0,0,tilemap.__width,tilemap.__height);
 	renderer.__pushMaskRect(rect,tilemap.__renderTransform);
-	openfl_display__$internal_CairoTilemap.renderTileContainer(tilemap.__group,renderer,tilemap.__renderTransform,tilemap.__tileset,renderer.__allowSmoothing && tilemap.smoothing,tilemap.tileAlphaEnabled,alpha,tilemap.tileBlendModeEnabled,tilemap.__worldBlendMode,null,null,null,rect,new lime_math_Matrix3());
+	openfl_display__$internal_CairoTilemap.renderTileContainer(tilemap.__group,renderer,tilemap.__renderTransform,tilemap.__tileset,renderer.__allowSmoothing && tilemap.smoothing,tilemap.tileAlphaEnabled,alpha,tilemap.tileBlendModeEnabled,tilemap.__worldBlendMode,null,null,null,rect,lime_math_Matrix3._new());
 	renderer.__popMaskRect();
 	renderer.__popMaskObject(tilemap);
 	openfl_geom_Rectangle.__pool.release(rect);
@@ -39516,7 +41376,6 @@ openfl_display__$internal_CairoTilemap.renderTileContainer = function(group,rend
 	var cairo = renderer.cairo;
 	var tileTransform = openfl_geom_Matrix.__pool.get();
 	var tiles = group.__tiles;
-	var tile;
 	var tileset;
 	var alpha;
 	var visible;
@@ -39579,8 +41438,8 @@ openfl_display__$internal_CairoTilemap.renderTileContainer = function(group,rend
 				renderer.__setBlendMode(blendMode);
 			}
 			renderer.applyMatrix(tileTransform,cairo);
-			matrix.tx = tileRect.x;
-			matrix.ty = tileRect.y;
+			matrix[6] = tileRect.x;
+			matrix[7] = tileRect.y;
 			lime_graphics_cairo_CairoPattern.set_matrix(pattern,matrix);
 			cairo.set_source(pattern);
 			cairo.save();
@@ -42113,6 +43972,7 @@ openfl_display__$internal_CanvasGraphics.createGradientPattern = function(type,c
 	var point = null;
 	var point2 = null;
 	var releaseMatrix = false;
+	var ratio = 0.0;
 	if(matrix == null) {
 		matrix = openfl_geom_Matrix.__pool.get();
 		matrix.identity();
@@ -42120,11 +43980,120 @@ openfl_display__$internal_CanvasGraphics.createGradientPattern = function(type,c
 	}
 	switch(type) {
 	case 0:
-		gradientFill = openfl_display__$internal_CanvasGraphics.context.createLinearGradient(-819.2,0,819.2,0);
-		openfl_display__$internal_CanvasGraphics.pendingMatrix = matrix.clone();
-		openfl_display__$internal_CanvasGraphics.inversePendingMatrix = matrix.clone();
+		if(spreadMethod == 0) {
+			gradientFill = openfl_display__$internal_CanvasGraphics.context.createLinearGradient(-819.2,0,819.2,0);
+			openfl_display__$internal_CanvasGraphics.pendingMatrix = matrix.clone();
+			openfl_display__$internal_CanvasGraphics.inversePendingMatrix = matrix.clone();
+			openfl_display__$internal_CanvasGraphics.inversePendingMatrix.invert();
+			var _g = 0;
+			var _g1 = colors.length;
+			while(_g < _g1) {
+				var i = _g++;
+				ratio = ratios[i] / 255;
+				if(ratio < 0) {
+					ratio = 0;
+				} else if(ratio > 1) {
+					ratio = 1;
+				}
+				gradientFill.addColorStop(ratio,openfl_display__$internal_CanvasGraphics.getRGBA(colors[i],alphas[i]));
+			}
+			if(point != null) {
+				openfl_geom_Point.__pool.release(point);
+			}
+			if(point2 != null) {
+				openfl_geom_Point.__pool.release(point2);
+			}
+			if(releaseMatrix) {
+				openfl_geom_Matrix.__pool.release(matrix);
+			}
+			return gradientFill;
+		}
+		var gradientScale = spreadMethod == 0 ? 1.0 : 25.0;
+		var dx = 0.5 * (gradientScale - 1.0) * 1638.4;
+		var canvas = window.document.createElement("canvas");
+		var context2 = canvas.getContext("2d");
+		var dimensions = openfl_display__$internal_CanvasGraphics.getDimensions(matrix);
+		canvas.width = openfl_display__$internal_CanvasGraphics.context.canvas.width;
+		canvas.height = openfl_display__$internal_CanvasGraphics.context.canvas.height;
+		gradientFill = openfl_display__$internal_CanvasGraphics.context.createLinearGradient(-819.2 - dx,0,819.2 + dx,0);
+		if(spreadMethod == 1) {
+			var t = 0;
+			var step = 0.04;
+			var a;
+			while(t < 1) {
+				var _g = 0;
+				var _g1 = colors.length;
+				while(_g < _g1) {
+					var i = _g++;
+					ratio = ratios[i] / 255;
+					ratio = t + ratio * step;
+					if(ratio < 0) {
+						ratio = 0;
+					} else if(ratio > 1) {
+						ratio = 1;
+					}
+					gradientFill.addColorStop(ratio,openfl_display__$internal_CanvasGraphics.getRGBA(colors[i],alphas[i]));
+				}
+				t += step;
+				a = colors.length - 1;
+				while(a >= 0) {
+					ratio = ratios[a] / 255;
+					ratio = t + (1.0 - ratio) * step;
+					if(ratio < 0) {
+						ratio = 0;
+					} else if(ratio > 1) {
+						ratio = 1;
+					}
+					gradientFill.addColorStop(ratio,openfl_display__$internal_CanvasGraphics.getRGBA(colors[a],alphas[a]));
+					--a;
+				}
+				t += step;
+			}
+		} else if(spreadMethod == 2) {
+			var t = 0;
+			var step = 0.04;
+			var a;
+			while(t < 1) {
+				var _g = 0;
+				var _g1 = colors.length;
+				while(_g < _g1) {
+					var i = _g++;
+					ratio = ratios[i] / 255;
+					ratio = t + ratio * step;
+					if(ratio < 0) {
+						ratio = 0;
+					} else if(ratio > 1) {
+						ratio = 0.999;
+					}
+					gradientFill.addColorStop(ratio,openfl_display__$internal_CanvasGraphics.getRGBA(colors[i],alphas[i]));
+				}
+				ratio = t + 0.001;
+				if(ratio < 0) {
+					ratio = 0;
+				} else if(ratio > 1) {
+					ratio = 1;
+				}
+				gradientFill.addColorStop(ratio - 0.001,openfl_display__$internal_CanvasGraphics.getRGBA(colors[colors.length - 1],alphas[alphas.length - 1]));
+				gradientFill.addColorStop(ratio,openfl_display__$internal_CanvasGraphics.getRGBA(colors[0],alphas[0]));
+				t += step;
+			}
+		}
+		openfl_display__$internal_CanvasGraphics.pendingMatrix = new openfl_geom_Matrix();
+		openfl_display__$internal_CanvasGraphics.pendingMatrix.tx = matrix.tx - dimensions.width / 2;
+		openfl_display__$internal_CanvasGraphics.pendingMatrix.ty = matrix.ty - dimensions.height / 2;
+		openfl_display__$internal_CanvasGraphics.inversePendingMatrix = openfl_display__$internal_CanvasGraphics.pendingMatrix.clone();
 		openfl_display__$internal_CanvasGraphics.inversePendingMatrix.invert();
-		break;
+		var path = new Path2D();
+		path.rect(0,0,canvas.width,canvas.height);
+		path.closePath();
+		var gradientMatrix = new DOMMatrix([matrix.a,matrix.b,matrix.c,matrix.d,matrix.tx,matrix.ty]);
+		var inverseMatrix = gradientMatrix.inverse();
+		var untransformedPath = new Path2D();
+		untransformedPath.addPath(path,inverseMatrix);
+		context2.fillStyle = gradientFill;
+		context2.setTransform(gradientMatrix);
+		context2.fill(untransformedPath);
+		return openfl_display__$internal_CanvasGraphics.context.createPattern(canvas,"no-repeat");
 	case 1:
 		var radius = 819.2;
 		if(focalPointRatio > 1.0) {
@@ -42136,42 +44105,46 @@ openfl_display__$internal_CanvasGraphics.createGradientPattern = function(type,c
 		openfl_display__$internal_CanvasGraphics.pendingMatrix = matrix.clone();
 		openfl_display__$internal_CanvasGraphics.inversePendingMatrix = matrix.clone();
 		openfl_display__$internal_CanvasGraphics.inversePendingMatrix.invert();
-		break;
-	}
-	var rgb;
-	var alpha;
-	var r;
-	var g;
-	var b;
-	var ratio;
-	var _g = 0;
-	var _g1 = colors.length;
-	while(_g < _g1) {
-		var i = _g++;
-		rgb = colors[i];
-		alpha = alphas[i];
-		r = (rgb & 16711680) >>> 16;
-		g = (rgb & 65280) >>> 8;
-		b = rgb & 255;
-		ratio = ratios[i] / 255;
-		if(ratio < 0) {
-			ratio = 0;
+		var _g = 0;
+		var _g1 = colors.length;
+		while(_g < _g1) {
+			var i = _g++;
+			ratio = ratios[i] / 255;
+			if(ratio < 0) {
+				ratio = 0;
+			} else if(ratio > 1) {
+				ratio = 1;
+			}
+			gradientFill.addColorStop(ratio,openfl_display__$internal_CanvasGraphics.getRGBA(colors[i],alphas[i]));
 		}
-		if(ratio > 1) {
-			ratio = 1;
+		if(point != null) {
+			openfl_geom_Point.__pool.release(point);
 		}
-		gradientFill.addColorStop(ratio,"rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")");
+		if(point2 != null) {
+			openfl_geom_Point.__pool.release(point2);
+		}
+		if(releaseMatrix) {
+			openfl_geom_Matrix.__pool.release(matrix);
+		}
+		return gradientFill;
 	}
-	if(point != null) {
-		openfl_geom_Point.__pool.release(point);
+};
+openfl_display__$internal_CanvasGraphics.getRGBA = function(color,alpha) {
+	var r = (color & 16711680) >>> 16;
+	var g = (color & 65280) >>> 8;
+	var b = color & 255;
+	return "rgba(" + (r == null ? "null" : Std.string(UInt.toFloat(r))) + ", " + (g == null ? "null" : Std.string(UInt.toFloat(g))) + ", " + (b == null ? "null" : Std.string(UInt.toFloat(b))) + ", " + alpha + ")";
+};
+openfl_display__$internal_CanvasGraphics.getDimensions = function(matrix) {
+	var angle = Math.atan2(matrix.c,matrix.a);
+	var cos = Math.cos(angle);
+	var w = matrix.a / cos * 1638.4;
+	var h = matrix.d / cos * 1638.4;
+	if(w == 0 && h == 0) {
+		h = 819.2;
+		w = h;
 	}
-	if(point2 != null) {
-		openfl_geom_Point.__pool.release(point2);
-	}
-	if(releaseMatrix) {
-		openfl_geom_Matrix.__pool.release(matrix);
-	}
-	return gradientFill;
+	return { width : w, height : h};
 };
 openfl_display__$internal_CanvasGraphics.createTempPatternCanvas = function(bitmap,repeat,width,height) {
 	var canvas = window.document.createElement("canvas");
@@ -43391,6 +45364,14 @@ openfl_display__$internal_CanvasGraphics.hitTest = function(graphics,x,y) {
 				openfl_display__$internal_CanvasGraphics.strokeCommands.lineGradientStyle(c11.buffer.o[c11.oPos],c11.buffer.ii[c11.iiPos],c11.buffer.ff[c11.ffPos],c11.buffer.ii[c11.iiPos + 1],c11.buffer.o[c11.oPos + 1],c11.buffer.o[c11.oPos + 2],c11.buffer.o[c11.oPos + 3],c11.buffer.f[c11.fPos]);
 				break;
 			case 16:
+				openfl_display__$internal_CanvasGraphics.endStroke();
+				if(openfl_display__$internal_CanvasGraphics.hasStroke && openfl_display__$internal_CanvasGraphics.context.isPointInStroke(x,y)) {
+					data.destroy();
+					graphics.__canvas = cacheCanvas;
+					graphics.__context = cacheContext;
+					openfl_display__$internal_CanvasGraphics.graphics = null;
+					return true;
+				}
 				switch(data.prev._hx_index) {
 				case 0:
 					data.oPos += 2;
@@ -43806,7 +45787,7 @@ openfl_display__$internal_CanvasGraphics.playCommands = function(commands,stroke
 	var y;
 	var width;
 	var height;
-	var kappa = .5522848;
+	var kappa = 0.5522848;
 	var ox;
 	var oy;
 	var xe;
@@ -43912,7 +45893,12 @@ openfl_display__$internal_CanvasGraphics.playCommands = function(commands,stroke
 			var this1 = data;
 			var c = this1;
 			openfl_display__$internal_CanvasGraphics.bitmapFill = c.buffer.o[c.oPos];
-			openfl_display__$internal_CanvasGraphics.context.fillStyle = openfl_display__$internal_CanvasGraphics.createBitmapFill(c.buffer.o[c.oPos],c.buffer.b[c.bPos],c.buffer.b[c.bPos + 1]);
+			if(c.buffer.o[c.oPos].readable) {
+				openfl_display__$internal_CanvasGraphics.context.fillStyle = openfl_display__$internal_CanvasGraphics.createBitmapFill(c.buffer.o[c.oPos],c.buffer.b[c.bPos],c.buffer.b[c.bPos + 1]);
+			} else {
+				var tmp = StringTools.hex(0,6);
+				openfl_display__$internal_CanvasGraphics.context.fillStyle = "#" + tmp;
+			}
 			openfl_display__$internal_CanvasGraphics.hasFill = true;
 			if(c.buffer.o[c.oPos + 1] != null) {
 				openfl_display__$internal_CanvasGraphics.pendingMatrix = c.buffer.o[c.oPos + 1];
@@ -44008,8 +45994,8 @@ openfl_display__$internal_CanvasGraphics.playCommands = function(commands,stroke
 				openfl_display__$internal_CanvasGraphics.hasFill = false;
 			} else {
 				if(c1.buffer.f[c1.fPos] == 1) {
-					var tmp = StringTools.hex(c1.buffer.i[c1.iPos] & 16777215,6);
-					openfl_display__$internal_CanvasGraphics.context.fillStyle = "#" + tmp;
+					var tmp1 = StringTools.hex(c1.buffer.i[c1.iPos] & 16777215,6);
+					openfl_display__$internal_CanvasGraphics.context.fillStyle = "#" + tmp1;
 				} else {
 					r = (c1.buffer.i[c1.iPos] & 16711680) >>> 16;
 					g = (c1.buffer.i[c1.iPos] & 65280) >>> 8;
@@ -44191,7 +46177,12 @@ openfl_display__$internal_CanvasGraphics.playCommands = function(commands,stroke
 			var shaderBuffer = c3.buffer.o[c3.oPos];
 			if(shaderBuffer.inputCount > 0) {
 				openfl_display__$internal_CanvasGraphics.bitmapFill = shaderBuffer.inputs[0];
-				openfl_display__$internal_CanvasGraphics.context.fillStyle = openfl_display__$internal_CanvasGraphics.createBitmapFill(openfl_display__$internal_CanvasGraphics.bitmapFill,shaderBuffer.inputWrap[0] != 0,shaderBuffer.inputFilter[0] != 5);
+				if(openfl_display__$internal_CanvasGraphics.bitmapFill.readable) {
+					openfl_display__$internal_CanvasGraphics.context.fillStyle = openfl_display__$internal_CanvasGraphics.createBitmapFill(openfl_display__$internal_CanvasGraphics.bitmapFill,shaderBuffer.inputWrap[0] != 0,shaderBuffer.inputFilter[0] != 5);
+				} else {
+					var tmp2 = StringTools.hex(0,6);
+					openfl_display__$internal_CanvasGraphics.context.fillStyle = "#" + tmp2;
+				}
 				openfl_display__$internal_CanvasGraphics.hasFill = true;
 				openfl_display__$internal_CanvasGraphics.pendingMatrix = null;
 				openfl_display__$internal_CanvasGraphics.inversePendingMatrix = null;
@@ -44280,6 +46271,8 @@ openfl_display__$internal_CanvasGraphics.playCommands = function(commands,stroke
 			var c4 = this5;
 			hasPath = true;
 			openfl_display__$internal_CanvasGraphics.context.bezierCurveTo(c4.buffer.f[c4.fPos] - offsetX,c4.buffer.f[c4.fPos + 1] - offsetY,c4.buffer.f[c4.fPos + 2] - offsetX,c4.buffer.f[c4.fPos + 3] - offsetY,c4.buffer.f[c4.fPos + 4] - offsetX,c4.buffer.f[c4.fPos + 5] - offsetY);
+			positionX = c4.buffer.f[c4.fPos + 4];
+			positionY = c4.buffer.f[c4.fPos + 5];
 			break;
 		case 5:
 			switch(data.prev._hx_index) {
@@ -44364,6 +46357,8 @@ openfl_display__$internal_CanvasGraphics.playCommands = function(commands,stroke
 			var c5 = this6;
 			hasPath = true;
 			openfl_display__$internal_CanvasGraphics.context.quadraticCurveTo(c5.buffer.f[c5.fPos] - offsetX,c5.buffer.f[c5.fPos + 1] - offsetY,c5.buffer.f[c5.fPos + 2] - offsetX,c5.buffer.f[c5.fPos + 3] - offsetY);
+			positionX = c5.buffer.f[c5.fPos + 2];
+			positionY = c5.buffer.f[c5.fPos + 3];
 			break;
 		case 6:
 			switch(data.prev._hx_index) {
@@ -44688,7 +46683,7 @@ openfl_display__$internal_CanvasGraphics.playCommands = function(commands,stroke
 				tileTransform.ty += positionY - offsetY;
 				tileTransform.concat(transform);
 				openfl_display__$internal_CanvasGraphics.context.setTransform(tileTransform.a,tileTransform.b,tileTransform.c,tileTransform.d,tileTransform.tx,tileTransform.ty);
-				if(openfl_display__$internal_CanvasGraphics.bitmapFill != null) {
+				if(openfl_display__$internal_CanvasGraphics.bitmapFill != null && openfl_display__$internal_CanvasGraphics.bitmapFill.readable) {
 					openfl_display__$internal_CanvasGraphics.context.drawImage(openfl_display__$internal_CanvasGraphics.bitmapFill.image.get_src(),tileRect.x,tileRect.y,tileRect.width,tileRect.height,0,0,tileRect.width,tileRect.height);
 				} else {
 					openfl_display__$internal_CanvasGraphics.context.fillRect(0,0,tileRect.width,tileRect.height);
@@ -44780,7 +46775,7 @@ openfl_display__$internal_CanvasGraphics.playCommands = function(commands,stroke
 			var this10 = data;
 			var c9 = this10;
 			optimizationUsed = false;
-			if(openfl_display__$internal_CanvasGraphics.bitmapFill != null && !openfl_display__$internal_CanvasGraphics.hitTesting) {
+			if(openfl_display__$internal_CanvasGraphics.bitmapFill != null && openfl_display__$internal_CanvasGraphics.bitmapFill.readable && !openfl_display__$internal_CanvasGraphics.hitTesting) {
 				st = 0;
 				sr = 0;
 				sb = 0;
@@ -45214,7 +47209,12 @@ openfl_display__$internal_CanvasGraphics.playCommands = function(commands,stroke
 				openfl_display__$internal_CanvasGraphics.closePath(true);
 			}
 			openfl_display__$internal_CanvasGraphics.context.moveTo(positionX - offsetX,positionY - offsetY);
-			openfl_display__$internal_CanvasGraphics.context.strokeStyle = openfl_display__$internal_CanvasGraphics.createBitmapFill(c12.buffer.o[c12.oPos],c12.buffer.b[c12.bPos],c12.buffer.b[c12.bPos + 1]);
+			if(c12.buffer.o[c12.oPos].readable) {
+				openfl_display__$internal_CanvasGraphics.context.strokeStyle = openfl_display__$internal_CanvasGraphics.createBitmapFill(c12.buffer.o[c12.oPos],c12.buffer.b[c12.bPos],c12.buffer.b[c12.bPos + 1]);
+			} else {
+				var tmp3 = StringTools.hex(0,6);
+				openfl_display__$internal_CanvasGraphics.context.strokeStyle = "#" + tmp3;
+			}
 			openfl_display__$internal_CanvasGraphics.hasStroke = true;
 			break;
 		case 15:
@@ -45395,14 +47395,14 @@ openfl_display__$internal_CanvasGraphics.playCommands = function(commands,stroke
 				openfl_display__$internal_CanvasGraphics.hasStroke = false;
 			} else {
 				openfl_display__$internal_CanvasGraphics.context.lineWidth = c14.buffer.o[c14.oPos] > 0 ? c14.buffer.o[c14.oPos] : 1;
-				var tmp1 = c14.buffer.o[c14.oPos + 3] == null ? "round" : openfl_display_JointStyle.toString(c14.buffer.o[c14.oPos + 3]).toLowerCase();
-				openfl_display__$internal_CanvasGraphics.context.lineJoin = tmp1;
-				var tmp2 = c14.buffer.o[c14.oPos + 2] == null ? "round" : c14.buffer.o[c14.oPos + 2] == 0 ? "butt" : openfl_display_CapsStyle.toString(c14.buffer.o[c14.oPos + 2]).toLowerCase();
-				openfl_display__$internal_CanvasGraphics.context.lineCap = tmp2;
+				var tmp4 = c14.buffer.o[c14.oPos + 3] == null ? "round" : openfl_display_JointStyle.toString(c14.buffer.o[c14.oPos + 3]).toLowerCase();
+				openfl_display__$internal_CanvasGraphics.context.lineJoin = tmp4;
+				var tmp5 = c14.buffer.o[c14.oPos + 2] == null ? "round" : c14.buffer.o[c14.oPos + 2] == 0 ? "butt" : openfl_display_CapsStyle.toString(c14.buffer.o[c14.oPos + 2]).toLowerCase();
+				openfl_display__$internal_CanvasGraphics.context.lineCap = tmp5;
 				openfl_display__$internal_CanvasGraphics.context.miterLimit = c14.buffer.f[c14.fPos + 1];
 				if(c14.buffer.f[c14.fPos] == 1) {
-					var tmp3 = StringTools.hex(c14.buffer.i[c14.iPos] & 16777215,6);
-					openfl_display__$internal_CanvasGraphics.context.strokeStyle = "#" + tmp3;
+					var tmp6 = StringTools.hex(c14.buffer.i[c14.iPos] & 16777215,6);
+					openfl_display__$internal_CanvasGraphics.context.strokeStyle = "#" + tmp6;
 				} else {
 					r = (c14.buffer.i[c14.iPos] & 16711680) >>> 16;
 					g = (c14.buffer.i[c14.iPos] & 65280) >>> 8;
@@ -47704,7 +49704,7 @@ openfl_display__$internal_CanvasGraphics.renderMask = function(graphics,renderer
 		var y;
 		var width;
 		var height;
-		var kappa = .5522848;
+		var kappa = 0.5522848;
 		var ox;
 		var oy;
 		var xe;
@@ -50091,6 +52091,13 @@ openfl_geom_Matrix.prototype = {
 	,deltaTransformPoint: function(point) {
 		return new openfl_geom_Point(point.x * this.a + point.y * this.c,point.x * this.b + point.y * this.d);
 	}
+	,deltaTransformPointToOutput: function(point,output) {
+		if(output != null) {
+			output.setTo(point.x * this.a + point.y * this.c,point.x * this.b + point.y * this.d);
+			return output;
+		}
+		return new openfl_geom_Point(point.x * this.a + point.y * this.c,point.x * this.b + point.y * this.d);
+	}
 	,equals: function(matrix) {
 		if(matrix != null && this.tx == matrix.tx && this.ty == matrix.ty && this.a == matrix.a && this.b == matrix.b && this.c == matrix.c) {
 			return this.d == matrix.d;
@@ -50182,6 +52189,13 @@ openfl_geom_Matrix.prototype = {
 	,transformPoint: function(pos) {
 		return new openfl_geom_Point(pos.x * this.a + pos.y * this.c + this.tx,pos.x * this.b + pos.y * this.d + this.ty);
 	}
+	,transformPointToOutput: function(pos,output) {
+		if(output != null) {
+			output.setTo(pos.x * this.a + pos.y * this.c + this.tx,pos.x * this.b + pos.y * this.d + this.ty);
+			return output;
+		}
+		return new openfl_geom_Point(pos.x * this.a + pos.y * this.c + this.tx,pos.x * this.b + pos.y * this.d + this.ty);
+	}
 	,translate: function(dx,dy) {
 		this.tx += dx;
 		this.ty += dy;
@@ -50231,7 +52245,7 @@ openfl_geom_Matrix.prototype = {
 		this.ty = Math.round(this.ty * 10) / 10;
 	}
 	,__toMatrix3: function() {
-		openfl_geom_Matrix.__matrix3.setTo(this.a,this.b,this.c,this.d,this.tx,this.ty);
+		lime_math_Matrix3.setTo(openfl_geom_Matrix.__matrix3,this.a,this.b,this.c,this.d,this.tx,this.ty);
 		return openfl_geom_Matrix.__matrix3;
 	}
 	,__transformInversePoint: function(point) {
@@ -50825,9 +52839,6 @@ openfl_display__$internal_Context3DGraphics.buildBuffer = function(graphics,rend
 					graphics.__quadBuffer.resize(quadBufferPosition + length,dataPerVertex);
 				}
 				var vertexOffset;
-				var alpha = 1.0;
-				var tileData;
-				var id;
 				var tileWidth;
 				var tileHeight;
 				var uvX;
@@ -50847,7 +52858,6 @@ openfl_display__$internal_Context3DGraphics.buildBuffer = function(graphics,rend
 				var vertexBufferData = graphics.__quadBuffer.vertexBufferData;
 				var bitmapWidth = bitmap.width;
 				var bitmapHeight = bitmap.height;
-				var sourceRect = bitmap.rect;
 				var _g4 = 0;
 				var _g5 = length;
 				while(_g4 < _g5) {
@@ -53759,26 +55769,9 @@ openfl_display__$internal_Context3DTilemap.buildBufferTileContainer = function(t
 	var roundPixels = renderer.__roundPixels;
 	var tiles = group.__tiles;
 	var length = group.__length;
-	var getLength = null;
-	getLength = function(_group) {
-		var _tiles = _group.__tiles;
-		var totalLength = 0;
-		var _g = 0;
-		while(_g < _tiles.length) {
-			var tile = _tiles[_g];
-			++_g;
-			if(tile.__length > 0) {
-				totalLength += getLength(tile);
-			} else {
-				++totalLength;
-			}
-		}
-		return totalLength;
-	};
 	if(isTopLevel) {
-		openfl_display__$internal_Context3DTilemap.resizeBuffer(tilemap,openfl_display__$internal_Context3DTilemap.numTiles + getLength(group));
+		openfl_display__$internal_Context3DTilemap.resizeBuffer(tilemap,openfl_display__$internal_Context3DTilemap.numTiles + openfl_display__$internal_Context3DTilemap.getRecursiveLength(group));
 	}
-	var tile;
 	var tileset;
 	var alpha;
 	var visible;
@@ -54007,6 +56000,21 @@ openfl_display__$internal_Context3DTilemap.flush = function(tilemap,renderer,ble
 	openfl_display__$internal_Context3DTilemap.lastUsedBitmapData = openfl_display__$internal_Context3DTilemap.currentBitmapData;
 	openfl_display__$internal_Context3DTilemap.lastUsedShader = openfl_display__$internal_Context3DTilemap.currentShader;
 };
+openfl_display__$internal_Context3DTilemap.getRecursiveLength = function(tileContainer) {
+	var tiles = tileContainer.__tiles;
+	var totalLength = 0;
+	var _g = 0;
+	while(_g < tiles.length) {
+		var tile = tiles[_g];
+		++_g;
+		if(tile.__length > 0) {
+			totalLength += openfl_display__$internal_Context3DTilemap.getRecursiveLength(tile);
+		} else {
+			++totalLength;
+		}
+	}
+	return totalLength;
+};
 openfl_display__$internal_Context3DTilemap.render = function(tilemap,renderer) {
 	if(!tilemap.__renderable || tilemap.__worldAlpha <= 0) {
 		return;
@@ -54076,7 +56084,6 @@ openfl_display__$internal_Context3DTilemap.renderDrawableMask = function(tilemap
 };
 openfl_display__$internal_Context3DTilemap.renderTileContainer = function(tilemap,renderer,group,defaultShader,defaultTileset,worldAlpha,blendModeEnabled,defaultBlendMode,cacheBitmapData) {
 	var tiles = group.__tiles;
-	var tile;
 	var tileset;
 	var alpha;
 	var visible;
@@ -57773,11 +59780,32 @@ openfl_geom_Point.distance = function(pt1,pt2) {
 openfl_geom_Point.interpolate = function(pt1,pt2,f) {
 	return new openfl_geom_Point(pt2.x + f * (pt1.x - pt2.x),pt2.y + f * (pt1.y - pt2.y));
 };
+openfl_geom_Point.interpolateToOutput = function(pt1,pt2,f,output) {
+	if(output != null) {
+		output.setTo(pt2.x + f * (pt1.x - pt2.x),pt2.y + f * (pt1.y - pt2.y));
+		return output;
+	}
+	return new openfl_geom_Point(pt2.x + f * (pt1.x - pt2.x),pt2.y + f * (pt1.y - pt2.y));
+};
 openfl_geom_Point.polar = function(len,angle) {
+	return new openfl_geom_Point(len * Math.cos(angle),len * Math.sin(angle));
+};
+openfl_geom_Point.polarToOutput = function(len,angle,output) {
+	if(output != null) {
+		output.setTo(len * Math.cos(angle),len * Math.sin(angle));
+		return output;
+	}
 	return new openfl_geom_Point(len * Math.cos(angle),len * Math.sin(angle));
 };
 openfl_geom_Point.prototype = {
 	add: function(v) {
+		return new openfl_geom_Point(v.x + this.x,v.y + this.y);
+	}
+	,addToOutput: function(v,output) {
+		if(output != null) {
+			output.setTo(v.x + this.x,v.y + this.y);
+			return output;
+		}
 		return new openfl_geom_Point(v.x + this.x,v.y + this.y);
 	}
 	,clone: function() {
@@ -57812,6 +59840,13 @@ openfl_geom_Point.prototype = {
 		this.y = ya;
 	}
 	,subtract: function(v) {
+		return new openfl_geom_Point(this.x - v.x,this.y - v.y);
+	}
+	,subtractToOutput: function(v,output) {
+		if(output != null) {
+			output.setTo(this.x - v.x,this.y - v.y);
+			return output;
+		}
 		return new openfl_geom_Point(this.x - v.x,this.y - v.y);
 	}
 	,toString: function() {
@@ -64207,6 +66242,7 @@ openfl_events_UncaughtErrorEvent.prototype = $extend(openfl_events_ErrorEvent.pr
 	,__class__: openfl_events_UncaughtErrorEvent
 });
 var openfl_events_UncaughtErrorEvents = function() {
+	this.__enabled = true;
 	openfl_events_EventDispatcher.call(this);
 };
 $hxClasses["openfl.events.UncaughtErrorEvents"] = openfl_events_UncaughtErrorEvents;
@@ -64302,6 +66338,17 @@ openfl_geom_Matrix3D.interpolate = function(thisMat,toMat,percent) {
 		m.rawData.set(i,thisMat.rawData.get(i) + (toMat.rawData.get(i) - thisMat.rawData.get(i)) * percent);
 	}
 	return m;
+};
+openfl_geom_Matrix3D.interpolateToOutput = function(thisMat,toMat,percent,output) {
+	if(output == null) {
+		output = new openfl_geom_Matrix3D();
+	}
+	var _g = 0;
+	while(_g < 16) {
+		var i = _g++;
+		output.rawData.set(i,thisMat.rawData.get(i) + (toMat.rawData.get(i) - thisMat.rawData.get(i)) * percent);
+	}
+	return output;
 };
 openfl_geom_Matrix3D.__getAxisRotation = function(x,y,z,degrees) {
 	var m = new openfl_geom_Matrix3D();
@@ -64689,10 +66736,123 @@ openfl_geom_Matrix3D.prototype = {
 		vec.push(scale);
 		return vec;
 	}
+	,decomposeToOutput: function(orientationStyle,output) {
+		if(orientationStyle == null) {
+			orientationStyle = 1;
+		}
+		if(output == null) {
+			output = openfl_Vector.toObjectVector(null);
+		}
+		var m = this.clone();
+		var mr = m.rawData.copy();
+		var pos = output.get(0);
+		if(pos == null) {
+			pos = new openfl_geom_Vector3D(mr.get(12),mr.get(13),mr.get(14));
+		} else {
+			pos.setTo(mr.get(12),mr.get(13),mr.get(14));
+		}
+		mr.set(12,0);
+		mr.set(13,0);
+		mr.set(14,0);
+		var scale = output.get(1);
+		if(scale == null) {
+			scale = new openfl_geom_Vector3D();
+		}
+		scale.x = Math.sqrt(mr.get(0) * mr.get(0) + mr.get(1) * mr.get(1) + mr.get(2) * mr.get(2));
+		scale.y = Math.sqrt(mr.get(4) * mr.get(4) + mr.get(5) * mr.get(5) + mr.get(6) * mr.get(6));
+		scale.z = Math.sqrt(mr.get(8) * mr.get(8) + mr.get(9) * mr.get(9) + mr.get(10) * mr.get(10));
+		if(mr.get(0) * (mr.get(5) * mr.get(10) - mr.get(6) * mr.get(9)) - mr.get(1) * (mr.get(4) * mr.get(10) - mr.get(6) * mr.get(8)) + mr.get(2) * (mr.get(4) * mr.get(9) - mr.get(5) * mr.get(8)) < 0) {
+			scale.z = -scale.z;
+		}
+		var _g = mr;
+		_g.set(0,_g.get(0) / scale.x);
+		var _g = mr;
+		_g.set(1,_g.get(1) / scale.x);
+		var _g = mr;
+		_g.set(2,_g.get(2) / scale.x);
+		var _g = mr;
+		_g.set(4,_g.get(4) / scale.y);
+		var _g = mr;
+		_g.set(5,_g.get(5) / scale.y);
+		var _g = mr;
+		_g.set(6,_g.get(6) / scale.y);
+		var _g = mr;
+		_g.set(8,_g.get(8) / scale.z);
+		var _g = mr;
+		_g.set(9,_g.get(9) / scale.z);
+		var _g = mr;
+		_g.set(10,_g.get(10) / scale.z);
+		var rot = output.get(2);
+		if(rot == null) {
+			rot = new openfl_geom_Vector3D();
+		}
+		switch(orientationStyle) {
+		case 0:
+			rot.w = Math.acos((mr.get(0) + mr.get(5) + mr.get(10) - 1) / 2);
+			var len = Math.sqrt((mr.get(6) - mr.get(9)) * (mr.get(6) - mr.get(9)) + (mr.get(8) - mr.get(2)) * (mr.get(8) - mr.get(2)) + (mr.get(1) - mr.get(4)) * (mr.get(1) - mr.get(4)));
+			if(len != 0) {
+				rot.x = (mr.get(6) - mr.get(9)) / len;
+				rot.y = (mr.get(8) - mr.get(2)) / len;
+				rot.z = (mr.get(1) - mr.get(4)) / len;
+			} else {
+				rot.x = rot.y = rot.z = 0;
+			}
+			break;
+		case 1:
+			rot.y = Math.asin(-mr.get(2));
+			if(mr.get(2) != 1 && mr.get(2) != -1) {
+				rot.x = Math.atan2(mr.get(6),mr.get(10));
+				rot.z = Math.atan2(mr.get(1),mr.get(0));
+			} else {
+				rot.z = 0;
+				rot.x = Math.atan2(mr.get(4),mr.get(5));
+			}
+			break;
+		case 2:
+			var tr = mr.get(0) + mr.get(5) + mr.get(10);
+			if(tr > 0) {
+				rot.w = Math.sqrt(1 + tr) / 2;
+				rot.x = (mr.get(6) - mr.get(9)) / (4 * rot.w);
+				rot.y = (mr.get(8) - mr.get(2)) / (4 * rot.w);
+				rot.z = (mr.get(1) - mr.get(4)) / (4 * rot.w);
+			} else if(mr.get(0) > mr.get(5) && mr.get(0) > mr.get(10)) {
+				rot.x = Math.sqrt(1 + mr.get(0) - mr.get(5) - mr.get(10)) / 2;
+				rot.w = (mr.get(6) - mr.get(9)) / (4 * rot.x);
+				rot.y = (mr.get(1) + mr.get(4)) / (4 * rot.x);
+				rot.z = (mr.get(8) + mr.get(2)) / (4 * rot.x);
+			} else if(mr.get(5) > mr.get(10)) {
+				rot.y = Math.sqrt(1 + mr.get(5) - mr.get(0) - mr.get(10)) / 2;
+				rot.x = (mr.get(1) + mr.get(4)) / (4 * rot.y);
+				rot.w = (mr.get(8) - mr.get(2)) / (4 * rot.y);
+				rot.z = (mr.get(6) + mr.get(9)) / (4 * rot.y);
+			} else {
+				rot.z = Math.sqrt(1 + mr.get(10) - mr.get(0) - mr.get(5)) / 2;
+				rot.x = (mr.get(8) + mr.get(2)) / (4 * rot.z);
+				rot.y = (mr.get(6) + mr.get(9)) / (4 * rot.z);
+				rot.w = (mr.get(1) - mr.get(4)) / (4 * rot.z);
+			}
+			break;
+		}
+		output.set(0,pos);
+		output.set(1,rot);
+		output.set(2,scale);
+		return output;
+	}
 	,deltaTransformVector: function(v) {
 		var x = v.x;
 		var y = v.y;
 		var z = v.z;
+		return new openfl_geom_Vector3D(x * this.rawData.get(0) + y * this.rawData.get(4) + z * this.rawData.get(8),x * this.rawData.get(1) + y * this.rawData.get(5) + z * this.rawData.get(9),x * this.rawData.get(2) + y * this.rawData.get(6) + z * this.rawData.get(10),x * this.rawData.get(3) + y * this.rawData.get(7) + z * this.rawData.get(11));
+	}
+	,deltaTransformVectorToOutput: function(v,output) {
+		var x = v.x;
+		var y = v.y;
+		var z = v.z;
+		if(output != null) {
+			output.setTo(x * this.rawData.get(0) + y * this.rawData.get(4) + z * this.rawData.get(8),x * this.rawData.get(1) + y * this.rawData.get(5) + z * this.rawData.get(9),x * this.rawData.get(2) + y * this.rawData.get(6) + z * this.rawData.get(10));
+			output.w = x * this.rawData.get(3) + y * this.rawData.get(7) + z * this.rawData.get(11);
+			return output;
+		}
 		return new openfl_geom_Vector3D(x * this.rawData.get(0) + y * this.rawData.get(4) + z * this.rawData.get(8),x * this.rawData.get(1) + y * this.rawData.get(5) + z * this.rawData.get(9),x * this.rawData.get(2) + y * this.rawData.get(6) + z * this.rawData.get(10),x * this.rawData.get(3) + y * this.rawData.get(7) + z * this.rawData.get(11));
 	}
 	,identity: function() {
@@ -64968,6 +67128,17 @@ openfl_geom_Matrix3D.prototype = {
 		var z = v.z;
 		return new openfl_geom_Vector3D(x * this.rawData.get(0) + y * this.rawData.get(4) + z * this.rawData.get(8) + this.rawData.get(12),x * this.rawData.get(1) + y * this.rawData.get(5) + z * this.rawData.get(9) + this.rawData.get(13),x * this.rawData.get(2) + y * this.rawData.get(6) + z * this.rawData.get(10) + this.rawData.get(14),x * this.rawData.get(3) + y * this.rawData.get(7) + z * this.rawData.get(11) + this.rawData.get(15));
 	}
+	,transformVectorToOutput: function(v,output) {
+		var x = v.x;
+		var y = v.y;
+		var z = v.z;
+		if(output != null) {
+			output.setTo(x * this.rawData.get(0) + y * this.rawData.get(4) + z * this.rawData.get(8) + this.rawData.get(12),x * this.rawData.get(1) + y * this.rawData.get(5) + z * this.rawData.get(9) + this.rawData.get(13),x * this.rawData.get(2) + y * this.rawData.get(6) + z * this.rawData.get(10) + this.rawData.get(14));
+			output.w = x * this.rawData.get(3) + y * this.rawData.get(7) + z * this.rawData.get(11) + this.rawData.get(15);
+			return output;
+		}
+		return new openfl_geom_Vector3D(x * this.rawData.get(0) + y * this.rawData.get(4) + z * this.rawData.get(8) + this.rawData.get(12),x * this.rawData.get(1) + y * this.rawData.get(5) + z * this.rawData.get(9) + this.rawData.get(13),x * this.rawData.get(2) + y * this.rawData.get(6) + z * this.rawData.get(10) + this.rawData.get(14),x * this.rawData.get(3) + y * this.rawData.get(7) + z * this.rawData.get(11) + this.rawData.get(15));
+	}
 	,transformVectors: function(vin,vout) {
 		var i = 0;
 		var x;
@@ -65197,6 +67368,13 @@ openfl_geom_Vector3D.prototype = {
 	add: function(a) {
 		return new openfl_geom_Vector3D(this.x + a.x,this.y + a.y,this.z + a.z);
 	}
+	,addToOutput: function(a,output) {
+		if(output != null) {
+			output.setTo(this.x + a.x,this.y + a.y,this.z + a.z);
+			return output;
+		}
+		return new openfl_geom_Vector3D(this.x + a.x,this.y + a.y,this.z + a.z);
+	}
 	,clone: function() {
 		return new openfl_geom_Vector3D(this.x,this.y,this.z,this.w);
 	}
@@ -65206,6 +67384,14 @@ openfl_geom_Vector3D.prototype = {
 		this.z = sourceVector3D.z;
 	}
 	,crossProduct: function(a) {
+		return new openfl_geom_Vector3D(this.y * a.z - this.z * a.y,this.z * a.x - this.x * a.z,this.x * a.y - this.y * a.x,1);
+	}
+	,crossProductToOutput: function(a,output) {
+		if(output != null) {
+			output.setTo(this.y * a.z - this.z * a.y,this.z * a.x - this.x * a.z,this.x * a.y - this.y * a.x);
+			output.w = 1;
+			return output;
+		}
 		return new openfl_geom_Vector3D(this.y * a.z - this.z * a.y,this.z * a.x - this.x * a.z,this.x * a.y - this.y * a.x,1);
 	}
 	,decrementBy: function(a) {
@@ -65281,6 +67467,13 @@ openfl_geom_Vector3D.prototype = {
 	,subtract: function(a) {
 		return new openfl_geom_Vector3D(this.x - a.x,this.y - a.y,this.z - a.z);
 	}
+	,subtractToOutput: function(a,output) {
+		if(output != null) {
+			output.setTo(this.x - a.x,this.y - a.y,this.z - a.z);
+			return output;
+		}
+		return new openfl_geom_Vector3D(this.x - a.x,this.y - a.y,this.z - a.z);
+	}
 	,toString: function() {
 		return "Vector3D(" + this.x + ", " + this.y + ", " + this.z + ")";
 	}
@@ -65354,11 +67547,15 @@ openfl_media_Sound.prototype = $extend(openfl_events_EventDispatcher.prototype,{
 		var _gthis = this;
 		this.url = stream.url;
 		this.__urlLoading = true;
+		this.dispatchEvent(new openfl_events_Event("open"));
 		var defaultLibrary = lime_utils_Assets.getLibrary("default");
 		if(defaultLibrary != null && Object.prototype.hasOwnProperty.call(defaultLibrary.cachedAudioBuffers.h,this.url)) {
-			this.AudioBuffer_onURLLoad(defaultLibrary.cachedAudioBuffers.h[this.url]);
+			var audioBuffer = defaultLibrary.cachedAudioBuffers.h[this.url];
+			var byteLength = audioBuffer != null && audioBuffer.data != null ? audioBuffer.data.byteLength : 0;
+			this.AudioBuffer_onURLProgress(byteLength,byteLength);
+			this.AudioBuffer_onURLLoad(audioBuffer);
 		} else {
-			lime_media_AudioBuffer.loadFromFile(this.url).onComplete($bind(this,this.AudioBuffer_onURLLoad)).onError(function(_) {
+			lime_media_AudioBuffer.loadFromFile(this.url).onProgress($bind(this,this.AudioBuffer_onURLProgress)).onComplete($bind(this,this.AudioBuffer_onURLLoad)).onError(function(_) {
 				_gthis.AudioBuffer_onURLLoad(null);
 			});
 		}
@@ -65390,6 +67587,8 @@ openfl_media_Sound.prototype = $extend(openfl_events_EventDispatcher.prototype,{
 		if(this.__buffer == null) {
 			this.dispatchEvent(new openfl_events_IOErrorEvent("ioError"));
 		} else {
+			this.dispatchEvent(new openfl_events_Event("open"));
+			this.dispatchEvent(new openfl_events_ProgressEvent("progress",false,false,UInt.toFloat(openfl_utils_ByteArray.get_length(bytes)),UInt.toFloat(openfl_utils_ByteArray.get_length(bytes))));
 			this.dispatchEvent(new openfl_events_Event("complete"));
 		}
 	}
@@ -65458,6 +67657,8 @@ openfl_media_Sound.prototype = $extend(openfl_events_EventDispatcher.prototype,{
 		audioBuffer.data = this1;
 		audioBuffer.sampleRate = sampleRate | 0;
 		this.__buffer = audioBuffer;
+		this.dispatchEvent(new openfl_events_Event("open"));
+		this.dispatchEvent(new openfl_events_ProgressEvent("progress",false,false,UInt.toFloat(openfl_utils_ByteArray.get_length(bytes)),UInt.toFloat(openfl_utils_ByteArray.get_length(bytes))));
 		this.dispatchEvent(new openfl_events_Event("complete"));
 	}
 	,play: function(startTime,loops,sndTransform) {
@@ -65531,6 +67732,12 @@ openfl_media_Sound.prototype = $extend(openfl_events_EventDispatcher.prototype,{
 		}
 		this.__pendingSoundChannel = null;
 		this.__pendingAudioSource = null;
+	}
+	,AudioBuffer_onURLProgress: function(bytesLoaded,bytesTotal) {
+		var progressEvent = new openfl_events_ProgressEvent("progress");
+		progressEvent.bytesLoaded = bytesLoaded;
+		progressEvent.bytesTotal = bytesTotal;
+		this.dispatchEvent(progressEvent);
 	}
 	,__class__: openfl_media_Sound
 	,__properties__: {get_sampleRate:"get_sampleRate",get_length:"get_length",get_id3:"get_id3"}
@@ -65718,8 +67925,8 @@ openfl_media_SoundMixer.areSoundsInaccessible = function() {
 openfl_media_SoundMixer.stopAll = function() {
 	var i = openfl_media_SoundMixer.__soundChannels.length;
 	while(i > 0) {
-		openfl_media_SoundMixer.__soundChannels[i].stop();
 		--i;
+		openfl_media_SoundMixer.__soundChannels[i].stop();
 	}
 };
 openfl_media_SoundMixer.__registerSoundChannel = function(soundChannel) {
@@ -65734,11 +67941,11 @@ openfl_media_SoundMixer.get_soundTransform = function() {
 openfl_media_SoundMixer.__unregisterSoundChannelByBuffer = function(buffer) {
 	var i = openfl_media_SoundMixer.__soundChannels.length;
 	while(i > 0) {
+		--i;
 		var channel = openfl_media_SoundMixer.__soundChannels[i];
 		if(channel.__audioSource.buffer == buffer) {
 			channel.stop();
 		}
-		--i;
 	}
 };
 openfl_media_SoundMixer.set_soundTransform = function(value) {
@@ -66202,7 +68409,11 @@ openfl_net_URLLoader.prototype = $extend(openfl_events_EventDispatcher.prototype
 			httpRequest.load().onProgress($bind(this,this.httpRequest_onProgress)).onError($bind(this,this.httpRequest_onError)).onComplete(function(data) {
 				_gthis.__dispatchResponseStatus();
 				_gthis.__dispatchStatus();
-				_gthis.data = data;
+				if(_gthis.dataFormat == 2) {
+					_gthis.data = openfl_net_URLVariables._new(data);
+				} else {
+					_gthis.data = data;
+				}
 				var event = new openfl_events_Event("complete");
 				_gthis.dispatchEvent(event);
 			});
@@ -66260,6 +68471,7 @@ openfl_net_URLLoader.prototype = $extend(openfl_events_EventDispatcher.prototype
 		this.__httpRequest.followRedirects = request.followRedirects;
 		this.__httpRequest.timeout = request.idleTimeout | 0;
 		this.__httpRequest.manageCookies = request.manageCookies;
+		this.__httpRequest.withCredentials = request.withCredentials;
 		var userAgent = request.userAgent;
 		if(userAgent == null) {
 			userAgent = "Mozilla/5.0 (Windows; U; en) AppleWebKit/420+ (KHTML, like Gecko) OpenFL/1.0";
@@ -66321,6 +68533,7 @@ openfl_net_URLLoaderDataFormat.toString = function(this1) {
 	}
 };
 var openfl_net_URLRequest = function(url) {
+	this.withCredentials = false;
 	if(url != null) {
 		this.url = url;
 	}
@@ -66358,6 +68571,69 @@ $hxClasses["openfl.net.URLRequestHeader"] = openfl_net_URLRequestHeader;
 openfl_net_URLRequestHeader.__name__ = "openfl.net.URLRequestHeader";
 openfl_net_URLRequestHeader.prototype = {
 	__class__: openfl_net_URLRequestHeader
+};
+var openfl_net_URLVariables = {};
+openfl_net_URLVariables._new = function(source) {
+	var this1 = { };
+	if(source != null) {
+		openfl_net_URLVariables.decode(this1,source);
+	}
+	return this1;
+};
+openfl_net_URLVariables.decode = function(this1,source) {
+	var fields = Reflect.fields(this1);
+	var _g = 0;
+	while(_g < fields.length) {
+		var f = fields[_g];
+		++_g;
+		Reflect.deleteField(this1,f);
+	}
+	var fields = source.split(";").join("&").split("&");
+	var _g = 0;
+	while(_g < fields.length) {
+		var f = fields[_g];
+		++_g;
+		var eq = f.indexOf("=");
+		if(eq > 0) {
+			var s = HxOverrides.substr(f,0,eq);
+			var field = decodeURIComponent(s.split("+").join(" "));
+			var s1 = HxOverrides.substr(f,eq + 1,null);
+			this1[field] = decodeURIComponent(s1.split("+").join(" "));
+		} else if(eq != 0) {
+			this1[decodeURIComponent(f.split("+").join(" "))] = "";
+		}
+	}
+};
+openfl_net_URLVariables.toString = function(this1) {
+	var result = [];
+	var fields = Reflect.fields(this1);
+	var _g = 0;
+	while(_g < fields.length) {
+		var f = fields[_g];
+		++_g;
+		var value = Reflect.field(this1,f);
+		if(f.indexOf("[]") > -1 && ((value) instanceof Array)) {
+			var _g1 = [];
+			var x = $getIterator(value);
+			while(x.hasNext()) {
+				var x1 = x.next();
+				_g1.push(encodeURIComponent(x1));
+			}
+			var arrayValue = _g1.join("&amp;" + f + "=");
+			result.push(encodeURIComponent(f) + "=" + arrayValue);
+		} else {
+			var tmp = encodeURIComponent(f) + "=";
+			var s = Std.string(value);
+			result.push(tmp + encodeURIComponent(s));
+		}
+	}
+	return result.join("&");
+};
+openfl_net_URLVariables.__get = function(this1,key) {
+	return Reflect.field(this1,key);
+};
+openfl_net_URLVariables.__set = function(this1,key,value) {
+	this1[key] = value;
 };
 var openfl_system_ApplicationDomain = function(parentDomain) {
 	if(parentDomain != null) {
@@ -66912,6 +69188,7 @@ var openfl_text_TextField = function() {
 	this.__mouseScrollVCounter = 0;
 	this.condenseWhite = false;
 	openfl_display_InteractiveObject.call(this);
+	this.__wordSelection = false;
 	this.__drawableType = 7;
 	this.__caretIndex = -1;
 	this.__selectionIndex = -1;
@@ -66923,7 +69200,6 @@ var openfl_text_TextField = function() {
 	this.__offsetY = 0;
 	this.__mouseWheelEnabled = true;
 	this.__text = "";
-	this.doubleClickEnabled = true;
 	if(openfl_text_TextField.__defaultTextFormat == null) {
 		openfl_text_TextField.__defaultTextFormat = new openfl_text_TextFormat("Times New Roman",12,0,false,false,false,"","",3,0,0,0,0);
 		openfl_text_TextField.__defaultTextFormat.blockIndent = 0;
@@ -66938,7 +69214,6 @@ var openfl_text_TextField = function() {
 	this.addEventListener("focusOut",$bind(this,this.this_onFocusOut));
 	this.addEventListener("keyDown",$bind(this,this.this_onKeyDown));
 	this.addEventListener("mouseWheel",$bind(this,this.this_onMouseWheel));
-	this.addEventListener("doubleClick",$bind(this,this.this_onDoubleClick));
 };
 $hxClasses["openfl.text.TextField"] = openfl_text_TextField;
 openfl_text_TextField.__name__ = "openfl.text.TextField";
@@ -67342,7 +69617,7 @@ openfl_text_TextField.prototype = $extend(openfl_display_InteractiveObject.proto
 					index += 2;
 				} else {
 					++index;
-					lime_utils_Log.warn("You found a bug in OpenFL's text code! Please save a copy of your project and create an issue on GitHub so we can fix this.",{ fileName : "openfl/text/TextField.hx", lineNumber : 1578, className : "openfl.text.TextField", methodName : "setTextFormat"});
+					lime_utils_Log.warn("You found a bug in OpenFL's text code! Please save a copy of your project and create an issue on GitHub so we can fix this.",{ fileName : "openfl/text/TextField.hx", lineNumber : 1610, className : "openfl.text.TextField", methodName : "setTextFormat"});
 				}
 			}
 		}
@@ -67611,6 +69886,48 @@ openfl_text_TextField.prototype = $extend(openfl_display_InteractiveObject.proto
 		}
 		return group.endIndex;
 	}
+	,__getPositionByIdentifier: function(x,y,line) {
+		var position = this.__getPosition(x,y);
+		var delimiters = line ? "\n" : " .,;:!?()[]{}<>/\\|-=+*&^%$#@~`'\"";
+		var char = this.__text.charAt(position);
+		if(this.__specialSelectionInitialIndex <= position) {
+			while(delimiters.indexOf(char) == -1 && position < this.__text.length) {
+				++position;
+				char = this.__text.charAt(position);
+			}
+		} else {
+			while(delimiters.indexOf(char) == -1 && position > 0) {
+				--position;
+				char = this.__text.charAt(position);
+			}
+			if(position == 0) {
+				return position;
+			}
+			++position;
+		}
+		return position;
+	}
+	,__getOppositeIdentifierBound: function(charIndex,line) {
+		var position = charIndex;
+		var delimiters = line ? "\n" : " .,;:!?()[]{}<>/\\|-=+*&^%$#@~`'\"";
+		var char = this.__text.charAt(position);
+		if(position <= this.__caretIndex) {
+			while(delimiters.indexOf(char) == -1 && position > 0) {
+				--position;
+				char = this.__text.charAt(position);
+			}
+			if(position == 0) {
+				return position;
+			}
+			++position;
+		} else {
+			while(delimiters.indexOf(char) == -1 && position < this.__text.length) {
+				++position;
+				char = this.__text.charAt(position);
+			}
+		}
+		return position;
+	}
 	,__hitTest: function(x,y,shapeFlag,stack,interactiveOnly,hitObject) {
 		if(!hitObject.get_visible() || this.__isMask || interactiveOnly && !this.mouseEnabled) {
 			return false;
@@ -67704,7 +70021,7 @@ openfl_text_TextField.prototype = $extend(openfl_display_InteractiveObject.proto
 			if(beginIndex == endIndex) {
 				if(range.start == range.end) {
 					if(range.start != 0) {
-						lime_utils_Log.warn("You found a bug in OpenFL's text code! Please save a copy of your project and create an issue on GitHub so we can fix this.",{ fileName : "openfl/text/TextField.hx", lineNumber : 2095, className : "openfl.text.TextField", methodName : "__replaceText"});
+						lime_utils_Log.warn("You found a bug in OpenFL's text code! Please save a copy of your project and create an issue on GitHub so we can fix this.",{ fileName : "openfl/text/TextField.hx", lineNumber : 2184, className : "openfl.text.TextField", methodName : "__replaceText"});
 					} else {
 						range.end += offset;
 					}
@@ -68106,6 +70423,11 @@ openfl_text_TextField.prototype = $extend(openfl_display_InteractiveObject.proto
 		}
 	}
 	,set_htmlText: function(value) {
+		if(value == null) {
+			var error = new openfl_errors_TypeError("Error #2007: Parameter text must be non-null.");
+			error.errorID = 2007;
+			throw error;
+		}
 		if(!this.__isHTML || this.__text != value) {
 			this.__dirty = true;
 			this.__layoutDirty = true;
@@ -68286,6 +70608,11 @@ openfl_text_TextField.prototype = $extend(openfl_display_InteractiveObject.proto
 		return this.__text;
 	}
 	,set_text: function(value) {
+		if(value == null) {
+			var error = new openfl_errors_TypeError("Error #2007: Parameter text must be non-null.");
+			error.errorID = 2007;
+			throw error;
+		}
 		if(this.__styleSheet != null) {
 			return this.set_htmlText(value);
 		}
@@ -68432,9 +70759,12 @@ openfl_text_TextField.prototype = $extend(openfl_display_InteractiveObject.proto
 		}
 		if(this.get_selectable() && this.__selectionIndex >= 0) {
 			this.__updateLayout();
-			var position = this.__getPosition(this.get_mouseX() + this.get_scrollH(),this.get_mouseY());
+			var position = this.__lineSelection ? this.__getPositionByIdentifier(this.get_mouseX() + this.get_scrollH(),this.get_mouseY(),true) : this.__wordSelection ? this.__getPositionByIdentifier(this.get_mouseX() + this.get_scrollH(),this.get_mouseY(),false) : this.__getPosition(this.get_mouseX() + this.get_scrollH(),this.get_mouseY());
 			if(position != this.__caretIndex) {
 				this.__caretIndex = position;
+				if(this.__wordSelection || this.__lineSelection) {
+					this.__selectionIndex = this.__getOppositeIdentifierBound(this.__specialSelectionInitialIndex,this.__lineSelection);
+				}
 				var setDirty = true;
 				if(openfl_display_DisplayObject.__supportDOM) {
 					if(this.__renderedOnCanvasWhileOnDOM) {
@@ -68463,11 +70793,12 @@ openfl_text_TextField.prototype = $extend(openfl_display_InteractiveObject.proto
 		if(stage.get_focus() == this) {
 			this.__getWorldTransform();
 			this.__updateLayout();
-			var upPos = this.__getPosition(this.get_mouseX() + this.get_scrollH(),this.get_mouseY());
+			var upPos = this.__lineSelection ? this.__getPositionByIdentifier(this.get_mouseX() + this.get_scrollH(),this.get_mouseY(),true) : this.__wordSelection ? this.__getPositionByIdentifier(this.get_mouseX() + this.get_scrollH(),this.get_mouseY(),false) : this.__getPosition(this.get_mouseX() + this.get_scrollH(),this.get_mouseY());
 			var leftPos = Math.min(this.__selectionIndex,upPos) | 0;
 			var rightPos = Math.max(this.__selectionIndex,upPos) | 0;
 			this.__selectionIndex = leftPos;
 			this.__caretIndex = rightPos;
+			this.__wordSelection = this.__lineSelection = false;
 			if(this.__inputEnabled) {
 				this.this_onFocusIn(null);
 				this.__stopCursorTimer();
@@ -68514,9 +70845,25 @@ openfl_text_TextField.prototype = $extend(openfl_display_InteractiveObject.proto
 		if(!this.get_selectable() && this.get_type() != 1) {
 			return;
 		}
+		this.__lineSelection = event.clickCount == 3;
+		this.__wordSelection = event.clickCount == 2;
+		if(this.__lineSelection) {
+			var prevCaretIndex = this.__caretIndex;
+			this.__caretIndex = this.__getPositionByIdentifier(event.stageX + this.get_scrollH(),event.stageY,true);
+			this.__selectionIndex = this.__getOppositeIdentifierBound(prevCaretIndex,true);
+			this.setSelection(this.__caretIndex,this.__selectionIndex);
+		} else if(this.__wordSelection) {
+			var prevCaretIndex = this.__caretIndex;
+			this.__caretIndex = this.__getPositionByIdentifier(event.stageX + this.get_scrollH(),event.stageY,false);
+			this.__selectionIndex = this.__getOppositeIdentifierBound(prevCaretIndex,false);
+			this.__specialSelectionInitialIndex = prevCaretIndex;
+			this.setSelection(this.__caretIndex,this.__selectionIndex);
+		} else {
+			this.__caretIndex = this.__getPosition(this.get_mouseX() + this.get_scrollH(),this.get_mouseY());
+			this.__selectionIndex = this.__caretIndex;
+			this.setSelection(this.__caretIndex,this.__selectionIndex);
+		}
 		this.__updateLayout();
-		this.__caretIndex = this.__getPosition(this.get_mouseX() + this.get_scrollH(),this.get_mouseY());
-		this.__selectionIndex = this.__caretIndex;
 		if(!openfl_display_DisplayObject.__supportDOM) {
 			this.__dirty = true;
 			if(!this.__renderDirty) {
@@ -68534,49 +70881,6 @@ openfl_text_TextField.prototype = $extend(openfl_display_InteractiveObject.proto
 	,this_onMouseWheel: function(event) {
 		if(this.get_mouseWheelEnabled()) {
 			this.set_scrollV(Math.min(this.get_scrollV() - event.delta,this.get_maxScrollV()) | 0);
-		}
-	}
-	,this_onDoubleClick: function(event) {
-		if(this.get_selectable()) {
-			this.__updateLayout();
-			var delimiters = ["\n",".","!","?",","," ",";",":","(",")","-","_","/"];
-			var txtStr = this.__text;
-			var leftPos = -1;
-			var rightPos = txtStr.length;
-			var pos = 0;
-			var startPos = Math.max(this.__caretIndex,1) | 0;
-			if(txtStr.length > 0 && this.__caretIndex >= 0 && rightPos >= this.__caretIndex) {
-				var _g = 0;
-				while(_g < delimiters.length) {
-					var c = delimiters[_g];
-					++_g;
-					pos = txtStr.lastIndexOf(c,startPos - 1);
-					if(pos > leftPos) {
-						leftPos = pos + 1;
-					}
-					pos = txtStr.indexOf(c,startPos);
-					if(pos < rightPos && pos != -1) {
-						rightPos = pos;
-					}
-				}
-				if(leftPos != rightPos) {
-					this.setSelection(leftPos,rightPos);
-					var setDirty = true;
-					if(openfl_display_DisplayObject.__supportDOM) {
-						if(this.__renderedOnCanvasWhileOnDOM) {
-							this.__forceCachedBitmapUpdate = true;
-						}
-						setDirty = false;
-					}
-					if(setDirty) {
-						this.__dirty = true;
-						if(!this.__renderDirty) {
-							this.__renderDirty = true;
-							this.__setParentRenderDirty();
-						}
-					}
-				}
-			}
 		}
 	}
 	,window_onKeyDown: function(key,modifier) {
@@ -69863,7 +72167,7 @@ openfl_text__$internal_TextEngine.prototype = {
 			y = 2;
 		}
 		var textHeight = this.textHeight * 1.185;
-		this.textBounds.setTo(Math.max(x - 2,0),Math.max(y - 2,0),Math.min(this.textWidth + 4,this.bounds.width + 4),Math.min(textHeight + 4,this.bounds.height + 4));
+		this.textBounds.setTo(Math.max(x - 2,0),Math.max(y - 2,0),Math.min(this.textWidth + 4,this.bounds.width),Math.min(textHeight + 4,this.bounds.height));
 	}
 	,getLine: function(index) {
 		if(index < 0 || index > this.lineBreaks.get_length() + 1) {
@@ -70184,7 +72488,7 @@ openfl_text__$internal_TextEngine.prototype = {
 					}
 					if(tempRangeEnd != endIndex) {
 						if(!nextFormatRange()) {
-							lime_utils_Log.warn("You found a bug in OpenFL's text code! Please save a copy of your project and create an issue on GitHub so we can fix this.",{ fileName : "openfl/text/_internal/TextEngine.hx", lineNumber : 1116, className : "openfl.text._internal.TextEngine", methodName : "getLayoutGroups"});
+							lime_utils_Log.warn("You found a bug in OpenFL's text code! Please save a copy of your project and create an issue on GitHub so we can fix this.",{ fileName : "openfl/text/_internal/TextEngine.hx", lineNumber : 1121, className : "openfl.text._internal.TextEngine", methodName : "getLayoutGroups"});
 							break;
 						}
 						tempIndex = tempRangeEnd;
@@ -70249,7 +72553,7 @@ openfl_text__$internal_TextEngine.prototype = {
 						break;
 					}
 					if(!nextFormatRange()) {
-						lime_utils_Log.warn("You found a bug in OpenFL's text code! Please save a copy of your project and create an issue on GitHub so we can fix this.",{ fileName : "openfl/text/_internal/TextEngine.hx", lineNumber : 1204, className : "openfl.text._internal.TextEngine", methodName : "getLayoutGroups"});
+						lime_utils_Log.warn("You found a bug in OpenFL's text code! Please save a copy of your project and create an issue on GitHub so we can fix this.",{ fileName : "openfl/text/_internal/TextEngine.hx", lineNumber : 1209, className : "openfl.text._internal.TextEngine", methodName : "getLayoutGroups"});
 						break;
 					}
 					setLineMetrics();
@@ -70776,6 +73080,7 @@ var openfl_text__$internal_TextLayout = function(text,font,size,direction,script
 	if(text == null) {
 		text = "";
 	}
+	this.__hbFontSize = -1;
 	this.letterSpacing = 0;
 	this.set_text(text);
 	this.set_font(font);
@@ -72902,14 +75207,14 @@ openfl_utils_Assets.getMovieClip = function(id) {
 				if(library.isLocal(symbolName,"MOVIE_CLIP")) {
 					return library.getMovieClip(symbolName);
 				} else {
-					lime_utils_Log.error("MovieClip asset \"" + id + "\" exists, but only asynchronously",{ fileName : "openfl/utils/Assets.hx", lineNumber : 215, className : "openfl.utils.Assets", methodName : "getMovieClip"});
+					lime_utils_Log.error("MovieClip asset \"" + id + "\" exists, but only asynchronously",{ fileName : "openfl/utils/Assets.hx", lineNumber : 242, className : "openfl.utils.Assets", methodName : "getMovieClip"});
 					return null;
 				}
 			}
 		}
-		lime_utils_Log.error("There is no MovieClip asset with an ID of \"" + id + "\"",{ fileName : "openfl/utils/Assets.hx", lineNumber : 221, className : "openfl.utils.Assets", methodName : "getMovieClip"});
+		lime_utils_Log.error("There is no MovieClip asset with an ID of \"" + id + "\"",{ fileName : "openfl/utils/Assets.hx", lineNumber : 248, className : "openfl.utils.Assets", methodName : "getMovieClip"});
 	} else {
-		lime_utils_Log.error("There is no asset library named \"" + libraryName + "\"",{ fileName : "openfl/utils/Assets.hx", lineNumber : 225, className : "openfl.utils.Assets", methodName : "getMovieClip"});
+		lime_utils_Log.error("There is no asset library named \"" + libraryName + "\"",{ fileName : "openfl/utils/Assets.hx", lineNumber : 252, className : "openfl.utils.Assets", methodName : "getMovieClip"});
 	}
 	return null;
 };
@@ -72963,7 +75268,7 @@ openfl_utils_Assets.initBinding = function(className,instance) {
 			instance.__bind(library,className);
 		}
 	} else {
-		lime_utils_Log.warn("No asset is registered as \"" + className + "\"",{ fileName : "openfl/utils/Assets.hx", lineNumber : 367, className : "openfl.utils.Assets", methodName : "initBinding"});
+		lime_utils_Log.warn("No asset is registered as \"" + className + "\"",{ fileName : "openfl/utils/Assets.hx", lineNumber : 408, className : "openfl.utils.Assets", methodName : "initBinding"});
 	}
 };
 openfl_utils_Assets.isLocal = function(id,type,useCache) {
@@ -73264,6 +75569,9 @@ openfl_utils_ByteArray.readFloat = function(this1) {
 openfl_utils_ByteArray.readInt = function(this1) {
 	return this1.readInt();
 };
+openfl_utils_ByteArray.readInt64 = function(this1) {
+	return this1.readInt64();
+};
 openfl_utils_ByteArray.readMultiByte = function(this1,length,charSet) {
 	return this1.readMultiByte(length,charSet);
 };
@@ -73338,6 +75646,9 @@ openfl_utils_ByteArray.writeFloat = function(this1,value) {
 };
 openfl_utils_ByteArray.writeInt = function(this1,value) {
 	this1.writeInt(value);
+};
+openfl_utils_ByteArray.writeInt64 = function(this1,value) {
+	this1.writeInt64(value);
 };
 openfl_utils_ByteArray.writeMultiByte = function(this1,value,charSet) {
 	this1.writeMultiByte(value,charSet);
@@ -73585,11 +75896,39 @@ openfl_utils_ByteArrayData.prototype = $extend(haxe_io_Bytes.prototype,{
 			return ch1 << 24 | ch2 << 16 | ch3 << 8 | ch4;
 		}
 	}
+	,readInt64: function() {
+		if(this.position + 8 > this.length) {
+			throw new openfl_errors_EOFError();
+		}
+		var high;
+		var low;
+		if(this.__endian == 1) {
+			low = this.readUnsignedInt();
+			high = this.readUnsignedInt();
+		} else {
+			high = this.readUnsignedInt();
+			low = this.readUnsignedInt();
+		}
+		var this1 = new haxe__$Int64__$_$_$Int64(high,low);
+		return this1;
+	}
 	,readMultiByte: function(length,charSet) {
 		return this.readUTFBytes(length);
 	}
 	,readObject: function() {
 		switch(this.objectEncoding) {
+		case 0:
+			var input = new haxe_io_BytesInput(this,this.position);
+			var reader = new openfl_utils__$internal_format_amf_AMFReader(input);
+			var data = openfl_utils__$internal_format_amf_AMFTools.unwrapValue(reader.read());
+			this.position = input.pos;
+			return data;
+		case 3:
+			var input = new haxe_io_BytesInput(this,this.position);
+			var reader = new openfl_utils__$internal_format_amf3_AMF3Reader(input,this.__amf3Reader);
+			var data = openfl_utils__$internal_format_amf3_AMF3Tools.decode(reader.read());
+			this.position = input.pos;
+			return data;
 		case 10:
 			var data = this.readUTF();
 			return haxe_Unserializer.run(data);
@@ -73745,11 +76084,38 @@ openfl_utils_ByteArrayData.prototype = $extend(haxe_io_Bytes.prototype,{
 			this.b[this.position++] = value & 255 & 255;
 		}
 	}
+	,writeInt64: function(value) {
+		if(this.__endian == 1) {
+			this.writeUnsignedInt(value.low);
+			this.writeUnsignedInt(value.high);
+		} else {
+			this.writeUnsignedInt(value.high);
+			this.writeUnsignedInt(value.low);
+		}
+	}
 	,writeMultiByte: function(value,charSet) {
 		this.writeUTFBytes(value);
 	}
 	,writeObject: function(object) {
 		switch(this.objectEncoding) {
+		case 0:
+			var value = openfl_utils__$internal_format_amf_AMFTools.encode(object);
+			var output = new haxe_io_BytesOutput();
+			var writer = new openfl_utils__$internal_format_amf_AMFWriter(output);
+			writer.write(value);
+			this.writeBytes(openfl_utils_ByteArray.fromBytes(output.getBytes()));
+			break;
+		case 3:
+			var output = new haxe_io_BytesOutput();
+			var writer = new openfl_utils__$internal_format_amf3_AMF3Writer(output);
+			if(((object) instanceof openfl_utils_ByteArrayData)) {
+				writer.write(openfl_utils__$internal_format_amf3_AMF3Value.AByteArray(object));
+			} else {
+				var value = openfl_utils__$internal_format_amf3_AMF3Tools.encode(object);
+				writer.write(value);
+			}
+			this.writeBytes(openfl_utils_ByteArray.fromBytes(output.getBytes()));
+			break;
 		case 10:
 			var value = haxe_Serializer.run(object);
 			this.writeUTF(value);
@@ -73854,68 +76220,6 @@ openfl_utils_CompressionAlgorithm.toString = function(this1) {
 	default:
 		return null;
 	}
-};
-var openfl_utils_Dictionary = {};
-openfl_utils_Dictionary.exists = function(this1,key) {
-	return this1.exists(key);
-};
-openfl_utils_Dictionary.get = function(this1,key) {
-	return this1.get(key);
-};
-openfl_utils_Dictionary.keyValueIterator = function(this1) {
-	return this1.keyValueIterator();
-};
-openfl_utils_Dictionary.remove = function(this1,key) {
-	return this1.remove(key);
-};
-openfl_utils_Dictionary.set = function(this1,key,value) {
-	this1.set(key,value);
-	return value;
-};
-openfl_utils_Dictionary.iterator = function(this1) {
-	return this1.keys();
-};
-openfl_utils_Dictionary.each = function(this1) {
-	return this1.iterator();
-};
-openfl_utils_Dictionary.toStringMap = function(t,weakKeys) {
-	return new haxe_ds_StringMap();
-};
-openfl_utils_Dictionary.toIntMap = function(t,weakKeys) {
-	return new haxe_ds_IntMap();
-};
-openfl_utils_Dictionary.toFloatMap = function(t,weakKeys) {
-	return new openfl_utils__$Dictionary_FloatMap();
-};
-openfl_utils_Dictionary.toEnumValueMapMap = function(t,weakKeys) {
-	return new haxe_ds_EnumValueMap();
-};
-openfl_utils_Dictionary.toObjectMap = function(t,weakKeys) {
-	return new haxe_ds_ObjectMap();
-};
-openfl_utils_Dictionary.toUtilsObjectMap = function(t,weakKeys) {
-	return new openfl_utils__$Dictionary_UtilsObjectMap();
-};
-openfl_utils_Dictionary.toClassMap = function(t,weakKeys) {
-	return new openfl_utils__$Dictionary_ClassMap();
-};
-openfl_utils_Dictionary.fromStringMap = function(map) {
-	return map;
-};
-openfl_utils_Dictionary.fromIntMap = function(map) {
-	return map;
-};
-openfl_utils_Dictionary.fromFloatMap = function(map) {
-	return map;
-};
-openfl_utils_Dictionary.fromObjectMap = function(map) {
-	return map;
-};
-openfl_utils_Dictionary.fromUtilsObjectMap = function(map) {
-	return map;
-};
-openfl_utils_Dictionary.fromClassMap = function(map) {
-	return map;
 };
 var openfl_utils__$Dictionary_ClassMap = function() {
 	this.types = new haxe_ds_StringMap();
@@ -74185,6 +76489,13 @@ openfl_utils_Endian.toString = function(this1) {
 	default:
 		return null;
 	}
+};
+var openfl_utils_IExternalizable = function() { };
+$hxClasses["openfl.utils.IExternalizable"] = openfl_utils_IExternalizable;
+openfl_utils_IExternalizable.__name__ = "openfl.utils.IExternalizable";
+openfl_utils_IExternalizable.__isInterface__ = true;
+openfl_utils_IExternalizable.prototype = {
+	__class__: openfl_utils_IExternalizable
 };
 var openfl_utils_Object = {};
 openfl_utils_Object._new = function() {
@@ -74656,6 +76967,1437 @@ openfl_utils__$internal_TouchData.prototype = {
 	}
 	,__class__: openfl_utils__$internal_TouchData
 };
+var openfl_utils__$internal_format_amf_AMFReader = function(i) {
+	this.i = i;
+	i.set_bigEndian(true);
+};
+$hxClasses["openfl.utils._internal.format.amf.AMFReader"] = openfl_utils__$internal_format_amf_AMFReader;
+openfl_utils__$internal_format_amf_AMFReader.__name__ = "openfl.utils._internal.format.amf.AMFReader";
+openfl_utils__$internal_format_amf_AMFReader.prototype = {
+	readObject: function() {
+		var h = new haxe_ds_StringMap();
+		while(true) {
+			var c1 = this.i.readByte();
+			var c2 = this.i.readByte();
+			var name = this.i.readString(c1 << 8 | c2);
+			var k = this.i.readByte();
+			if(k == 9) {
+				break;
+			}
+			var value = this.readWithCode(k);
+			h.h[name] = value;
+		}
+		return h;
+	}
+	,readArray: function(n) {
+		var a = [];
+		var _g = 0;
+		var _g1 = n;
+		while(_g < _g1) {
+			var i = _g++;
+			a.push(this.read());
+		}
+		return a;
+	}
+	,readInt: function() {
+		return this.i.readInt32();
+	}
+	,readWithCode: function(id) {
+		var i = this.i;
+		switch(id) {
+		case 0:
+			return openfl_utils__$internal_format_amf_AMFValue.ANumber(i.readDouble());
+		case 1:
+			var tmp;
+			switch(i.readByte()) {
+			case 0:
+				tmp = false;
+				break;
+			case 1:
+				tmp = true;
+				break;
+			default:
+				throw haxe_Exception.thrown("Invalid AMF");
+			}
+			return openfl_utils__$internal_format_amf_AMFValue.ABool(tmp);
+		case 2:
+			return openfl_utils__$internal_format_amf_AMFValue.AString(i.readString(i.readUInt16()));
+		case 5:
+			return openfl_utils__$internal_format_amf_AMFValue.ANull;
+		case 6:
+			return openfl_utils__$internal_format_amf_AMFValue.AUndefined;
+		case 7:
+			throw haxe_Exception.thrown("Not supported : Reference");
+		case 3:case 8:
+			var ismixed = id == 8;
+			var size = ismixed ? this.i.readInt32() : null;
+			return openfl_utils__$internal_format_amf_AMFValue.AObject(this.readObject(),size);
+		case 10:
+			return openfl_utils__$internal_format_amf_AMFValue.AArray(this.readArray(this.i.readInt32()));
+		case 11:
+			var time_ms = i.readDouble();
+			var tz_min = i.readUInt16();
+			return openfl_utils__$internal_format_amf_AMFValue.ADate(new Date(time_ms + tz_min * 60 * 1000.0));
+		case 12:
+			return openfl_utils__$internal_format_amf_AMFValue.AString(i.readString(this.i.readInt32()));
+		default:
+			throw haxe_Exception.thrown("Unknown AMF " + id);
+		}
+	}
+	,read: function() {
+		return this.readWithCode(this.i.readByte());
+	}
+	,__class__: openfl_utils__$internal_format_amf_AMFReader
+};
+var openfl_utils__$internal_format_amf_AMFTools = function() { };
+$hxClasses["openfl.utils._internal.format.amf.AMFTools"] = openfl_utils__$internal_format_amf_AMFTools;
+openfl_utils__$internal_format_amf_AMFTools.__name__ = "openfl.utils._internal.format.amf.AMFTools";
+openfl_utils__$internal_format_amf_AMFTools.encode = function(o) {
+	var _g = Type.typeof(o);
+	switch(_g._hx_index) {
+	case 0:
+		return openfl_utils__$internal_format_amf_AMFValue.ANull;
+	case 1:
+		return openfl_utils__$internal_format_amf_AMFValue.ANumber(o);
+	case 2:
+		return openfl_utils__$internal_format_amf_AMFValue.ANumber(o);
+	case 3:
+		return openfl_utils__$internal_format_amf_AMFValue.ABool(o);
+	case 4:
+		var h = new haxe_ds_StringMap();
+		var _g1 = 0;
+		var _g2 = Reflect.fields(o);
+		while(_g1 < _g2.length) {
+			var f = _g2[_g1];
+			++_g1;
+			var value = openfl_utils__$internal_format_amf_AMFTools.encode(Reflect.field(o,f));
+			h.h[f] = value;
+		}
+		return openfl_utils__$internal_format_amf_AMFValue.AObject(h);
+	case 6:
+		var c = _g.c;
+		switch(c) {
+		case Array:
+			var o1 = o;
+			var a = [];
+			var _g = 0;
+			while(_g < o1.length) {
+				var v = o1[_g];
+				++_g;
+				a.push(openfl_utils__$internal_format_amf_AMFTools.encode(v));
+			}
+			return openfl_utils__$internal_format_amf_AMFValue.AArray(a);
+		case String:
+			return openfl_utils__$internal_format_amf_AMFValue.AString(o);
+		case haxe_ds_StringMap:
+			var o1 = o;
+			var h = new haxe_ds_StringMap();
+			var h1 = o1.h;
+			var f_h = h1;
+			var f_keys = Object.keys(h1);
+			var f_length = f_keys.length;
+			var f_current = 0;
+			while(f_current < f_length) {
+				var f = f_keys[f_current++];
+				var value = openfl_utils__$internal_format_amf_AMFTools.encode(o1.h[f]);
+				h.h[f] = value;
+			}
+			return openfl_utils__$internal_format_amf_AMFValue.AObject(h);
+		default:
+			throw haxe_Exception.thrown("Can't encode instance of " + c.__name__);
+		}
+		break;
+	default:
+		throw haxe_Exception.thrown("Can't encode " + Std.string(o));
+	}
+};
+openfl_utils__$internal_format_amf_AMFTools.number = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 0) {
+		var n = a.f;
+		return n;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf_AMFTools.string = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 2) {
+		var s = a.s;
+		return s;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf_AMFTools.object = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 3) {
+		var _g = a.size;
+		var o = a.fields;
+		return o;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf_AMFTools.abool = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 1) {
+		var b = a.b;
+		return b;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf_AMFTools.array = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 7) {
+		var a1 = a.values;
+		return a1;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf_AMFTools.unwrapValue = function(val) {
+	switch(val._hx_index) {
+	case 0:
+		var f = val.f;
+		return f;
+	case 1:
+		var b = val.b;
+		return b;
+	case 2:
+		var s = val.s;
+		return s;
+	case 3:
+		var _g = val.size;
+		var vmap = val.fields;
+		var obj = { };
+		var h = vmap.h;
+		var name_h = h;
+		var name_keys = Object.keys(h);
+		var name_length = name_keys.length;
+		var name_current = 0;
+		while(name_current < name_length) {
+			var name = name_keys[name_current++];
+			obj[name] = openfl_utils__$internal_format_amf_AMFTools.unwrapValue(vmap.h[name]);
+		}
+		return obj;
+	case 4:
+		var d = val.d;
+		return d;
+	case 5:
+		return null;
+	case 6:
+		return null;
+	case 7:
+		var vals = val.values;
+		var f = openfl_utils__$internal_format_amf_AMFTools.unwrapValue;
+		var result = new Array(vals.length);
+		var _g = 0;
+		var _g1 = vals.length;
+		while(_g < _g1) {
+			var i = _g++;
+			result[i] = f(vals[i]);
+		}
+		return result;
+	}
+};
+var openfl_utils__$internal_format_amf_AMFValue = $hxEnums["openfl.utils._internal.format.amf.AMFValue"] = { __ename__:"openfl.utils._internal.format.amf.AMFValue",__constructs__:null
+	,ANumber: ($_=function(f) { return {_hx_index:0,f:f,__enum__:"openfl.utils._internal.format.amf.AMFValue",toString:$estr}; },$_._hx_name="ANumber",$_.__params__ = ["f"],$_)
+	,ABool: ($_=function(b) { return {_hx_index:1,b:b,__enum__:"openfl.utils._internal.format.amf.AMFValue",toString:$estr}; },$_._hx_name="ABool",$_.__params__ = ["b"],$_)
+	,AString: ($_=function(s) { return {_hx_index:2,s:s,__enum__:"openfl.utils._internal.format.amf.AMFValue",toString:$estr}; },$_._hx_name="AString",$_.__params__ = ["s"],$_)
+	,AObject: ($_=function(fields,size) { return {_hx_index:3,fields:fields,size:size,__enum__:"openfl.utils._internal.format.amf.AMFValue",toString:$estr}; },$_._hx_name="AObject",$_.__params__ = ["fields","size"],$_)
+	,ADate: ($_=function(d) { return {_hx_index:4,d:d,__enum__:"openfl.utils._internal.format.amf.AMFValue",toString:$estr}; },$_._hx_name="ADate",$_.__params__ = ["d"],$_)
+	,AUndefined: {_hx_name:"AUndefined",_hx_index:5,__enum__:"openfl.utils._internal.format.amf.AMFValue",toString:$estr}
+	,ANull: {_hx_name:"ANull",_hx_index:6,__enum__:"openfl.utils._internal.format.amf.AMFValue",toString:$estr}
+	,AArray: ($_=function(values) { return {_hx_index:7,values:values,__enum__:"openfl.utils._internal.format.amf.AMFValue",toString:$estr}; },$_._hx_name="AArray",$_.__params__ = ["values"],$_)
+};
+openfl_utils__$internal_format_amf_AMFValue.__constructs__ = [openfl_utils__$internal_format_amf_AMFValue.ANumber,openfl_utils__$internal_format_amf_AMFValue.ABool,openfl_utils__$internal_format_amf_AMFValue.AString,openfl_utils__$internal_format_amf_AMFValue.AObject,openfl_utils__$internal_format_amf_AMFValue.ADate,openfl_utils__$internal_format_amf_AMFValue.AUndefined,openfl_utils__$internal_format_amf_AMFValue.ANull,openfl_utils__$internal_format_amf_AMFValue.AArray];
+var openfl_utils__$internal_format_amf_AMFWriter = function(o) {
+	this.o = o;
+	o.set_bigEndian(true);
+};
+$hxClasses["openfl.utils._internal.format.amf.AMFWriter"] = openfl_utils__$internal_format_amf_AMFWriter;
+openfl_utils__$internal_format_amf_AMFWriter.__name__ = "openfl.utils._internal.format.amf.AMFWriter";
+openfl_utils__$internal_format_amf_AMFWriter.prototype = {
+	write: function(v) {
+		var o = this.o;
+		switch(v._hx_index) {
+		case 0:
+			var n = v.f;
+			o.writeByte(0);
+			o.writeDouble(n);
+			break;
+		case 1:
+			var b = v.b;
+			o.writeByte(1);
+			o.writeByte(b ? 1 : 0);
+			break;
+		case 2:
+			var s = v.s;
+			if(s.length <= 65535) {
+				o.writeByte(2);
+				o.writeUInt16(s.length);
+			} else {
+				o.writeByte(12);
+				o.writeInt32(s.length);
+			}
+			o.writeString(s);
+			break;
+		case 3:
+			var h = v.fields;
+			var size = v.size;
+			if(size == null) {
+				o.writeByte(3);
+			} else {
+				o.writeByte(8);
+				o.writeInt32(size);
+			}
+			var h1 = h.h;
+			var f_h = h1;
+			var f_keys = Object.keys(h1);
+			var f_length = f_keys.length;
+			var f_current = 0;
+			while(f_current < f_length) {
+				var f = f_keys[f_current++];
+				o.writeUInt16(f.length);
+				o.writeString(f);
+				this.write(h.h[f]);
+			}
+			o.writeByte(0);
+			o.writeByte(0);
+			o.writeByte(9);
+			break;
+		case 4:
+			var d = v.d;
+			o.writeByte(11);
+			o.writeDouble(d.getTime());
+			o.writeUInt16(0);
+			break;
+		case 5:
+			o.writeByte(6);
+			break;
+		case 6:
+			o.writeByte(5);
+			break;
+		case 7:
+			var a = v.values;
+			o.writeByte(10);
+			o.writeInt32(a.length);
+			var _g = 0;
+			while(_g < a.length) {
+				var f = a[_g];
+				++_g;
+				this.write(f);
+			}
+			break;
+		}
+	}
+	,__class__: openfl_utils__$internal_format_amf_AMFWriter
+};
+var openfl_utils__$internal_format_amf3_AMF3Array = function(initA,initExtra) {
+	this.a = initA;
+	this.extra = initExtra;
+};
+$hxClasses["openfl.utils._internal.format.amf3.AMF3Array"] = openfl_utils__$internal_format_amf3_AMF3Array;
+openfl_utils__$internal_format_amf3_AMF3Array.__name__ = "openfl.utils._internal.format.amf3.AMF3Array";
+openfl_utils__$internal_format_amf3_AMF3Array.prototype = {
+	__class__: openfl_utils__$internal_format_amf3_AMF3Array
+};
+var openfl_utils__$internal_format_amf3_AMF3Reader = function(i,parent) {
+	if(parent == null) {
+		this.complexObjectsTable = [];
+		this.objectTraitsTable = [];
+		this.stringTable = [];
+	} else {
+		this.complexObjectsTable = parent.complexObjectsTable;
+		this.objectTraitsTable = parent.objectTraitsTable;
+		this.stringTable = parent.stringTable;
+	}
+	this.i = i;
+	i.set_bigEndian(true);
+};
+$hxClasses["openfl.utils._internal.format.amf3.AMF3Reader"] = openfl_utils__$internal_format_amf3_AMF3Reader;
+openfl_utils__$internal_format_amf3_AMF3Reader.__name__ = "openfl.utils._internal.format.amf3.AMF3Reader";
+openfl_utils__$internal_format_amf3_AMF3Reader.prototype = {
+	readObject: function() {
+		var dyn = false;
+		var isExternalizable = false;
+		var className = null;
+		var sealedMemberNames = [];
+		var n = this.readInt();
+		if((n & 1) == 0) {
+			return this.complexObjectsTable[n >> 1];
+		} else if((n & 3) == 1) {
+			n >>= 2;
+			var refTraits = this.objectTraitsTable[n];
+			dyn = refTraits.isDynamic;
+			isExternalizable = refTraits.isExternalizable;
+			className = refTraits.className;
+			sealedMemberNames = refTraits.sealedMemberNames;
+		} else if((n & 7) == 3) {
+			dyn = (n >> 3 & 1) == 1;
+			n >>= 4;
+			className = this.readString();
+			var _g = 0;
+			var _g1 = n;
+			while(_g < _g1) {
+				var j = _g++;
+				sealedMemberNames.push(openfl_utils__$internal_format_amf3_AMF3Tools.decode(this.readString()));
+			}
+			this.objectTraitsTable.push({ isExternalizable : isExternalizable, isDynamic : dyn, className : className, sealedMemberNames : sealedMemberNames});
+		} else if((n & 7) == 7) {
+			isExternalizable = true;
+			className = this.readString();
+		} else {
+			throw haxe_Exception.thrown("Invalid object traits");
+		}
+		var ret = null;
+		if(isExternalizable) {
+			var o = openfl_utils__$internal_format_amf3_AMF3Tools.object(openfl_utils__$internal_format_amf3_AMF3Value.AObject(null,null,openfl_utils__$internal_format_amf3_AMF3Tools.decode(className)));
+			if(o != null && js_Boot.__implements(o,openfl_utils_IExternalizable)) {
+				var external = o;
+				external.readExternal(new openfl_utils__$internal_format_amf3_AMF3ReaderInput(this));
+				ret = openfl_utils__$internal_format_amf3_AMF3Value.AExternal(external);
+			} else {
+				ret = openfl_utils__$internal_format_amf3_AMF3Value.ANull;
+			}
+		} else {
+			var h = new haxe_ds_StringMap();
+			ret = openfl_utils__$internal_format_amf3_AMF3Value.AObject(h,null,className != null ? openfl_utils__$internal_format_amf3_AMF3Tools.decode(className) : null);
+			var _g = 0;
+			var _g1 = sealedMemberNames.length;
+			while(_g < _g1) {
+				var j = _g++;
+				var value = this.read();
+				h.h[sealedMemberNames[j]] = value;
+			}
+			if(dyn) {
+				var s;
+				while(true) {
+					s = openfl_utils__$internal_format_amf3_AMF3Tools.decode(this.readString());
+					if(s == "") {
+						break;
+					}
+					var value = this.read();
+					h.h[s] = value;
+				}
+			}
+		}
+		this.complexObjectsTable.push(ret);
+		return ret;
+	}
+	,readMap: function() {
+		var n = this.readInt();
+		if((n & 1) == 0) {
+			return this.complexObjectsTable[n >> 1];
+		}
+		n >>= 1;
+		var h = new haxe_ds_EnumValueMap();
+		var ret = openfl_utils__$internal_format_amf3_AMF3Value.AMap(h);
+		this.complexObjectsTable.push(ret);
+		this.i.readByte();
+		var _g = 0;
+		var _g1 = n;
+		while(_g < _g1) {
+			var i = _g++;
+			h.set(this.read(),this.read());
+		}
+		return ret;
+	}
+	,readArray: function() {
+		var n = this.readInt();
+		if((n & 1) == 0) {
+			return this.complexObjectsTable[n >> 1];
+		}
+		n >>= 1;
+		var a = [];
+		var m = new haxe_ds_StringMap();
+		var ret = openfl_utils__$internal_format_amf3_AMF3Value.AArray(a,m);
+		this.complexObjectsTable.push(ret);
+		var assocName = openfl_utils__$internal_format_amf3_AMF3Tools.decode(this.readString());
+		while(assocName.length != 0) {
+			var v = this.read();
+			m.h[assocName] = v;
+			assocName = openfl_utils__$internal_format_amf3_AMF3Tools.decode(this.readString());
+		}
+		var _g = 0;
+		var _g1 = n;
+		while(_g < _g1) {
+			var i = _g++;
+			a.push(this.read());
+		}
+		return ret;
+	}
+	,readIntVector: function() {
+		var header = this.readInt();
+		if((header & 1) == 0) {
+			return this.complexObjectsTable[header >> 1];
+		}
+		var len = header >> 1;
+		var fixed = this.i.readByte() != 0;
+		var v = openfl_Vector.toIntVector(null,len);
+		v.fixed = fixed;
+		var _g = 0;
+		var _g1 = len;
+		while(_g < _g1) {
+			var r = _g++;
+			v.set(r,this.i.readInt32());
+		}
+		var ret = openfl_utils__$internal_format_amf3_AMF3Value.AIntVector(v);
+		this.complexObjectsTable.push(ret);
+		return ret;
+	}
+	,readFloatVector: function() {
+		var header = this.readInt();
+		if((header & 1) == 0) {
+			return this.complexObjectsTable[header >> 1];
+		}
+		var len = header >> 1;
+		var fixed = this.i.readByte() != 0;
+		var v = openfl_Vector.toFloatVector(null,len);
+		v.fixed = fixed;
+		var _g = 0;
+		var _g1 = len;
+		while(_g < _g1) {
+			var r = _g++;
+			v.set(r,this.i.readDouble());
+		}
+		var ret = openfl_utils__$internal_format_amf3_AMF3Value.AFloatVector(v);
+		this.complexObjectsTable.push(ret);
+		return ret;
+	}
+	,readObjectVector: function() {
+		var header = this.readInt();
+		if((header & 1) == 0) {
+			return this.complexObjectsTable[header >> 1];
+		}
+		var len = header >> 1;
+		var fixed = this.i.readByte() != 0;
+		var type = openfl_utils__$internal_format_amf3_AMF3Tools.decode(this.readString());
+		var v = openfl_Vector.toNullVector(null,len);
+		v.fixed = fixed;
+		var ret = openfl_utils__$internal_format_amf3_AMF3Value.AObjectVector(v,type);
+		this.complexObjectsTable.push(ret);
+		var _g = 0;
+		var _g1 = len;
+		while(_g < _g1) {
+			var r = _g++;
+			v.set(r,this.read());
+		}
+		return ret;
+	}
+	,readByteArray: function() {
+		var n = this.readInt();
+		if((n & 1) == 0) {
+			return this.complexObjectsTable[n >> 1];
+		}
+		n >>= 1;
+		var b = new haxe_io_Bytes(new ArrayBuffer(n));
+		var _g = 0;
+		var _g1 = n;
+		while(_g < _g1) {
+			var j = _g++;
+			var v = this.i.readByte();
+			b.b[j] = v & 255;
+		}
+		var ba = openfl_utils_ByteArray.fromBytes(b);
+		ba.__endian = 0;
+		ba.__amf3Reader = this;
+		var ret = openfl_utils__$internal_format_amf3_AMF3Value.AByteArray(ba);
+		this.complexObjectsTable.push(ret);
+		return ret;
+	}
+	,readInt: function(signExtend,preShift) {
+		if(preShift == null) {
+			preShift = 0;
+		}
+		if(signExtend == null) {
+			signExtend = false;
+		}
+		var c = this.i.readByte() & 255;
+		if(c < 128) {
+			return c >> preShift;
+		}
+		var ret = (c & 127) << 7;
+		c = this.i.readByte() & 255;
+		if(c < 128) {
+			return (ret | c) >> preShift;
+		}
+		ret |= c & 127;
+		ret <<= 7;
+		c = this.i.readByte() & 255;
+		if(c < 128) {
+			return (ret | c) >> preShift;
+		}
+		ret |= c & 127;
+		ret <<= 8;
+		c = this.i.readByte() & 255;
+		ret |= c;
+		if(signExtend && (ret & 268435456) != 0) {
+			ret |= -536870912;
+		}
+		return ret >> preShift;
+	}
+	,readString: function() {
+		var header = this.readInt();
+		if((header & 1) == 0) {
+			var strRefIdx = header >> 1;
+			return this.stringTable[strRefIdx];
+		}
+		var len = header >> 1;
+		return this.readStringNoHeader(len);
+	}
+	,readStringNoHeader: function(len) {
+		if(len == 0) {
+			return openfl_utils__$internal_format_amf3_AMF3Value.AString("");
+		}
+		var ret = openfl_utils__$internal_format_amf3_AMF3Value.AString(this.i.readString(len,haxe_io_Encoding.UTF8));
+		this.stringTable.push(ret);
+		return ret;
+	}
+	,readDate: function() {
+		var n = this.readInt();
+		if((n & 1) == 0) {
+			return this.complexObjectsTable[n >> 1];
+		}
+		var date = new Date(this.i.readDouble());
+		var ret = openfl_utils__$internal_format_amf3_AMF3Value.ADate(date);
+		this.complexObjectsTable.push(ret);
+		return ret;
+	}
+	,readXml: function() {
+		var n = this.readInt();
+		if((n & 1) == 0) {
+			return this.complexObjectsTable[n >> 1];
+		}
+		n >>= 1;
+		var xml = Xml.parse(openfl_utils__$internal_format_amf3_AMF3Tools.decode(this.readStringNoHeader(n)));
+		var ret = openfl_utils__$internal_format_amf3_AMF3Value.AXml(xml);
+		this.complexObjectsTable.push(ret);
+		return ret;
+	}
+	,readWithCode: function(id) {
+		var i = this.i;
+		switch(id) {
+		case 0:
+			return openfl_utils__$internal_format_amf3_AMF3Value.AUndefined;
+		case 1:
+			return openfl_utils__$internal_format_amf3_AMF3Value.ANull;
+		case 2:
+			return openfl_utils__$internal_format_amf3_AMF3Value.ABool(false);
+		case 3:
+			return openfl_utils__$internal_format_amf3_AMF3Value.ABool(true);
+		case 4:
+			return openfl_utils__$internal_format_amf3_AMF3Value.AInt(this.readInt(true));
+		case 5:
+			return openfl_utils__$internal_format_amf3_AMF3Value.ANumber(i.readDouble());
+		case 6:
+			return this.readString();
+		case 7:
+			throw haxe_Exception.thrown("XMLDocument unsupported");
+		case 8:
+			return this.readDate();
+		case 9:
+			return this.readArray();
+		case 10:
+			return this.readObject();
+		case 11:
+			return this.readXml();
+		case 12:
+			return this.readByteArray();
+		case 13:case 14:
+			return this.readIntVector();
+		case 15:
+			return this.readFloatVector();
+		case 16:
+			return this.readObjectVector();
+		case 17:
+			return this.readMap();
+		default:
+			throw haxe_Exception.thrown("Unknown AMF " + id);
+		}
+	}
+	,read: function() {
+		var byte = this.i.readByte();
+		return this.readWithCode(byte);
+	}
+	,__class__: openfl_utils__$internal_format_amf3_AMF3Reader
+};
+var openfl_utils__$internal_format_amf3_AMF3ReaderInput = function(r) {
+	this.i = r.i;
+	this.r = r;
+	this.objectEncoding = 3;
+};
+$hxClasses["openfl.utils._internal.format.amf3.AMF3ReaderInput"] = openfl_utils__$internal_format_amf3_AMF3ReaderInput;
+openfl_utils__$internal_format_amf3_AMF3ReaderInput.__name__ = "openfl.utils._internal.format.amf3.AMF3ReaderInput";
+openfl_utils__$internal_format_amf3_AMF3ReaderInput.__interfaces__ = [openfl_utils_IDataInput];
+openfl_utils__$internal_format_amf3_AMF3ReaderInput.prototype = {
+	readBoolean: function() {
+		return this.i.readByte() != 0;
+	}
+	,readByte: function() {
+		return this.i.readByte();
+	}
+	,readBytes: function(bytes,offset,length) {
+		if(length == null) {
+			length = 0;
+		}
+		if(offset == null) {
+			offset = 0;
+		}
+		this.i.readBytes(openfl_utils_ByteArray.toBytes(bytes),offset,length);
+	}
+	,readDouble: function() {
+		return this.i.readDouble();
+	}
+	,readFloat: function() {
+		return this.i.readFloat();
+	}
+	,readInt: function() {
+		return this.i.readInt32();
+	}
+	,readMultiByte: function(length,charSet) {
+		return this.i.readString(length);
+	}
+	,readObject: function() {
+		switch(this.objectEncoding) {
+		case 0:
+			var reader = new openfl_utils__$internal_format_amf_AMFReader(this.i);
+			var data = openfl_utils__$internal_format_amf_AMFTools.unwrapValue(reader.read());
+			return data;
+		case 3:
+			var reader = new openfl_utils__$internal_format_amf3_AMF3Reader(this.i,this.r);
+			var data = openfl_utils__$internal_format_amf3_AMF3Tools.decode(reader.read());
+			return data;
+		default:
+			return null;
+		}
+	}
+	,readShort: function() {
+		return this.i.readInt16();
+	}
+	,readUnsignedByte: function() {
+		return this.i.readByte();
+	}
+	,readUnsignedInt: function() {
+		var ch1 = this.i.readByte();
+		var ch2 = this.i.readByte();
+		var ch3 = this.i.readByte();
+		var ch4 = this.i.readByte();
+		if(this.get_endian() == 1) {
+			return ch4 << 24 | ch3 << 16 | ch2 << 8 | ch1;
+		} else {
+			return ch1 << 24 | ch2 << 16 | ch3 << 8 | ch4;
+		}
+	}
+	,readUnsignedShort: function() {
+		var ch1 = this.i.readByte();
+		var ch2 = this.i.readByte();
+		if(this.get_endian() == 1) {
+			return (ch2 << 8) + ch1;
+		} else {
+			return ch1 << 8 | ch2;
+		}
+	}
+	,readUTF: function() {
+		var bytesCount = this.readUnsignedShort();
+		return this.readUTFBytes(bytesCount);
+	}
+	,readUTFBytes: function(length) {
+		return this.i.readString(length);
+	}
+	,get_bytesAvailable: function() {
+		return -1;
+	}
+	,get_endian: function() {
+		if(this.i.bigEndian) {
+			return 0;
+		} else {
+			return 1;
+		}
+	}
+	,set_endian: function(value) {
+		return value;
+	}
+	,__class__: openfl_utils__$internal_format_amf3_AMF3ReaderInput
+	,__properties__: {set_endian:"set_endian",get_endian:"get_endian",get_bytesAvailable:"get_bytesAvailable"}
+};
+var openfl_utils__$internal_format_amf3_AMF3Tools = function() { };
+$hxClasses["openfl.utils._internal.format.amf3.AMF3Tools"] = openfl_utils__$internal_format_amf3_AMF3Tools;
+openfl_utils__$internal_format_amf3_AMF3Tools.__name__ = "openfl.utils._internal.format.amf3.AMF3Tools";
+openfl_utils__$internal_format_amf3_AMF3Tools.encode = function(o) {
+	var _g = Type.typeof(o);
+	switch(_g._hx_index) {
+	case 0:
+		return openfl_utils__$internal_format_amf3_AMF3Value.ANull;
+	case 1:
+		return openfl_utils__$internal_format_amf3_AMF3Value.AInt(o);
+	case 2:
+		return openfl_utils__$internal_format_amf3_AMF3Value.ANumber(o);
+	case 3:
+		return openfl_utils__$internal_format_amf3_AMF3Value.ABool(o);
+	case 4:
+		var h = new haxe_ds_StringMap();
+		var _g1 = 0;
+		var _g2 = Reflect.fields(o);
+		while(_g1 < _g2.length) {
+			var f = _g2[_g1];
+			++_g1;
+			var value = openfl_utils__$internal_format_amf3_AMF3Tools.encode(Reflect.field(o,f));
+			h.h[f] = value;
+		}
+		return openfl_utils__$internal_format_amf3_AMF3Value.AObject(h,null,null);
+	case 5:
+		return openfl_utils__$internal_format_amf3_AMF3Value.ANull;
+	case 6:
+		var c = _g.c;
+		switch(c) {
+		case Array:
+			var o1 = o;
+			var a = [];
+			var _g = 0;
+			while(_g < o1.length) {
+				var v = o1[_g];
+				++_g;
+				a.push(openfl_utils__$internal_format_amf3_AMF3Tools.encode(v));
+			}
+			return openfl_utils__$internal_format_amf3_AMF3Value.AArray(a);
+		case Date:
+			return openfl_utils__$internal_format_amf3_AMF3Value.ADate(o);
+		case String:
+			return openfl_utils__$internal_format_amf3_AMF3Value.AString(o);
+		case Xml:
+			return openfl_utils__$internal_format_amf3_AMF3Value.AXml(o);
+		case haxe_ds_IntMap:case haxe_ds_ObjectMap:case haxe_ds_StringMap:
+			var o1 = o;
+			var h = new haxe_ds_EnumValueMap();
+			var h1 = o1.h;
+			var f_h = h1;
+			var f_keys = Object.keys(h1);
+			var f_length = f_keys.length;
+			var f_current = 0;
+			while(f_current < f_length) {
+				var f = f_keys[f_current++];
+				h.set(openfl_utils__$internal_format_amf3_AMF3Tools.encode(f),openfl_utils__$internal_format_amf3_AMF3Tools.encode(o1.h[f]));
+			}
+			return openfl_utils__$internal_format_amf3_AMF3Value.AMap(h);
+		case haxe_io_Bytes:
+			return openfl_utils__$internal_format_amf3_AMF3Value.AByteArray(openfl_utils_ByteArray.fromBytes(o));
+		case openfl_utils_ByteArrayData:
+			return openfl_utils__$internal_format_amf3_AMF3Value.AByteArray(o);
+		case openfl_utils__$internal_format_amf3_AMF3Array:
+			var o1 = o;
+			var a = [];
+			var m = new haxe_ds_StringMap();
+			var _g = 0;
+			var _g1 = o1.a;
+			while(_g < _g1.length) {
+				var v = _g1[_g];
+				++_g;
+				a.push(openfl_utils__$internal_format_amf3_AMF3Tools.encode(v));
+			}
+			var h = o1.extra.h;
+			var k_h = h;
+			var k_keys = Object.keys(h);
+			var k_length = k_keys.length;
+			var k_current = 0;
+			while(k_current < k_length) {
+				var k = k_h[k_keys[k_current++]];
+				var v = openfl_utils__$internal_format_amf3_AMF3Tools.encode(o1.extra.h[k]);
+				m.h[k] = v;
+			}
+			return openfl_utils__$internal_format_amf3_AMF3Value.AArray(a,m);
+		default:
+			if(js_Boot.__implements(o,openfl_utils_IExternalizable)) {
+				return openfl_utils__$internal_format_amf3_AMF3Value.AExternal(o);
+			} else {
+				return openfl_utils__$internal_format_amf3_AMF3Value.ANull;
+			}
+		}
+		break;
+	default:
+		throw haxe_Exception.thrown("Can't encode " + Std.string(o));
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.decode = function(a) {
+	if(a == null) {
+		return null;
+	}
+	switch(a._hx_index) {
+	case 0:
+		return openfl_utils__$internal_format_amf3_AMF3Tools.undefined(a);
+	case 1:
+		return openfl_utils__$internal_format_amf3_AMF3Tools.anull(a);
+	case 2:
+		var _g = a.b;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.bool(a);
+	case 3:
+		var _g = a.i;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.int(a);
+	case 4:
+		var _g = a.f;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.number(a);
+	case 5:
+		var _g = a.s;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.string(a);
+	case 6:
+		var _g = a.d;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.date(a);
+	case 7:
+		var _g = a.fields;
+		var _g = a.size;
+		var _g = a.className;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.object(a);
+	case 8:
+		var _g = a.o;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.external(a);
+	case 9:
+		var _g = a.values;
+		var _g = a.extra;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.array(a);
+	case 10:
+		var _g = a.v;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.intVector(a);
+	case 11:
+		var _g = a.v;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.floatVector(a);
+	case 12:
+		var _g = a.v;
+		var _g = a.type;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.objectVector(a);
+	case 13:
+		var _g = a.x;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.xml(a);
+	case 14:
+		var _g = a.ba;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.byteArray(a);
+	case 15:
+		var _g = a.m;
+		return openfl_utils__$internal_format_amf3_AMF3Tools.map(a);
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.undefined = function(a) {
+	return null;
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.anull = function(a) {
+	return null;
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.bool = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 2) {
+		var b = a.b;
+		return b;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.int = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 3) {
+		var n = a.i;
+		return n;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.number = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 4) {
+		var n = a.f;
+		return n;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.string = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 5) {
+		var s = a.s;
+		return s;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.date = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 6) {
+		var d = a.d;
+		return d;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.array = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 9) {
+		var a1 = a.values;
+		var m = a.extra;
+		var b = [];
+		var _g = 0;
+		while(_g < a1.length) {
+			var f = a1[_g];
+			++_g;
+			b.push(openfl_utils__$internal_format_amf3_AMF3Tools.decode(f));
+		}
+		return b;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.intVector = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 10) {
+		var v = a.v;
+		return v;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.floatVector = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 11) {
+		var v = a.v;
+		return v;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.objectVector = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 12) {
+		var v = a.v;
+		var type = a.type;
+		var ret = openfl_Vector.toObjectVector(null,v.get_length(),v.fixed);
+		var _g = 0;
+		var _g1 = v.get_length();
+		while(_g < _g1) {
+			var i = _g++;
+			ret.set(i,openfl_utils__$internal_format_amf3_AMF3Tools.decode(v.get(i)));
+		}
+		return ret;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.object = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 7) {
+		var _g = a.size;
+		var f = a.fields;
+		var className = a.className;
+		var o = null;
+		if(className != null && className != "") {
+			var cls = openfl_Lib.getClassByAlias(className);
+			if(cls == null) {
+				cls = $hxClasses[className];
+			}
+			if(cls != null) {
+				o = Type.createInstance(cls,[]);
+			}
+		} else {
+			o = { };
+		}
+		if(o != null && f != null) {
+			var h = f.h;
+			var name_h = h;
+			var name_keys = Object.keys(h);
+			var name_length = name_keys.length;
+			var name_current = 0;
+			while(name_current < name_length) {
+				var name = name_keys[name_current++];
+				Reflect.setProperty(o,name,openfl_utils__$internal_format_amf3_AMF3Tools.decode(f.h[name]));
+			}
+		}
+		return o;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.external = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 8) {
+		var e = a.o;
+		return e;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.xml = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 13) {
+		var x = a.x;
+		return x;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.byteArray = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 14) {
+		var b = a.ba;
+		return b;
+	} else {
+		return null;
+	}
+};
+openfl_utils__$internal_format_amf3_AMF3Tools.map = function(a) {
+	if(a == null) {
+		return null;
+	}
+	if(a._hx_index == 15) {
+		var m = a.m;
+		var f = m.keys();
+		while(f.hasNext()) {
+			var f1 = f.next();
+			if(typeof(f1) == "number" && ((f1 | 0) === f1)) {
+				var p = new haxe_ds_IntMap();
+				var f2 = m.keys();
+				while(f2.hasNext()) {
+					var f3 = f2.next();
+					var key = openfl_utils__$internal_format_amf3_AMF3Tools.decode(f3);
+					var value = openfl_utils__$internal_format_amf3_AMF3Tools.decode(m.get(f3));
+					p.h[key] = value;
+				}
+			} else if(typeof(f1) == "string") {
+				var p1 = new haxe_ds_StringMap();
+				var f4 = m.keys();
+				while(f4.hasNext()) {
+					var f5 = f4.next();
+					var key1 = openfl_utils__$internal_format_amf3_AMF3Tools.decode(f5);
+					var value1 = openfl_utils__$internal_format_amf3_AMF3Tools.decode(m.get(f5));
+					p1.h[key1] = value1;
+				}
+			} else {
+				var p2 = new haxe_ds_ObjectMap();
+				var f6 = m.keys();
+				while(f6.hasNext()) {
+					var f7 = f6.next();
+					p2.set(openfl_utils__$internal_format_amf3_AMF3Tools.decode(f7),openfl_utils__$internal_format_amf3_AMF3Tools.decode(m.get(f7)));
+				}
+			}
+			break;
+		}
+		return new haxe_ds_ObjectMap();
+	} else {
+		return null;
+	}
+};
+var openfl_utils__$internal_format_amf3_AMF3Value = $hxEnums["openfl.utils._internal.format.amf3.AMF3Value"] = { __ename__:"openfl.utils._internal.format.amf3.AMF3Value",__constructs__:null
+	,AUndefined: {_hx_name:"AUndefined",_hx_index:0,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}
+	,ANull: {_hx_name:"ANull",_hx_index:1,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}
+	,ABool: ($_=function(b) { return {_hx_index:2,b:b,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="ABool",$_.__params__ = ["b"],$_)
+	,AInt: ($_=function(i) { return {_hx_index:3,i:i,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AInt",$_.__params__ = ["i"],$_)
+	,ANumber: ($_=function(f) { return {_hx_index:4,f:f,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="ANumber",$_.__params__ = ["f"],$_)
+	,AString: ($_=function(s) { return {_hx_index:5,s:s,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AString",$_.__params__ = ["s"],$_)
+	,ADate: ($_=function(d) { return {_hx_index:6,d:d,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="ADate",$_.__params__ = ["d"],$_)
+	,AObject: ($_=function(fields,size,className) { return {_hx_index:7,fields:fields,size:size,className:className,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AObject",$_.__params__ = ["fields","size","className"],$_)
+	,AExternal: ($_=function(o) { return {_hx_index:8,o:o,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AExternal",$_.__params__ = ["o"],$_)
+	,AArray: ($_=function(values,extra) { return {_hx_index:9,values:values,extra:extra,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AArray",$_.__params__ = ["values","extra"],$_)
+	,AIntVector: ($_=function(v) { return {_hx_index:10,v:v,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AIntVector",$_.__params__ = ["v"],$_)
+	,AFloatVector: ($_=function(v) { return {_hx_index:11,v:v,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AFloatVector",$_.__params__ = ["v"],$_)
+	,AObjectVector: ($_=function(v,type) { return {_hx_index:12,v:v,type:type,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AObjectVector",$_.__params__ = ["v","type"],$_)
+	,AXml: ($_=function(x) { return {_hx_index:13,x:x,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AXml",$_.__params__ = ["x"],$_)
+	,AByteArray: ($_=function(ba) { return {_hx_index:14,ba:ba,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AByteArray",$_.__params__ = ["ba"],$_)
+	,AMap: ($_=function(m) { return {_hx_index:15,m:m,__enum__:"openfl.utils._internal.format.amf3.AMF3Value",toString:$estr}; },$_._hx_name="AMap",$_.__params__ = ["m"],$_)
+};
+openfl_utils__$internal_format_amf3_AMF3Value.__constructs__ = [openfl_utils__$internal_format_amf3_AMF3Value.AUndefined,openfl_utils__$internal_format_amf3_AMF3Value.ANull,openfl_utils__$internal_format_amf3_AMF3Value.ABool,openfl_utils__$internal_format_amf3_AMF3Value.AInt,openfl_utils__$internal_format_amf3_AMF3Value.ANumber,openfl_utils__$internal_format_amf3_AMF3Value.AString,openfl_utils__$internal_format_amf3_AMF3Value.ADate,openfl_utils__$internal_format_amf3_AMF3Value.AObject,openfl_utils__$internal_format_amf3_AMF3Value.AExternal,openfl_utils__$internal_format_amf3_AMF3Value.AArray,openfl_utils__$internal_format_amf3_AMF3Value.AIntVector,openfl_utils__$internal_format_amf3_AMF3Value.AFloatVector,openfl_utils__$internal_format_amf3_AMF3Value.AObjectVector,openfl_utils__$internal_format_amf3_AMF3Value.AXml,openfl_utils__$internal_format_amf3_AMF3Value.AByteArray,openfl_utils__$internal_format_amf3_AMF3Value.AMap];
+var openfl_utils__$internal_format_amf3_AMF3Writer = function(o) {
+	this.o = o;
+	o.set_bigEndian(true);
+};
+$hxClasses["openfl.utils._internal.format.amf3.AMF3Writer"] = openfl_utils__$internal_format_amf3_AMF3Writer;
+openfl_utils__$internal_format_amf3_AMF3Writer.__name__ = "openfl.utils._internal.format.amf3.AMF3Writer";
+openfl_utils__$internal_format_amf3_AMF3Writer.prototype = {
+	writeInt: function(i) {
+		if(i > 268435455 || i < -268435456) {
+			this.o.writeByte(5);
+			this.o.writeDouble(i);
+		} else {
+			this.o.writeByte(4);
+			this.writeUInt(i);
+		}
+	}
+	,writeUInt: function(u,shiftLeft) {
+		if(shiftLeft == null) {
+			shiftLeft = false;
+		}
+		if(shiftLeft) {
+			u = u << 1 | 1;
+		}
+		if((u >>> 31 & 1) == 1) {
+			u = u & 536870911;
+		}
+		var bits = 22;
+		var started = false;
+		var chunk = u >>> bits - 1;
+		if(UInt.gt(chunk,0)) {
+			chunk = chunk >>> 1;
+			this.o.writeByte(chunk | 128);
+			u = u - (chunk << bits);
+			++bits;
+			started = true;
+		}
+		bits -= 8;
+		chunk = u >>> bits;
+		if(started || UInt.gt(chunk,0)) {
+			this.o.writeByte(chunk | 128);
+			u = u - (chunk << bits);
+			started = true;
+		}
+		bits -= 7;
+		chunk = u >>> bits;
+		if(started || UInt.gt(chunk,0)) {
+			this.o.writeByte(chunk | 128);
+			u = u - (chunk << bits);
+			started = true;
+		}
+		this.o.writeByte(u);
+	}
+	,writeString: function(s) {
+		var bytes = haxe_io_Bytes.ofString(s,haxe_io_Encoding.UTF8);
+		this.writeUInt(bytes.length,true);
+		this.o.writeBytes(bytes,0,bytes.length);
+	}
+	,writeIntVector: function(v) {
+		this.writeUInt(v.get_length(),true);
+		this.o.writeByte(v.fixed ? 1 : 0);
+		var _g = 0;
+		var _g1 = v.get_length();
+		while(_g < _g1) {
+			var r = _g++;
+			this.o.writeInt32(v.get(r));
+		}
+	}
+	,writeFloatVector: function(v) {
+		this.writeUInt(v.get_length(),true);
+		this.o.writeByte(v.fixed ? 1 : 0);
+		var _g = 0;
+		var _g1 = v.get_length();
+		while(_g < _g1) {
+			var r = _g++;
+			this.o.writeDouble(v.get(r));
+		}
+	}
+	,writeObjectVector: function(v,type) {
+		this.writeUInt(v.get_length(),true);
+		this.o.writeByte(v.fixed ? 1 : 0);
+		this.o.writeString(type);
+		var _g = 0;
+		var _g1 = v.get_length();
+		while(_g < _g1) {
+			var r = _g++;
+			this.write(v.get(r));
+		}
+	}
+	,writeObject: function(h,size,className) {
+		if(size == null) {
+			this.o.writeByte(11);
+		} else {
+			this.writeUInt(size << 4 | 3);
+		}
+		this.o.writeByte(1);
+		if(size == null) {
+			var h1 = h.h;
+			var f_h = h1;
+			var f_keys = Object.keys(h1);
+			var f_length = f_keys.length;
+			var f_current = 0;
+			while(f_current < f_length) {
+				var f = f_keys[f_current++];
+				this.writeString(f);
+				this.write(h.h[f]);
+			}
+			this.o.writeByte(1);
+		} else {
+			var k = [];
+			var h1 = h.h;
+			var f_h = h1;
+			var f_keys = Object.keys(h1);
+			var f_length = f_keys.length;
+			var f_current = 0;
+			while(f_current < f_length) {
+				var f = f_keys[f_current++];
+				k.push(f);
+				this.writeString(f);
+			}
+			var _g = 0;
+			var _g1 = k.length;
+			while(_g < _g1) {
+				var i = _g++;
+				this.write(h.h[k[i]]);
+			}
+		}
+	}
+	,writeExternal: function(external) {
+		var isExternal = true;
+		var isDynamic = false;
+		var traitsCount = 0;
+		this.writeUInt(3 | (isExternal ? 4 : 0) | (isDynamic ? 8 : 0) | traitsCount << 4);
+		var cls = js_Boot.getClass(external);
+		var className = null;
+		if(openfl_Lib.__registeredClasses.exists(cls)) {
+			className = openfl_Lib.__registeredClasses.get(cls);
+		}
+		if(className == null) {
+			className = cls.__name__;
+		}
+		this.writeString(className);
+		var this1 = new openfl_utils_ByteArrayData(0);
+		var ba = this1;
+		ba.__endian = 0;
+		external.writeExternal(ba);
+		this.o.writeBytes(openfl_utils_ByteArray.toBytes(ba),0,openfl_utils_ByteArray.get_length(ba));
+	}
+	,write: function(v) {
+		var o = this.o;
+		switch(v._hx_index) {
+		case 0:
+			o.writeByte(0);
+			break;
+		case 1:
+			o.writeByte(1);
+			break;
+		case 2:
+			var b = v.b;
+			o.writeByte(b ? 3 : 2);
+			break;
+		case 3:
+			var i = v.i;
+			this.writeInt(i);
+			break;
+		case 4:
+			var n = v.f;
+			o.writeByte(5);
+			o.writeDouble(n);
+			break;
+		case 5:
+			var s = v.s;
+			o.writeByte(6);
+			this.writeString(s);
+			break;
+		case 6:
+			var d = v.d;
+			o.writeByte(8);
+			o.writeByte(1);
+			o.writeDouble(d.getTime());
+			break;
+		case 7:
+			var h = v.fields;
+			var n = v.size;
+			var className = v.className;
+			o.writeByte(10);
+			this.writeObject(h,n,className);
+			break;
+		case 8:
+			var e = v.o;
+			o.writeByte(10);
+			this.writeExternal(e);
+			break;
+		case 9:
+			var a = v.values;
+			var extra = v.extra;
+			o.writeByte(9);
+			this.writeUInt(a.length,true);
+			if(extra != null) {
+				var h = extra.h;
+				var mk_h = h;
+				var mk_keys = Object.keys(h);
+				var mk_length = mk_keys.length;
+				var mk_current = 0;
+				while(mk_current < mk_length) {
+					var mk = mk_keys[mk_current++];
+					o.writeString(mk);
+					this.write(extra.h[mk]);
+				}
+			}
+			o.writeByte(1);
+			var _g = 0;
+			while(_g < a.length) {
+				var f = a[_g];
+				++_g;
+				this.write(f);
+			}
+			break;
+		case 10:
+			var v1 = v.v;
+			o.writeByte(13);
+			this.writeIntVector(v1);
+			break;
+		case 11:
+			var v1 = v.v;
+			o.writeByte(15);
+			this.writeFloatVector(v1);
+			break;
+		case 12:
+			var _g = v.type;
+			var v1 = v.v;
+			o.writeByte(16);
+			this.writeObjectVector(v1);
+			break;
+		case 13:
+			var x = v.x;
+			o.writeByte(11);
+			this.writeString(haxe_xml_Printer.print(x));
+			break;
+		case 14:
+			var b = v.ba;
+			o.writeByte(12);
+			this.writeUInt(openfl_utils_ByteArray.get_length(b),true);
+			o.write(openfl_utils_ByteArray.toBytes(b));
+			break;
+		case 15:
+			var m = v.m;
+			o.writeByte(17);
+			this.writeUInt(Lambda.count(m),true);
+			o.writeByte(0);
+			var f = m.keys();
+			while(f.hasNext()) {
+				var f1 = f.next();
+				this.write(f1);
+				this.write(m.get(f1));
+			}
+			break;
+		}
+	}
+	,__class__: openfl_utils__$internal_format_amf3_AMF3Writer
+};
 function $getIterator(o) { if( o instanceof Array ) return new haxe_iterators_ArrayIterator(o); else return o.iterator(); }
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $global.$haxeUID++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = m.bind(o); o.hx__closures__[m.__id__] = f; } return f; }
 $global.$haxeUID |= 0;
@@ -74682,6 +78424,18 @@ var Enum = { };
 js_Boot.__toStr = ({ }).toString;
 if(ArrayBuffer.prototype.slice == null) {
 	ArrayBuffer.prototype.slice = js_lib__$ArrayBuffer_ArrayBufferCompat.sliceImpl;
+}
+if(typeof window == "undefined") {
+	$global.onmessage = function(event) {
+		var job = event.data;
+		try {
+			$global.onmessage = ($_=lime__$internal_backend_html5_HTML5Thread.__current,$bind($_,$_.dispatchMessage));
+			(lime__$internal_backend_html5_WorkFunction.toFunction(job))();
+		} catch( _g ) {
+			haxe_NativeStackTrace.lastError = _g;
+			lime__$internal_backend_html5_HTML5Thread.__current.destroy();
+		}
+	};
 }
 var array = null;
 var vector = null;
@@ -74734,6 +78488,13 @@ openfl_display_DisplayObject.__tempStack = new lime_utils_ObjectPool(function() 
 },function(stack) {
 	stack.set_length(0);
 });
+Xml.Element = 0;
+Xml.PCData = 1;
+Xml.CData = 2;
+Xml.Comment = 3;
+Xml.DocType = 4;
+Xml.ProcessingInstruction = 5;
+Xml.Document = 6;
 haxe_Serializer.USE_CACHE = false;
 haxe_Serializer.USE_ENUM_INDEX = false;
 haxe_Serializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
@@ -74748,6 +78509,17 @@ haxe_io_FPHelper.i64tmp = (function($this) {
 	return $r;
 }(this));
 haxe_io_FPHelper.helper = new DataView(new ArrayBuffer(8));
+haxe_xml_Parser.escapes = (function($this) {
+	var $r;
+	var h = new haxe_ds_StringMap();
+	h.h["lt"] = "<";
+	h.h["gt"] = ">";
+	h.h["amp"] = "&";
+	h.h["quot"] = "\"";
+	h.h["apos"] = "'";
+	$r = h;
+	return $r;
+}(this));
 haxe_zip_InflateImpl.LEN_EXTRA_BITS_TBL = [0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0,-1,-1];
 haxe_zip_InflateImpl.LEN_BASE_VAL_TBL = [3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
 haxe_zip_InflateImpl.DIST_EXTRA_BITS_TBL = [0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,-1,-1];
@@ -74757,6 +78529,14 @@ lime__$internal_backend_html5_HTML5HTTPRequest.OPTION_REVOKE_URL = 1;
 lime__$internal_backend_html5_HTML5HTTPRequest.activeRequests = 0;
 lime__$internal_backend_html5_HTML5HTTPRequest.requestLimit = 17;
 lime__$internal_backend_html5_HTML5HTTPRequest.requestQueue = new haxe_ds_List();
+lime__$internal_backend_html5_Message.PROTOTYPE_FIELD = "__prototype__";
+lime__$internal_backend_html5_Message.SKIP_FIELD = "__skipPrototype__";
+lime__$internal_backend_html5_Message.RESTORE_FIELD = "__restoreFlag__";
+lime__$internal_backend_html5_HTML5Thread.__current = new lime__$internal_backend_html5_HTML5Thread($global.location.href);
+lime__$internal_backend_html5_HTML5Thread.__isWorker = typeof window == "undefined";
+lime__$internal_backend_html5_HTML5Thread.__messages = new haxe_ds_List();
+lime__$internal_backend_html5_HTML5Thread.__resolveMethods = new haxe_ds_List();
+lime__$internal_backend_html5_HTML5Thread.__workerCount = 0;
 lime__$internal_backend_html5_HTML5Window.dummyCharacter = "";
 lime__$internal_backend_html5_HTML5Window.windowID = 0;
 lime__$internal_format_Base64.DICTIONARY = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split("");
@@ -75349,7 +79129,6 @@ lime_graphics_opengl_GL.INVALID_INDEX = -1;
 lime_graphics_opengl_GL.TIMEOUT_IGNORED = -1;
 lime_graphics_opengl_GL.MAX_CLIENT_WAIT_TIMEOUT_WEBGL = 37447;
 lime_math_ColorMatrix.__identity = [1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0];
-lime_math_Matrix3.__identity = new lime_math_Matrix3();
 lime_math_Matrix4.__identity = [1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0];
 lime_media_openal_AL.NONE = 0;
 lime_media_openal_AL.FALSE = 0;
@@ -75569,6 +79348,10 @@ lime_system_Clipboard.__updated = false;
 lime_system_Sensor.sensorByID = new haxe_ds_IntMap();
 lime_system_Sensor.sensors = [];
 lime_system_System.__directories = new haxe_ds_IntMap();
+lime_system_ThreadPool.__mainThread = !(lime__$internal_backend_html5_HTML5Thread.__current.__worker != null || lime__$internal_backend_html5_HTML5Thread.__isWorker) ? lime__$internal_backend_html5_HTML5Thread.__current : null;
+lime_system_ThreadPool.workLoad = 0.5;
+lime_system_ThreadPool.__totalWorkPriority = 0;
+lime_system_JobData.nextID = 0;
 lime_ui_Gamepad.devices = new haxe_ds_IntMap();
 lime_ui_Gamepad.onConnect = new lime_app__$Event_$lime_$ui_$Gamepad_$Void();
 lime_ui_GamepadAxis.LEFT_X = 0;
@@ -76101,6 +79884,7 @@ openfl_Lib.__lastTimerID = 0;
 openfl_Lib.__sentWarnings = new haxe_ds_StringMap();
 openfl_Lib.__timers = new haxe_ds_IntMap();
 openfl_Lib.__registeredClassAliases = new haxe_ds_StringMap();
+openfl_Lib.__registeredClasses = openfl_utils_Dictionary.toUtilsObjectMap(null);
 openfl__$Vector_IVector.__meta__ = { obj : { SuppressWarnings : ["checkstyle:FieldDocComment"]}};
 openfl__$Vector_BoolVector.__meta__ = { obj : { SuppressWarnings : ["checkstyle:FieldDocComment"]}, fields : { toJSON : { SuppressWarnings : ["checkstyle:Dynamic"]}}};
 openfl__$Vector_FloatVector.__meta__ = { obj : { SuppressWarnings : ["checkstyle:FieldDocComment"]}, fields : { toJSON : { SuppressWarnings : ["checkstyle:Dynamic"]}, _ : { SuppressWarnings : ["checkstyle:Dynamic"]}}};
@@ -76223,7 +80007,7 @@ openfl_display_StageScaleMode.NO_BORDER = 1;
 openfl_display_StageScaleMode.NO_SCALE = 2;
 openfl_display_StageScaleMode.SHOW_ALL = 3;
 openfl_display_Tile.__meta__ = { fields : { data : { SuppressWarnings : ["checkstyle:Dynamic"]}}};
-openfl_display__$Tileset_TileData.__meta__ = { obj : { SuppressWarnings : ["checkstyle:FieldDocComment"]}};
+openfl_display_TileData.__meta__ = { obj : { SuppressWarnings : ["checkstyle:FieldDocComment"]}};
 openfl_display_TriangleCulling.NEGATIVE = 0;
 openfl_display_TriangleCulling.NONE = 1;
 openfl_display_TriangleCulling.POSITIVE = 2;
@@ -76261,7 +80045,7 @@ openfl_geom_Matrix.__pool = new lime_utils_ObjectPool(function() {
 },function(m) {
 	m.identity();
 });
-openfl_geom_Matrix.__matrix3 = new lime_math_Matrix3();
+openfl_geom_Matrix.__matrix3 = lime_math_Matrix3._new();
 openfl_geom_ColorTransform.__pool = new lime_utils_ObjectPool(function() {
 	return new openfl_geom_ColorTransform();
 },function(ct) {
@@ -76515,6 +80299,7 @@ openfl_net_URLLoaderDataFormat.VARIABLES = 2;
 openfl_net_URLRequestDefaults.followRedirects = true;
 openfl_net_URLRequestDefaults.idleTimeout = 0;
 openfl_net_URLRequestDefaults.manageCookies = true;
+openfl_net_URLVariables.__meta__ = { statics : { __get : { SuppressWarnings : ["checkstyle:FieldDocComment"]}, __set : { SuppressWarnings : ["checkstyle:FieldDocComment"]}}};
 openfl_system_ApplicationDomain.currentDomain = new openfl_system_ApplicationDomain(null);
 openfl_system_SecurityDomain.__meta__ = { obj : { SuppressWarnings : ["checkstyle:UnnecessaryConstructor"]}};
 openfl_system_SecurityDomain.currentDomain = new openfl_system_SecurityDomain();
@@ -76996,42 +80781,57 @@ openfl_utils__$internal_TouchData.__pool = new lime_utils_ObjectPool(function() 
 },function(data) {
 	data.reset();
 });
+openfl_utils__$internal_format_amf3_AMF3Array.__meta__ = { fields : { extra : { optional : null}}};
 ApplicationMain.main();
 })(typeof exports != "undefined" ? exports : typeof window != "undefined" ? window : typeof self != "undefined" ? self : this, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
 
 });
-$hx_exports.lime = $hx_exports.lime || {};
-$hx_exports.lime.$scripts = $hx_exports.lime.$scripts || {};
-$hx_exports.lime.$scripts["openfl"] = $hx_script;
-$hx_exports.lime.embed = function(projectName) { var exports = {};
-	var script = $hx_exports.lime.$scripts[projectName];
-	if (!script) throw Error("Cannot find project name \"" + projectName + "\"");
-	script(exports, $global);
-	for (var key in exports) $hx_exports[key] = $hx_exports[key] || exports[key];
-	var lime = exports.lime || window.lime;
-	if (lime && lime.embed && this != lime.embed) lime.embed.apply(lime, arguments);
-	return exports;
-};
-if(typeof define == "function" && define.amd) {
-	define([], function() { return $hx_exports.lime; });
-	define.__amd = define.amd;
-	define.amd = null;
-}
-})(typeof exports != "undefined" ? exports : typeof define == "function" && define.amd ? {} : typeof window != "undefined" ? window : typeof self != "undefined" ? self : this, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+	if (typeof self !== "undefined" && self.constructor.name.includes("Worker")) {
+		// No need for exports in a worker context, just initialize statics.
+		$hx_script({}, $global);
+	} else {
+		$hx_exports.lime = $hx_exports.lime || {};
+		$hx_exports.lime.$scripts = $hx_exports.lime.$scripts || {};
+		$hx_exports.lime.$scripts["openfl"] = $hx_script;
+		$hx_exports.lime.embed = function (projectName) {
+			var exports = {};
+			var script = $hx_exports.lime.$scripts[projectName];
+			if (!script) throw Error("Cannot find project name \"" + projectName + "\"");
+			script(exports, $global);
+			for (var key in exports) $hx_exports[key] = $hx_exports[key] || exports[key];
+			var lime = exports.lime || window.lime;
+			if (lime && lime.embed && this !== lime.embed) lime.embed.apply(lime, arguments);
+			return exports;
+		};
+	}
 
-/*! howler.js v2.2.4 | (c) 2013-2020, James Simpson of GoldFire Studios | MIT License | howlerjs.com */
+	if (typeof define === "function" && define.amd) {
+		define([], function () { return $hx_exports.lime; });
+		define.__amd = define.amd;
+		define.amd = null;
+	}
+})
+
+$lime_init(typeof exports !== "undefined" ? exports : typeof define === "function" && define.amd ? {} : typeof window !== "undefined" ? window : typeof self !== "undefined" ? self : this,
+typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : this);
+
+
+if(typeof self === "undefined" || !self.constructor.name.includes("Worker")) { /*! howler.js v2.2.4 | (c) 2013-2020, James Simpson of GoldFire Studios | MIT License | howlerjs.com */
 !function(){"use strict";var e=function(){this.init()};e.prototype={init:function(){var e=this||n;return e._counter=1e3,e._html5AudioPool=[],e.html5PoolSize=10,e._codecs={},e._howls=[],e._muted=!1,e._volume=1,e._canPlayEvent="canplaythrough",e._navigator="undefined"!=typeof window&&window.navigator?window.navigator:null,e.masterGain=null,e.noAudio=!1,e.usingWebAudio=!0,e.autoSuspend=!0,e.ctx=null,e.autoUnlock=!0,e._setup(),e},volume:function(e){var o=this||n;if(e=parseFloat(e),o.ctx||_(),void 0!==e&&e>=0&&e<=1){if(o._volume=e,o._muted)return o;o.usingWebAudio&&o.masterGain.gain.setValueAtTime(e,n.ctx.currentTime);for(var t=0;t<o._howls.length;t++)if(!o._howls[t]._webAudio)for(var r=o._howls[t]._getSoundIds(),a=0;a<r.length;a++){var u=o._howls[t]._soundById(r[a]);u&&u._node&&(u._node.volume=u._volume*e)}return o}return o._volume},mute:function(e){var o=this||n;o.ctx||_(),o._muted=e,o.usingWebAudio&&o.masterGain.gain.setValueAtTime(e?0:o._volume,n.ctx.currentTime);for(var t=0;t<o._howls.length;t++)if(!o._howls[t]._webAudio)for(var r=o._howls[t]._getSoundIds(),a=0;a<r.length;a++){var u=o._howls[t]._soundById(r[a]);u&&u._node&&(u._node.muted=!!e||u._muted)}return o},stop:function(){for(var e=this||n,o=0;o<e._howls.length;o++)e._howls[o].stop();return e},unload:function(){for(var e=this||n,o=e._howls.length-1;o>=0;o--)e._howls[o].unload();return e.usingWebAudio&&e.ctx&&void 0!==e.ctx.close&&(e.ctx.close(),e.ctx=null,_()),e},codecs:function(e){return(this||n)._codecs[e.replace(/^x-/,"")]},_setup:function(){var e=this||n;if(e.state=e.ctx?e.ctx.state||"suspended":"suspended",e._autoSuspend(),!e.usingWebAudio)if("undefined"!=typeof Audio)try{var o=new Audio;void 0===o.oncanplaythrough&&(e._canPlayEvent="canplay")}catch(n){e.noAudio=!0}else e.noAudio=!0;try{var o=new Audio;o.muted&&(e.noAudio=!0)}catch(e){}return e.noAudio||e._setupCodecs(),e},_setupCodecs:function(){var e=this||n,o=null;try{o="undefined"!=typeof Audio?new Audio:null}catch(n){return e}if(!o||"function"!=typeof o.canPlayType)return e;var t=o.canPlayType("audio/mpeg;").replace(/^no$/,""),r=e._navigator?e._navigator.userAgent:"",a=r.match(/OPR\/(\d+)/g),u=a&&parseInt(a[0].split("/")[1],10)<33,d=-1!==r.indexOf("Safari")&&-1===r.indexOf("Chrome"),i=r.match(/Version\/(.*?) /),_=d&&i&&parseInt(i[1],10)<15;return e._codecs={mp3:!(u||!t&&!o.canPlayType("audio/mp3;").replace(/^no$/,"")),mpeg:!!t,opus:!!o.canPlayType('audio/ogg; codecs="opus"').replace(/^no$/,""),ogg:!!o.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/,""),oga:!!o.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/,""),wav:!!(o.canPlayType('audio/wav; codecs="1"')||o.canPlayType("audio/wav")).replace(/^no$/,""),aac:!!o.canPlayType("audio/aac;").replace(/^no$/,""),caf:!!o.canPlayType("audio/x-caf;").replace(/^no$/,""),m4a:!!(o.canPlayType("audio/x-m4a;")||o.canPlayType("audio/m4a;")||o.canPlayType("audio/aac;")).replace(/^no$/,""),m4b:!!(o.canPlayType("audio/x-m4b;")||o.canPlayType("audio/m4b;")||o.canPlayType("audio/aac;")).replace(/^no$/,""),mp4:!!(o.canPlayType("audio/x-mp4;")||o.canPlayType("audio/mp4;")||o.canPlayType("audio/aac;")).replace(/^no$/,""),weba:!(_||!o.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/,"")),webm:!(_||!o.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/,"")),dolby:!!o.canPlayType('audio/mp4; codecs="ec-3"').replace(/^no$/,""),flac:!!(o.canPlayType("audio/x-flac;")||o.canPlayType("audio/flac;")).replace(/^no$/,"")},e},_unlockAudio:function(){var e=this||n;if(!e._audioUnlocked&&e.ctx){e._audioUnlocked=!1,e.autoUnlock=!1,e._mobileUnloaded||44100===e.ctx.sampleRate||(e._mobileUnloaded=!0,e.unload()),e._scratchBuffer=e.ctx.createBuffer(1,1,22050);var o=function(n){for(;e._html5AudioPool.length<e.html5PoolSize;)try{var t=new Audio;t._unlocked=!0,e._releaseHtml5Audio(t)}catch(n){e.noAudio=!0;break}for(var r=0;r<e._howls.length;r++)if(!e._howls[r]._webAudio)for(var a=e._howls[r]._getSoundIds(),u=0;u<a.length;u++){var d=e._howls[r]._soundById(a[u]);d&&d._node&&!d._node._unlocked&&(d._node._unlocked=!0,d._node.load())}e._autoResume();var i=e.ctx.createBufferSource();i.buffer=e._scratchBuffer,i.connect(e.ctx.destination),void 0===i.start?i.noteOn(0):i.start(0),"function"==typeof e.ctx.resume&&e.ctx.resume(),i.onended=function(){i.disconnect(0),e._audioUnlocked=!0,document.removeEventListener("touchstart",o,!0),document.removeEventListener("touchend",o,!0),document.removeEventListener("click",o,!0),document.removeEventListener("keydown",o,!0);for(var n=0;n<e._howls.length;n++)e._howls[n]._emit("unlock")}};return document.addEventListener("touchstart",o,!0),document.addEventListener("touchend",o,!0),document.addEventListener("click",o,!0),document.addEventListener("keydown",o,!0),e}},_obtainHtml5Audio:function(){var e=this||n;if(e._html5AudioPool.length)return e._html5AudioPool.pop();var o=(new Audio).play();return o&&"undefined"!=typeof Promise&&(o instanceof Promise||"function"==typeof o.then)&&o.catch(function(){console.warn("HTML5 Audio pool exhausted, returning potentially locked audio object.")}),new Audio},_releaseHtml5Audio:function(e){var o=this||n;return e._unlocked&&o._html5AudioPool.push(e),o},_autoSuspend:function(){var e=this;if(e.autoSuspend&&e.ctx&&void 0!==e.ctx.suspend&&n.usingWebAudio){for(var o=0;o<e._howls.length;o++)if(e._howls[o]._webAudio)for(var t=0;t<e._howls[o]._sounds.length;t++)if(!e._howls[o]._sounds[t]._paused)return e;return e._suspendTimer&&clearTimeout(e._suspendTimer),e._suspendTimer=setTimeout(function(){if(e.autoSuspend){e._suspendTimer=null,e.state="suspending";var n=function(){e.state="suspended",e._resumeAfterSuspend&&(delete e._resumeAfterSuspend,e._autoResume())};e.ctx.suspend().then(n,n)}},3e4),e}},_autoResume:function(){var e=this;if(e.ctx&&void 0!==e.ctx.resume&&n.usingWebAudio)return"running"===e.state&&"interrupted"!==e.ctx.state&&e._suspendTimer?(clearTimeout(e._suspendTimer),e._suspendTimer=null):"suspended"===e.state||"running"===e.state&&"interrupted"===e.ctx.state?(e.ctx.resume().then(function(){e.state="running";for(var n=0;n<e._howls.length;n++)e._howls[n]._emit("resume")}),e._suspendTimer&&(clearTimeout(e._suspendTimer),e._suspendTimer=null)):"suspending"===e.state&&(e._resumeAfterSuspend=!0),e}};var n=new e,o=function(e){var n=this;if(!e.src||0===e.src.length)return void console.error("An array of source files must be passed with any new Howl.");n.init(e)};o.prototype={init:function(e){var o=this;return n.ctx||_(),o._autoplay=e.autoplay||!1,o._format="string"!=typeof e.format?e.format:[e.format],o._html5=e.html5||!1,o._muted=e.mute||!1,o._loop=e.loop||!1,o._pool=e.pool||5,o._preload="boolean"!=typeof e.preload&&"metadata"!==e.preload||e.preload,o._rate=e.rate||1,o._sprite=e.sprite||{},o._src="string"!=typeof e.src?e.src:[e.src],o._volume=void 0!==e.volume?e.volume:1,o._xhr={method:e.xhr&&e.xhr.method?e.xhr.method:"GET",headers:e.xhr&&e.xhr.headers?e.xhr.headers:null,withCredentials:!(!e.xhr||!e.xhr.withCredentials)&&e.xhr.withCredentials},o._duration=0,o._state="unloaded",o._sounds=[],o._endTimers={},o._queue=[],o._playLock=!1,o._onend=e.onend?[{fn:e.onend}]:[],o._onfade=e.onfade?[{fn:e.onfade}]:[],o._onload=e.onload?[{fn:e.onload}]:[],o._onloaderror=e.onloaderror?[{fn:e.onloaderror}]:[],o._onplayerror=e.onplayerror?[{fn:e.onplayerror}]:[],o._onpause=e.onpause?[{fn:e.onpause}]:[],o._onplay=e.onplay?[{fn:e.onplay}]:[],o._onstop=e.onstop?[{fn:e.onstop}]:[],o._onmute=e.onmute?[{fn:e.onmute}]:[],o._onvolume=e.onvolume?[{fn:e.onvolume}]:[],o._onrate=e.onrate?[{fn:e.onrate}]:[],o._onseek=e.onseek?[{fn:e.onseek}]:[],o._onunlock=e.onunlock?[{fn:e.onunlock}]:[],o._onresume=[],o._webAudio=n.usingWebAudio&&!o._html5,void 0!==n.ctx&&n.ctx&&n.autoUnlock&&n._unlockAudio(),n._howls.push(o),o._autoplay&&o._queue.push({event:"play",action:function(){o.play()}}),o._preload&&"none"!==o._preload&&o.load(),o},load:function(){var e=this,o=null;if(n.noAudio)return void e._emit("loaderror",null,"No audio support.");"string"==typeof e._src&&(e._src=[e._src]);for(var r=0;r<e._src.length;r++){var u,d;if(e._format&&e._format[r])u=e._format[r];else{if("string"!=typeof(d=e._src[r])){e._emit("loaderror",null,"Non-string found in selected audio sources - ignoring.");continue}u=/^data:audio\/([^;,]+);/i.exec(d),u||(u=/\.([^.]+)$/.exec(d.split("?",1)[0])),u&&(u=u[1].toLowerCase())}if(u||console.warn('No file extension was found. Consider using the "format" property or specify an extension.'),u&&n.codecs(u)){o=e._src[r];break}}return o?(e._src=o,e._state="loading","https:"===window.location.protocol&&"http:"===o.slice(0,5)&&(e._html5=!0,e._webAudio=!1),new t(e),e._webAudio&&a(e),e):void e._emit("loaderror",null,"No codec support for selected audio sources.")},play:function(e,o){var t=this,r=null;if("number"==typeof e)r=e,e=null;else{if("string"==typeof e&&"loaded"===t._state&&!t._sprite[e])return null;if(void 0===e&&(e="__default",!t._playLock)){for(var a=0,u=0;u<t._sounds.length;u++)t._sounds[u]._paused&&!t._sounds[u]._ended&&(a++,r=t._sounds[u]._id);1===a?e=null:r=null}}var d=r?t._soundById(r):t._inactiveSound();if(!d)return null;if(r&&!e&&(e=d._sprite||"__default"),"loaded"!==t._state){d._sprite=e,d._ended=!1;var i=d._id;return t._queue.push({event:"play",action:function(){t.play(i)}}),i}if(r&&!d._paused)return o||t._loadQueue("play"),d._id;t._webAudio&&n._autoResume();var _=Math.max(0,d._seek>0?d._seek:t._sprite[e][0]/1e3),s=Math.max(0,(t._sprite[e][0]+t._sprite[e][1])/1e3-_),l=1e3*s/Math.abs(d._rate),c=t._sprite[e][0]/1e3,f=(t._sprite[e][0]+t._sprite[e][1])/1e3;d._sprite=e,d._ended=!1;var p=function(){d._paused=!1,d._seek=_,d._start=c,d._stop=f,d._loop=!(!d._loop&&!t._sprite[e][2])};if(_>=f)return void t._ended(d);var m=d._node;if(t._webAudio){var v=function(){t._playLock=!1,p(),t._refreshBuffer(d);var e=d._muted||t._muted?0:d._volume;m.gain.setValueAtTime(e,n.ctx.currentTime),d._playStart=n.ctx.currentTime,void 0===m.bufferSource.start?d._loop?m.bufferSource.noteGrainOn(0,_,86400):m.bufferSource.noteGrainOn(0,_,s):d._loop?m.bufferSource.start(0,_,86400):m.bufferSource.start(0,_,s),l!==1/0&&(t._endTimers[d._id]=setTimeout(t._ended.bind(t,d),l)),o||setTimeout(function(){t._emit("play",d._id),t._loadQueue()},0)};"running"===n.state&&"interrupted"!==n.ctx.state?v():(t._playLock=!0,t.once("resume",v),t._clearTimer(d._id))}else{var h=function(){m.currentTime=_,m.muted=d._muted||t._muted||n._muted||m.muted,m.volume=d._volume*n.volume(),m.playbackRate=d._rate;try{var r=m.play();if(r&&"undefined"!=typeof Promise&&(r instanceof Promise||"function"==typeof r.then)?(t._playLock=!0,p(),r.then(function(){t._playLock=!1,m._unlocked=!0,o?t._loadQueue():t._emit("play",d._id)}).catch(function(){t._playLock=!1,t._emit("playerror",d._id,"Playback was unable to start. This is most commonly an issue on mobile devices and Chrome where playback was not within a user interaction."),d._ended=!0,d._paused=!0})):o||(t._playLock=!1,p(),t._emit("play",d._id)),m.playbackRate=d._rate,m.paused)return void t._emit("playerror",d._id,"Playback was unable to start. This is most commonly an issue on mobile devices and Chrome where playback was not within a user interaction.");"__default"!==e||d._loop?t._endTimers[d._id]=setTimeout(t._ended.bind(t,d),l):(t._endTimers[d._id]=function(){t._ended(d),m.removeEventListener("ended",t._endTimers[d._id],!1)},m.addEventListener("ended",t._endTimers[d._id],!1))}catch(e){t._emit("playerror",d._id,e)}};"data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA"===m.src&&(m.src=t._src,m.load());var y=window&&window.ejecta||!m.readyState&&n._navigator.isCocoonJS;if(m.readyState>=3||y)h();else{t._playLock=!0,t._state="loading";var g=function(){t._state="loaded",h(),m.removeEventListener(n._canPlayEvent,g,!1)};m.addEventListener(n._canPlayEvent,g,!1),t._clearTimer(d._id)}}return d._id},pause:function(e){var n=this;if("loaded"!==n._state||n._playLock)return n._queue.push({event:"pause",action:function(){n.pause(e)}}),n;for(var o=n._getSoundIds(e),t=0;t<o.length;t++){n._clearTimer(o[t]);var r=n._soundById(o[t]);if(r&&!r._paused&&(r._seek=n.seek(o[t]),r._rateSeek=0,r._paused=!0,n._stopFade(o[t]),r._node))if(n._webAudio){if(!r._node.bufferSource)continue;void 0===r._node.bufferSource.stop?r._node.bufferSource.noteOff(0):r._node.bufferSource.stop(0),n._cleanBuffer(r._node)}else isNaN(r._node.duration)&&r._node.duration!==1/0||r._node.pause();arguments[1]||n._emit("pause",r?r._id:null)}return n},stop:function(e,n){var o=this;if("loaded"!==o._state||o._playLock)return o._queue.push({event:"stop",action:function(){o.stop(e)}}),o;for(var t=o._getSoundIds(e),r=0;r<t.length;r++){o._clearTimer(t[r]);var a=o._soundById(t[r]);a&&(a._seek=a._start||0,a._rateSeek=0,a._paused=!0,a._ended=!0,o._stopFade(t[r]),a._node&&(o._webAudio?a._node.bufferSource&&(void 0===a._node.bufferSource.stop?a._node.bufferSource.noteOff(0):a._node.bufferSource.stop(0),o._cleanBuffer(a._node)):isNaN(a._node.duration)&&a._node.duration!==1/0||(a._node.currentTime=a._start||0,a._node.pause(),a._node.duration===1/0&&o._clearSound(a._node))),n||o._emit("stop",a._id))}return o},mute:function(e,o){var t=this;if("loaded"!==t._state||t._playLock)return t._queue.push({event:"mute",action:function(){t.mute(e,o)}}),t;if(void 0===o){if("boolean"!=typeof e)return t._muted;t._muted=e}for(var r=t._getSoundIds(o),a=0;a<r.length;a++){var u=t._soundById(r[a]);u&&(u._muted=e,u._interval&&t._stopFade(u._id),t._webAudio&&u._node?u._node.gain.setValueAtTime(e?0:u._volume,n.ctx.currentTime):u._node&&(u._node.muted=!!n._muted||e),t._emit("mute",u._id))}return t},volume:function(){var e,o,t=this,r=arguments;if(0===r.length)return t._volume;if(1===r.length||2===r.length&&void 0===r[1]){t._getSoundIds().indexOf(r[0])>=0?o=parseInt(r[0],10):e=parseFloat(r[0])}else r.length>=2&&(e=parseFloat(r[0]),o=parseInt(r[1],10));var a;if(!(void 0!==e&&e>=0&&e<=1))return a=o?t._soundById(o):t._sounds[0],a?a._volume:0;if("loaded"!==t._state||t._playLock)return t._queue.push({event:"volume",action:function(){t.volume.apply(t,r)}}),t;void 0===o&&(t._volume=e),o=t._getSoundIds(o);for(var u=0;u<o.length;u++)(a=t._soundById(o[u]))&&(a._volume=e,r[2]||t._stopFade(o[u]),t._webAudio&&a._node&&!a._muted?a._node.gain.setValueAtTime(e,n.ctx.currentTime):a._node&&!a._muted&&(a._node.volume=e*n.volume()),t._emit("volume",a._id));return t},fade:function(e,o,t,r){var a=this;if("loaded"!==a._state||a._playLock)return a._queue.push({event:"fade",action:function(){a.fade(e,o,t,r)}}),a;e=Math.min(Math.max(0,parseFloat(e)),1),o=Math.min(Math.max(0,parseFloat(o)),1),t=parseFloat(t),a.volume(e,r);for(var u=a._getSoundIds(r),d=0;d<u.length;d++){var i=a._soundById(u[d]);if(i){if(r||a._stopFade(u[d]),a._webAudio&&!i._muted){var _=n.ctx.currentTime,s=_+t/1e3;i._volume=e,i._node.gain.setValueAtTime(e,_),i._node.gain.linearRampToValueAtTime(o,s)}a._startFadeInterval(i,e,o,t,u[d],void 0===r)}}return a},_startFadeInterval:function(e,n,o,t,r,a){var u=this,d=n,i=o-n,_=Math.abs(i/.01),s=Math.max(4,_>0?t/_:t),l=Date.now();e._fadeTo=o,e._interval=setInterval(function(){var r=(Date.now()-l)/t;l=Date.now(),d+=i*r,d=Math.round(100*d)/100,d=i<0?Math.max(o,d):Math.min(o,d),u._webAudio?e._volume=d:u.volume(d,e._id,!0),a&&(u._volume=d),(o<n&&d<=o||o>n&&d>=o)&&(clearInterval(e._interval),e._interval=null,e._fadeTo=null,u.volume(o,e._id),u._emit("fade",e._id))},s)},_stopFade:function(e){var o=this,t=o._soundById(e);return t&&t._interval&&(o._webAudio&&t._node.gain.cancelScheduledValues(n.ctx.currentTime),clearInterval(t._interval),t._interval=null,o.volume(t._fadeTo,e),t._fadeTo=null,o._emit("fade",e)),o},loop:function(){var e,n,o,t=this,r=arguments;if(0===r.length)return t._loop;if(1===r.length){if("boolean"!=typeof r[0])return!!(o=t._soundById(parseInt(r[0],10)))&&o._loop;e=r[0],t._loop=e}else 2===r.length&&(e=r[0],n=parseInt(r[1],10));for(var a=t._getSoundIds(n),u=0;u<a.length;u++)(o=t._soundById(a[u]))&&(o._loop=e,t._webAudio&&o._node&&o._node.bufferSource&&(o._node.bufferSource.loop=e,e&&(o._node.bufferSource.loopStart=o._start||0,o._node.bufferSource.loopEnd=o._stop,t.playing(a[u])&&(t.pause(a[u],!0),t.play(a[u],!0)))));return t},rate:function(){var e,o,t=this,r=arguments;if(0===r.length)o=t._sounds[0]._id;else if(1===r.length){var a=t._getSoundIds(),u=a.indexOf(r[0]);u>=0?o=parseInt(r[0],10):e=parseFloat(r[0])}else 2===r.length&&(e=parseFloat(r[0]),o=parseInt(r[1],10));var d;if("number"!=typeof e)return d=t._soundById(o),d?d._rate:t._rate;if("loaded"!==t._state||t._playLock)return t._queue.push({event:"rate",action:function(){t.rate.apply(t,r)}}),t;void 0===o&&(t._rate=e),o=t._getSoundIds(o);for(var i=0;i<o.length;i++)if(d=t._soundById(o[i])){t.playing(o[i])&&(d._rateSeek=t.seek(o[i]),d._playStart=t._webAudio?n.ctx.currentTime:d._playStart),d._rate=e,t._webAudio&&d._node&&d._node.bufferSource?d._node.bufferSource.playbackRate.setValueAtTime(e,n.ctx.currentTime):d._node&&(d._node.playbackRate=e);var _=t.seek(o[i]),s=(t._sprite[d._sprite][0]+t._sprite[d._sprite][1])/1e3-_,l=1e3*s/Math.abs(d._rate);!t._endTimers[o[i]]&&d._paused||(t._clearTimer(o[i]),t._endTimers[o[i]]=setTimeout(t._ended.bind(t,d),l)),t._emit("rate",d._id)}return t},seek:function(){var e,o,t=this,r=arguments;if(0===r.length)t._sounds.length&&(o=t._sounds[0]._id);else if(1===r.length){var a=t._getSoundIds(),u=a.indexOf(r[0]);u>=0?o=parseInt(r[0],10):t._sounds.length&&(o=t._sounds[0]._id,e=parseFloat(r[0]))}else 2===r.length&&(e=parseFloat(r[0]),o=parseInt(r[1],10));if(void 0===o)return 0;if("number"==typeof e&&("loaded"!==t._state||t._playLock))return t._queue.push({event:"seek",action:function(){t.seek.apply(t,r)}}),t;var d=t._soundById(o);if(d){if(!("number"==typeof e&&e>=0)){if(t._webAudio){var i=t.playing(o)?n.ctx.currentTime-d._playStart:0,_=d._rateSeek?d._rateSeek-d._seek:0;return d._seek+(_+i*Math.abs(d._rate))}return d._node.currentTime}var s=t.playing(o);s&&t.pause(o,!0),d._seek=e,d._ended=!1,t._clearTimer(o),t._webAudio||!d._node||isNaN(d._node.duration)||(d._node.currentTime=e);var l=function(){s&&t.play(o,!0),t._emit("seek",o)};if(s&&!t._webAudio){var c=function(){t._playLock?setTimeout(c,0):l()};setTimeout(c,0)}else l()}return t},playing:function(e){var n=this;if("number"==typeof e){var o=n._soundById(e);return!!o&&!o._paused}for(var t=0;t<n._sounds.length;t++)if(!n._sounds[t]._paused)return!0;return!1},duration:function(e){var n=this,o=n._duration,t=n._soundById(e);return t&&(o=n._sprite[t._sprite][1]/1e3),o},state:function(){return this._state},unload:function(){for(var e=this,o=e._sounds,t=0;t<o.length;t++)o[t]._paused||e.stop(o[t]._id),e._webAudio||(e._clearSound(o[t]._node),o[t]._node.removeEventListener("error",o[t]._errorFn,!1),o[t]._node.removeEventListener(n._canPlayEvent,o[t]._loadFn,!1),o[t]._node.removeEventListener("ended",o[t]._endFn,!1),n._releaseHtml5Audio(o[t]._node)),delete o[t]._node,e._clearTimer(o[t]._id);var a=n._howls.indexOf(e);a>=0&&n._howls.splice(a,1);var u=!0;for(t=0;t<n._howls.length;t++)if(n._howls[t]._src===e._src||e._src.indexOf(n._howls[t]._src)>=0){u=!1;break}return r&&u&&delete r[e._src],n.noAudio=!1,e._state="unloaded",e._sounds=[],e=null,null},on:function(e,n,o,t){var r=this,a=r["_on"+e];return"function"==typeof n&&a.push(t?{id:o,fn:n,once:t}:{id:o,fn:n}),r},off:function(e,n,o){var t=this,r=t["_on"+e],a=0;if("number"==typeof n&&(o=n,n=null),n||o)for(a=0;a<r.length;a++){var u=o===r[a].id;if(n===r[a].fn&&u||!n&&u){r.splice(a,1);break}}else if(e)t["_on"+e]=[];else{var d=Object.keys(t);for(a=0;a<d.length;a++)0===d[a].indexOf("_on")&&Array.isArray(t[d[a]])&&(t[d[a]]=[])}return t},once:function(e,n,o){var t=this;return t.on(e,n,o,1),t},_emit:function(e,n,o){for(var t=this,r=t["_on"+e],a=r.length-1;a>=0;a--)r[a].id&&r[a].id!==n&&"load"!==e||(setTimeout(function(e){e.call(this,n,o)}.bind(t,r[a].fn),0),r[a].once&&t.off(e,r[a].fn,r[a].id));return t._loadQueue(e),t},_loadQueue:function(e){var n=this;if(n._queue.length>0){var o=n._queue[0];o.event===e&&(n._queue.shift(),n._loadQueue()),e||o.action()}return n},_ended:function(e){var o=this,t=e._sprite;if(!o._webAudio&&e._node&&!e._node.paused&&!e._node.ended&&e._node.currentTime<e._stop)return setTimeout(o._ended.bind(o,e),100),o;var r=!(!e._loop&&!o._sprite[t][2]);if(o._emit("end",e._id),!o._webAudio&&r&&o.stop(e._id,!0).play(e._id),o._webAudio&&r){o._emit("play",e._id),e._seek=e._start||0,e._rateSeek=0,e._playStart=n.ctx.currentTime;var a=1e3*(e._stop-e._start)/Math.abs(e._rate);o._endTimers[e._id]=setTimeout(o._ended.bind(o,e),a)}return o._webAudio&&!r&&(e._paused=!0,e._ended=!0,e._seek=e._start||0,e._rateSeek=0,o._clearTimer(e._id),o._cleanBuffer(e._node),n._autoSuspend()),o._webAudio||r||o.stop(e._id,!0),o},_clearTimer:function(e){var n=this;if(n._endTimers[e]){if("function"!=typeof n._endTimers[e])clearTimeout(n._endTimers[e]);else{var o=n._soundById(e);o&&o._node&&o._node.removeEventListener("ended",n._endTimers[e],!1)}delete n._endTimers[e]}return n},_soundById:function(e){for(var n=this,o=0;o<n._sounds.length;o++)if(e===n._sounds[o]._id)return n._sounds[o];return null},_inactiveSound:function(){var e=this;e._drain();for(var n=0;n<e._sounds.length;n++)if(e._sounds[n]._ended)return e._sounds[n].reset();return new t(e)},_drain:function(){var e=this,n=e._pool,o=0,t=0;if(!(e._sounds.length<n)){for(t=0;t<e._sounds.length;t++)e._sounds[t]._ended&&o++;for(t=e._sounds.length-1;t>=0;t--){if(o<=n)return;e._sounds[t]._ended&&(e._webAudio&&e._sounds[t]._node&&e._sounds[t]._node.disconnect(0),e._sounds.splice(t,1),o--)}}},_getSoundIds:function(e){var n=this;if(void 0===e){for(var o=[],t=0;t<n._sounds.length;t++)o.push(n._sounds[t]._id);return o}return[e]},_refreshBuffer:function(e){var o=this;return e._node.bufferSource=n.ctx.createBufferSource(),e._node.bufferSource.buffer=r[o._src],e._panner?e._node.bufferSource.connect(e._panner):e._node.bufferSource.connect(e._node),e._node.bufferSource.loop=e._loop,e._loop&&(e._node.bufferSource.loopStart=e._start||0,e._node.bufferSource.loopEnd=e._stop||0),e._node.bufferSource.playbackRate.setValueAtTime(e._rate,n.ctx.currentTime),o},_cleanBuffer:function(e){var o=this,t=n._navigator&&n._navigator.vendor.indexOf("Apple")>=0;if(!e.bufferSource)return o;if(n._scratchBuffer&&e.bufferSource&&(e.bufferSource.onended=null,e.bufferSource.disconnect(0),t))try{e.bufferSource.buffer=n._scratchBuffer}catch(e){}return e.bufferSource=null,o},_clearSound:function(e){/MSIE |Trident\//.test(n._navigator&&n._navigator.userAgent)||(e.src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA")}};var t=function(e){this._parent=e,this.init()};t.prototype={init:function(){var e=this,o=e._parent;return e._muted=o._muted,e._loop=o._loop,e._volume=o._volume,e._rate=o._rate,e._seek=0,e._paused=!0,e._ended=!0,e._sprite="__default",e._id=++n._counter,o._sounds.push(e),e.create(),e},create:function(){var e=this,o=e._parent,t=n._muted||e._muted||e._parent._muted?0:e._volume;return o._webAudio?(e._node=void 0===n.ctx.createGain?n.ctx.createGainNode():n.ctx.createGain(),e._node.gain.setValueAtTime(t,n.ctx.currentTime),e._node.paused=!0,e._node.connect(n.masterGain)):n.noAudio||(e._node=n._obtainHtml5Audio(),e._errorFn=e._errorListener.bind(e),e._node.addEventListener("error",e._errorFn,!1),e._loadFn=e._loadListener.bind(e),e._node.addEventListener(n._canPlayEvent,e._loadFn,!1),e._endFn=e._endListener.bind(e),e._node.addEventListener("ended",e._endFn,!1),e._node.src=o._src,e._node.preload=!0===o._preload?"auto":o._preload,e._node.volume=t*n.volume(),e._node.load()),e},reset:function(){var e=this,o=e._parent;return e._muted=o._muted,e._loop=o._loop,e._volume=o._volume,e._rate=o._rate,e._seek=0,e._rateSeek=0,e._paused=!0,e._ended=!0,e._sprite="__default",e._id=++n._counter,e},_errorListener:function(){var e=this;e._parent._emit("loaderror",e._id,e._node.error?e._node.error.code:0),e._node.removeEventListener("error",e._errorFn,!1)},_loadListener:function(){var e=this,o=e._parent;o._duration=Math.ceil(10*e._node.duration)/10,0===Object.keys(o._sprite).length&&(o._sprite={__default:[0,1e3*o._duration]}),"loaded"!==o._state&&(o._state="loaded",o._emit("load"),o._loadQueue()),e._node.removeEventListener(n._canPlayEvent,e._loadFn,!1)},_endListener:function(){var e=this,n=e._parent;n._duration===1/0&&(n._duration=Math.ceil(10*e._node.duration)/10,n._sprite.__default[1]===1/0&&(n._sprite.__default[1]=1e3*n._duration),n._ended(e)),e._node.removeEventListener("ended",e._endFn,!1)}};var r={},a=function(e){var n=e._src;if(r[n])return e._duration=r[n].duration,void i(e);if(/^data:[^;]+;base64,/.test(n)){for(var o=atob(n.split(",")[1]),t=new Uint8Array(o.length),a=0;a<o.length;++a)t[a]=o.charCodeAt(a);d(t.buffer,e)}else{var _=new XMLHttpRequest;_.open(e._xhr.method,n,!0),_.withCredentials=e._xhr.withCredentials,_.responseType="arraybuffer",e._xhr.headers&&Object.keys(e._xhr.headers).forEach(function(n){_.setRequestHeader(n,e._xhr.headers[n])}),_.onload=function(){var n=(_.status+"")[0];if("0"!==n&&"2"!==n&&"3"!==n)return void e._emit("loaderror",null,"Failed loading audio file with status: "+_.status+".");d(_.response,e)},_.onerror=function(){e._webAudio&&(e._html5=!0,e._webAudio=!1,e._sounds=[],delete r[n],e.load())},u(_)}},u=function(e){try{e.send()}catch(n){e.onerror()}},d=function(e,o){var t=function(){o._emit("loaderror",null,"Decoding audio data failed.")},a=function(e){e&&o._sounds.length>0?(r[o._src]=e,i(o,e)):t()};"undefined"!=typeof Promise&&1===n.ctx.decodeAudioData.length?n.ctx.decodeAudioData(e).then(a).catch(t):n.ctx.decodeAudioData(e,a,t)},i=function(e,n){n&&!e._duration&&(e._duration=n.duration),0===Object.keys(e._sprite).length&&(e._sprite={__default:[0,1e3*e._duration]}),"loaded"!==e._state&&(e._state="loaded",e._emit("load"),e._loadQueue())},_=function(){if(n.usingWebAudio){try{"undefined"!=typeof AudioContext?n.ctx=new AudioContext:"undefined"!=typeof webkitAudioContext?n.ctx=new webkitAudioContext:n.usingWebAudio=!1}catch(e){n.usingWebAudio=!1}n.ctx||(n.usingWebAudio=!1);var e=/iP(hone|od|ad)/.test(n._navigator&&n._navigator.platform),o=n._navigator&&n._navigator.appVersion.match(/OS (\d+)_(\d+)_?(\d+)?/),t=o?parseInt(o[1],10):null;if(e&&t&&t<9){var r=/safari/.test(n._navigator&&n._navigator.userAgent.toLowerCase());n._navigator&&!r&&(n.usingWebAudio=!1)}n.usingWebAudio&&(n.masterGain=void 0===n.ctx.createGain?n.ctx.createGainNode():n.ctx.createGain(),n.masterGain.gain.setValueAtTime(n._muted?0:n._volume,n.ctx.currentTime),n.masterGain.connect(n.ctx.destination)),n._setup()}};"function"==typeof define&&define.amd&&define([],function(){return{Howler:n,Howl:o}}),"undefined"!=typeof exports&&(exports.Howler=n,exports.Howl=o),"undefined"!=typeof global?(global.HowlerGlobal=e,global.Howler=n,global.Howl=o,global.Sound=t):"undefined"!=typeof window&&(window.HowlerGlobal=e,window.Howler=n,window.Howl=o,window.Sound=t)}();
 /*! Spatial Plugin */
 !function(){"use strict";HowlerGlobal.prototype._pos=[0,0,0],HowlerGlobal.prototype._orientation=[0,0,-1,0,1,0],HowlerGlobal.prototype.stereo=function(e){var n=this;if(!n.ctx||!n.ctx.listener)return n;for(var t=n._howls.length-1;t>=0;t--)n._howls[t].stereo(e);return n},HowlerGlobal.prototype.pos=function(e,n,t){var r=this;return r.ctx&&r.ctx.listener?(n="number"!=typeof n?r._pos[1]:n,t="number"!=typeof t?r._pos[2]:t,"number"!=typeof e?r._pos:(r._pos=[e,n,t],void 0!==r.ctx.listener.positionX?(r.ctx.listener.positionX.setTargetAtTime(r._pos[0],Howler.ctx.currentTime,.1),r.ctx.listener.positionY.setTargetAtTime(r._pos[1],Howler.ctx.currentTime,.1),r.ctx.listener.positionZ.setTargetAtTime(r._pos[2],Howler.ctx.currentTime,.1)):r.ctx.listener.setPosition(r._pos[0],r._pos[1],r._pos[2]),r)):r},HowlerGlobal.prototype.orientation=function(e,n,t,r,o,i){var a=this;if(!a.ctx||!a.ctx.listener)return a;var p=a._orientation;return n="number"!=typeof n?p[1]:n,t="number"!=typeof t?p[2]:t,r="number"!=typeof r?p[3]:r,o="number"!=typeof o?p[4]:o,i="number"!=typeof i?p[5]:i,"number"!=typeof e?p:(a._orientation=[e,n,t,r,o,i],void 0!==a.ctx.listener.forwardX?(a.ctx.listener.forwardX.setTargetAtTime(e,Howler.ctx.currentTime,.1),a.ctx.listener.forwardY.setTargetAtTime(n,Howler.ctx.currentTime,.1),a.ctx.listener.forwardZ.setTargetAtTime(t,Howler.ctx.currentTime,.1),a.ctx.listener.upX.setTargetAtTime(r,Howler.ctx.currentTime,.1),a.ctx.listener.upY.setTargetAtTime(o,Howler.ctx.currentTime,.1),a.ctx.listener.upZ.setTargetAtTime(i,Howler.ctx.currentTime,.1)):a.ctx.listener.setOrientation(e,n,t,r,o,i),a)},Howl.prototype.init=function(e){return function(n){var t=this;return t._orientation=n.orientation||[1,0,0],t._stereo=n.stereo||null,t._pos=n.pos||null,t._pannerAttr={coneInnerAngle:void 0!==n.coneInnerAngle?n.coneInnerAngle:360,coneOuterAngle:void 0!==n.coneOuterAngle?n.coneOuterAngle:360,coneOuterGain:void 0!==n.coneOuterGain?n.coneOuterGain:0,distanceModel:void 0!==n.distanceModel?n.distanceModel:"inverse",maxDistance:void 0!==n.maxDistance?n.maxDistance:1e4,panningModel:void 0!==n.panningModel?n.panningModel:"HRTF",refDistance:void 0!==n.refDistance?n.refDistance:1,rolloffFactor:void 0!==n.rolloffFactor?n.rolloffFactor:1},t._onstereo=n.onstereo?[{fn:n.onstereo}]:[],t._onpos=n.onpos?[{fn:n.onpos}]:[],t._onorientation=n.onorientation?[{fn:n.onorientation}]:[],e.call(this,n)}}(Howl.prototype.init),Howl.prototype.stereo=function(n,t){var r=this;if(!r._webAudio)return r;if("loaded"!==r._state)return r._queue.push({event:"stereo",action:function(){r.stereo(n,t)}}),r;var o=void 0===Howler.ctx.createStereoPanner?"spatial":"stereo";if(void 0===t){if("number"!=typeof n)return r._stereo;r._stereo=n,r._pos=[n,0,0]}for(var i=r._getSoundIds(t),a=0;a<i.length;a++){var p=r._soundById(i[a]);if(p){if("number"!=typeof n)return p._stereo;p._stereo=n,p._pos=[n,0,0],p._node&&(p._pannerAttr.panningModel="equalpower",p._panner&&p._panner.pan||e(p,o),"spatial"===o?void 0!==p._panner.positionX?(p._panner.positionX.setValueAtTime(n,Howler.ctx.currentTime),p._panner.positionY.setValueAtTime(0,Howler.ctx.currentTime),p._panner.positionZ.setValueAtTime(0,Howler.ctx.currentTime)):p._panner.setPosition(n,0,0):p._panner.pan.setValueAtTime(n,Howler.ctx.currentTime)),r._emit("stereo",p._id)}}return r},Howl.prototype.pos=function(n,t,r,o){var i=this;if(!i._webAudio)return i;if("loaded"!==i._state)return i._queue.push({event:"pos",action:function(){i.pos(n,t,r,o)}}),i;if(t="number"!=typeof t?0:t,r="number"!=typeof r?-.5:r,void 0===o){if("number"!=typeof n)return i._pos;i._pos=[n,t,r]}for(var a=i._getSoundIds(o),p=0;p<a.length;p++){var s=i._soundById(a[p]);if(s){if("number"!=typeof n)return s._pos;s._pos=[n,t,r],s._node&&(s._panner&&!s._panner.pan||e(s,"spatial"),void 0!==s._panner.positionX?(s._panner.positionX.setValueAtTime(n,Howler.ctx.currentTime),s._panner.positionY.setValueAtTime(t,Howler.ctx.currentTime),s._panner.positionZ.setValueAtTime(r,Howler.ctx.currentTime)):s._panner.setPosition(n,t,r)),i._emit("pos",s._id)}}return i},Howl.prototype.orientation=function(n,t,r,o){var i=this;if(!i._webAudio)return i;if("loaded"!==i._state)return i._queue.push({event:"orientation",action:function(){i.orientation(n,t,r,o)}}),i;if(t="number"!=typeof t?i._orientation[1]:t,r="number"!=typeof r?i._orientation[2]:r,void 0===o){if("number"!=typeof n)return i._orientation;i._orientation=[n,t,r]}for(var a=i._getSoundIds(o),p=0;p<a.length;p++){var s=i._soundById(a[p]);if(s){if("number"!=typeof n)return s._orientation;s._orientation=[n,t,r],s._node&&(s._panner||(s._pos||(s._pos=i._pos||[0,0,-.5]),e(s,"spatial")),void 0!==s._panner.orientationX?(s._panner.orientationX.setValueAtTime(n,Howler.ctx.currentTime),s._panner.orientationY.setValueAtTime(t,Howler.ctx.currentTime),s._panner.orientationZ.setValueAtTime(r,Howler.ctx.currentTime)):s._panner.setOrientation(n,t,r)),i._emit("orientation",s._id)}}return i},Howl.prototype.pannerAttr=function(){var n,t,r,o=this,i=arguments;if(!o._webAudio)return o;if(0===i.length)return o._pannerAttr;if(1===i.length){if("object"!=typeof i[0])return r=o._soundById(parseInt(i[0],10)),r?r._pannerAttr:o._pannerAttr;n=i[0],void 0===t&&(n.pannerAttr||(n.pannerAttr={coneInnerAngle:n.coneInnerAngle,coneOuterAngle:n.coneOuterAngle,coneOuterGain:n.coneOuterGain,distanceModel:n.distanceModel,maxDistance:n.maxDistance,refDistance:n.refDistance,rolloffFactor:n.rolloffFactor,panningModel:n.panningModel}),o._pannerAttr={coneInnerAngle:void 0!==n.pannerAttr.coneInnerAngle?n.pannerAttr.coneInnerAngle:o._coneInnerAngle,coneOuterAngle:void 0!==n.pannerAttr.coneOuterAngle?n.pannerAttr.coneOuterAngle:o._coneOuterAngle,coneOuterGain:void 0!==n.pannerAttr.coneOuterGain?n.pannerAttr.coneOuterGain:o._coneOuterGain,distanceModel:void 0!==n.pannerAttr.distanceModel?n.pannerAttr.distanceModel:o._distanceModel,maxDistance:void 0!==n.pannerAttr.maxDistance?n.pannerAttr.maxDistance:o._maxDistance,refDistance:void 0!==n.pannerAttr.refDistance?n.pannerAttr.refDistance:o._refDistance,rolloffFactor:void 0!==n.pannerAttr.rolloffFactor?n.pannerAttr.rolloffFactor:o._rolloffFactor,panningModel:void 0!==n.pannerAttr.panningModel?n.pannerAttr.panningModel:o._panningModel})}else 2===i.length&&(n=i[0],t=parseInt(i[1],10));for(var a=o._getSoundIds(t),p=0;p<a.length;p++)if(r=o._soundById(a[p])){var s=r._pannerAttr;s={coneInnerAngle:void 0!==n.coneInnerAngle?n.coneInnerAngle:s.coneInnerAngle,coneOuterAngle:void 0!==n.coneOuterAngle?n.coneOuterAngle:s.coneOuterAngle,coneOuterGain:void 0!==n.coneOuterGain?n.coneOuterGain:s.coneOuterGain,distanceModel:void 0!==n.distanceModel?n.distanceModel:s.distanceModel,maxDistance:void 0!==n.maxDistance?n.maxDistance:s.maxDistance,refDistance:void 0!==n.refDistance?n.refDistance:s.refDistance,rolloffFactor:void 0!==n.rolloffFactor?n.rolloffFactor:s.rolloffFactor,panningModel:void 0!==n.panningModel?n.panningModel:s.panningModel};var c=r._panner;c||(r._pos||(r._pos=o._pos||[0,0,-.5]),e(r,"spatial"),c=r._panner),c.coneInnerAngle=s.coneInnerAngle,c.coneOuterAngle=s.coneOuterAngle,c.coneOuterGain=s.coneOuterGain,c.distanceModel=s.distanceModel,c.maxDistance=s.maxDistance,c.refDistance=s.refDistance,c.rolloffFactor=s.rolloffFactor,c.panningModel=s.panningModel}return o},Sound.prototype.init=function(e){return function(){var n=this,t=n._parent;n._orientation=t._orientation,n._stereo=t._stereo,n._pos=t._pos,n._pannerAttr=t._pannerAttr,e.call(this),n._stereo?t.stereo(n._stereo):n._pos&&t.pos(n._pos[0],n._pos[1],n._pos[2],n._id)}}(Sound.prototype.init),Sound.prototype.reset=function(e){return function(){var n=this,t=n._parent;return n._orientation=t._orientation,n._stereo=t._stereo,n._pos=t._pos,n._pannerAttr=t._pannerAttr,n._stereo?t.stereo(n._stereo):n._pos?t.pos(n._pos[0],n._pos[1],n._pos[2],n._id):n._panner&&(n._panner.disconnect(0),n._panner=void 0,t._refreshBuffer(n)),e.call(this)}}(Sound.prototype.reset);var e=function(e,n){n=n||"spatial","spatial"===n?(e._panner=Howler.ctx.createPanner(),e._panner.coneInnerAngle=e._pannerAttr.coneInnerAngle,e._panner.coneOuterAngle=e._pannerAttr.coneOuterAngle,e._panner.coneOuterGain=e._pannerAttr.coneOuterGain,e._panner.distanceModel=e._pannerAttr.distanceModel,e._panner.maxDistance=e._pannerAttr.maxDistance,e._panner.refDistance=e._pannerAttr.refDistance,e._panner.rolloffFactor=e._pannerAttr.rolloffFactor,e._panner.panningModel=e._pannerAttr.panningModel,void 0!==e._panner.positionX?(e._panner.positionX.setValueAtTime(e._pos[0],Howler.ctx.currentTime),e._panner.positionY.setValueAtTime(e._pos[1],Howler.ctx.currentTime),e._panner.positionZ.setValueAtTime(e._pos[2],Howler.ctx.currentTime)):e._panner.setPosition(e._pos[0],e._pos[1],e._pos[2]),void 0!==e._panner.orientationX?(e._panner.orientationX.setValueAtTime(e._orientation[0],Howler.ctx.currentTime),e._panner.orientationY.setValueAtTime(e._orientation[1],Howler.ctx.currentTime),e._panner.orientationZ.setValueAtTime(e._orientation[2],Howler.ctx.currentTime)):e._panner.setOrientation(e._orientation[0],e._orientation[1],e._orientation[2])):(e._panner=Howler.ctx.createStereoPanner(),e._panner.pan.setValueAtTime(e._stereo,Howler.ctx.currentTime)),e._panner.connect(e._node),e._paused||e._parent.pause(e._id,!0).play(e._id,!0)}}();
-
+ }
 /* pako 1.0.2 nodeca/pako */
 !function(t){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=t();else if("function"==typeof define&&define.amd)define([],t);else{var e;e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,e.pako=t()}}(function(){return function t(e,a,i){function n(s,o){if(!a[s]){if(!e[s]){var l="function"==typeof require&&require;if(!o&&l)return l(s,!0);if(r)return r(s,!0);var h=new Error("Cannot find module '"+s+"'");throw h.code="MODULE_NOT_FOUND",h}var d=a[s]={exports:{}};e[s][0].call(d.exports,function(t){var a=e[s][1][t];return n(a?a:t)},d,d.exports,t,e,a,i)}return a[s].exports}for(var r="function"==typeof require&&require,s=0;s<i.length;s++)n(i[s]);return n}({1:[function(t,e,a){"use strict";function i(t){if(!(this instanceof i))return new i(t);this.options=l.assign({level:w,method:v,chunkSize:16384,windowBits:15,memLevel:8,strategy:p,to:""},t||{});var e=this.options;e.raw&&e.windowBits>0?e.windowBits=-e.windowBits:e.gzip&&e.windowBits>0&&e.windowBits<16&&(e.windowBits+=16),this.err=0,this.msg="",this.ended=!1,this.chunks=[],this.strm=new f,this.strm.avail_out=0;var a=o.deflateInit2(this.strm,e.level,e.method,e.windowBits,e.memLevel,e.strategy);if(a!==b)throw new Error(d[a]);if(e.header&&o.deflateSetHeader(this.strm,e.header),e.dictionary){var n;if(n="string"==typeof e.dictionary?h.string2buf(e.dictionary):"[object ArrayBuffer]"===_.call(e.dictionary)?new Uint8Array(e.dictionary):e.dictionary,a=o.deflateSetDictionary(this.strm,n),a!==b)throw new Error(d[a]);this._dict_set=!0}}function n(t,e){var a=new i(e);if(a.push(t,!0),a.err)throw a.msg;return a.result}function r(t,e){return e=e||{},e.raw=!0,n(t,e)}function s(t,e){return e=e||{},e.gzip=!0,n(t,e)}var o=t("./zlib/deflate"),l=t("./utils/common"),h=t("./utils/strings"),d=t("./zlib/messages"),f=t("./zlib/zstream"),_=Object.prototype.toString,u=0,c=4,b=0,g=1,m=2,w=-1,p=0,v=8;i.prototype.push=function(t,e){var a,i,n=this.strm,r=this.options.chunkSize;if(this.ended)return!1;i=e===~~e?e:e===!0?c:u,"string"==typeof t?n.input=h.string2buf(t):"[object ArrayBuffer]"===_.call(t)?n.input=new Uint8Array(t):n.input=t,n.next_in=0,n.avail_in=n.input.length;do{if(0===n.avail_out&&(n.output=new l.Buf8(r),n.next_out=0,n.avail_out=r),a=o.deflate(n,i),a!==g&&a!==b)return this.onEnd(a),this.ended=!0,!1;0!==n.avail_out&&(0!==n.avail_in||i!==c&&i!==m)||("string"===this.options.to?this.onData(h.buf2binstring(l.shrinkBuf(n.output,n.next_out))):this.onData(l.shrinkBuf(n.output,n.next_out)))}while((n.avail_in>0||0===n.avail_out)&&a!==g);return i===c?(a=o.deflateEnd(this.strm),this.onEnd(a),this.ended=!0,a===b):i!==m||(this.onEnd(b),n.avail_out=0,!0)},i.prototype.onData=function(t){this.chunks.push(t)},i.prototype.onEnd=function(t){t===b&&("string"===this.options.to?this.result=this.chunks.join(""):this.result=l.flattenChunks(this.chunks)),this.chunks=[],this.err=t,this.msg=this.strm.msg},a.Deflate=i,a.deflate=n,a.deflateRaw=r,a.gzip=s},{"./utils/common":3,"./utils/strings":4,"./zlib/deflate":8,"./zlib/messages":13,"./zlib/zstream":15}],2:[function(t,e,a){"use strict";function i(t){if(!(this instanceof i))return new i(t);this.options=o.assign({chunkSize:16384,windowBits:0,to:""},t||{});var e=this.options;e.raw&&e.windowBits>=0&&e.windowBits<16&&(e.windowBits=-e.windowBits,0===e.windowBits&&(e.windowBits=-15)),!(e.windowBits>=0&&e.windowBits<16)||t&&t.windowBits||(e.windowBits+=32),e.windowBits>15&&e.windowBits<48&&0===(15&e.windowBits)&&(e.windowBits|=15),this.err=0,this.msg="",this.ended=!1,this.chunks=[],this.strm=new f,this.strm.avail_out=0;var a=s.inflateInit2(this.strm,e.windowBits);if(a!==h.Z_OK)throw new Error(d[a]);this.header=new _,s.inflateGetHeader(this.strm,this.header)}function n(t,e){var a=new i(e);if(a.push(t,!0),a.err)throw a.msg;return a.result}function r(t,e){return e=e||{},e.raw=!0,n(t,e)}var s=t("./zlib/inflate"),o=t("./utils/common"),l=t("./utils/strings"),h=t("./zlib/constants"),d=t("./zlib/messages"),f=t("./zlib/zstream"),_=t("./zlib/gzheader"),u=Object.prototype.toString;i.prototype.push=function(t,e){var a,i,n,r,d,f,_=this.strm,c=this.options.chunkSize,b=this.options.dictionary,g=!1;if(this.ended)return!1;i=e===~~e?e:e===!0?h.Z_FINISH:h.Z_NO_FLUSH,"string"==typeof t?_.input=l.binstring2buf(t):"[object ArrayBuffer]"===u.call(t)?_.input=new Uint8Array(t):_.input=t,_.next_in=0,_.avail_in=_.input.length;do{if(0===_.avail_out&&(_.output=new o.Buf8(c),_.next_out=0,_.avail_out=c),a=s.inflate(_,h.Z_NO_FLUSH),a===h.Z_NEED_DICT&&b&&(f="string"==typeof b?l.string2buf(b):"[object ArrayBuffer]"===u.call(b)?new Uint8Array(b):b,a=s.inflateSetDictionary(this.strm,f)),a===h.Z_BUF_ERROR&&g===!0&&(a=h.Z_OK,g=!1),a!==h.Z_STREAM_END&&a!==h.Z_OK)return this.onEnd(a),this.ended=!0,!1;_.next_out&&(0!==_.avail_out&&a!==h.Z_STREAM_END&&(0!==_.avail_in||i!==h.Z_FINISH&&i!==h.Z_SYNC_FLUSH)||("string"===this.options.to?(n=l.utf8border(_.output,_.next_out),r=_.next_out-n,d=l.buf2string(_.output,n),_.next_out=r,_.avail_out=c-r,r&&o.arraySet(_.output,_.output,n,r,0),this.onData(d)):this.onData(o.shrinkBuf(_.output,_.next_out)))),0===_.avail_in&&0===_.avail_out&&(g=!0)}while((_.avail_in>0||0===_.avail_out)&&a!==h.Z_STREAM_END);return a===h.Z_STREAM_END&&(i=h.Z_FINISH),i===h.Z_FINISH?(a=s.inflateEnd(this.strm),this.onEnd(a),this.ended=!0,a===h.Z_OK):i!==h.Z_SYNC_FLUSH||(this.onEnd(h.Z_OK),_.avail_out=0,!0)},i.prototype.onData=function(t){this.chunks.push(t)},i.prototype.onEnd=function(t){t===h.Z_OK&&("string"===this.options.to?this.result=this.chunks.join(""):this.result=o.flattenChunks(this.chunks)),this.chunks=[],this.err=t,this.msg=this.strm.msg},a.Inflate=i,a.inflate=n,a.inflateRaw=r,a.ungzip=n},{"./utils/common":3,"./utils/strings":4,"./zlib/constants":6,"./zlib/gzheader":9,"./zlib/inflate":11,"./zlib/messages":13,"./zlib/zstream":15}],3:[function(t,e,a){"use strict";var i="undefined"!=typeof Uint8Array&&"undefined"!=typeof Uint16Array&&"undefined"!=typeof Int32Array;a.assign=function(t){for(var e=Array.prototype.slice.call(arguments,1);e.length;){var a=e.shift();if(a){if("object"!=typeof a)throw new TypeError(a+"must be non-object");for(var i in a)a.hasOwnProperty(i)&&(t[i]=a[i])}}return t},a.shrinkBuf=function(t,e){return t.length===e?t:t.subarray?t.subarray(0,e):(t.length=e,t)};var n={arraySet:function(t,e,a,i,n){if(e.subarray&&t.subarray)return void t.set(e.subarray(a,a+i),n);for(var r=0;r<i;r++)t[n+r]=e[a+r]},flattenChunks:function(t){var e,a,i,n,r,s;for(i=0,e=0,a=t.length;e<a;e++)i+=t[e].length;for(s=new Uint8Array(i),n=0,e=0,a=t.length;e<a;e++)r=t[e],s.set(r,n),n+=r.length;return s}},r={arraySet:function(t,e,a,i,n){for(var r=0;r<i;r++)t[n+r]=e[a+r]},flattenChunks:function(t){return[].concat.apply([],t)}};a.setTyped=function(t){t?(a.Buf8=Uint8Array,a.Buf16=Uint16Array,a.Buf32=Int32Array,a.assign(a,n)):(a.Buf8=Array,a.Buf16=Array,a.Buf32=Array,a.assign(a,r))},a.setTyped(i)},{}],4:[function(t,e,a){"use strict";function i(t,e){if(e<65537&&(t.subarray&&s||!t.subarray&&r))return String.fromCharCode.apply(null,n.shrinkBuf(t,e));for(var a="",i=0;i<e;i++)a+=String.fromCharCode(t[i]);return a}var n=t("./common"),r=!0,s=!0;try{String.fromCharCode.apply(null,[0])}catch(t){r=!1}try{String.fromCharCode.apply(null,new Uint8Array(1))}catch(t){s=!1}for(var o=new n.Buf8(256),l=0;l<256;l++)o[l]=l>=252?6:l>=248?5:l>=240?4:l>=224?3:l>=192?2:1;o[254]=o[254]=1,a.string2buf=function(t){var e,a,i,r,s,o=t.length,l=0;for(r=0;r<o;r++)a=t.charCodeAt(r),55296===(64512&a)&&r+1<o&&(i=t.charCodeAt(r+1),56320===(64512&i)&&(a=65536+(a-55296<<10)+(i-56320),r++)),l+=a<128?1:a<2048?2:a<65536?3:4;for(e=new n.Buf8(l),s=0,r=0;s<l;r++)a=t.charCodeAt(r),55296===(64512&a)&&r+1<o&&(i=t.charCodeAt(r+1),56320===(64512&i)&&(a=65536+(a-55296<<10)+(i-56320),r++)),a<128?e[s++]=a:a<2048?(e[s++]=192|a>>>6,e[s++]=128|63&a):a<65536?(e[s++]=224|a>>>12,e[s++]=128|a>>>6&63,e[s++]=128|63&a):(e[s++]=240|a>>>18,e[s++]=128|a>>>12&63,e[s++]=128|a>>>6&63,e[s++]=128|63&a);return e},a.buf2binstring=function(t){return i(t,t.length)},a.binstring2buf=function(t){for(var e=new n.Buf8(t.length),a=0,i=e.length;a<i;a++)e[a]=t.charCodeAt(a);return e},a.buf2string=function(t,e){var a,n,r,s,l=e||t.length,h=new Array(2*l);for(n=0,a=0;a<l;)if(r=t[a++],r<128)h[n++]=r;else if(s=o[r],s>4)h[n++]=65533,a+=s-1;else{for(r&=2===s?31:3===s?15:7;s>1&&a<l;)r=r<<6|63&t[a++],s--;s>1?h[n++]=65533:r<65536?h[n++]=r:(r-=65536,h[n++]=55296|r>>10&1023,h[n++]=56320|1023&r)}return i(h,n)},a.utf8border=function(t,e){var a;for(e=e||t.length,e>t.length&&(e=t.length),a=e-1;a>=0&&128===(192&t[a]);)a--;return a<0?e:0===a?e:a+o[t[a]]>e?a:e}},{"./common":3}],5:[function(t,e,a){"use strict";function i(t,e,a,i){for(var n=65535&t|0,r=t>>>16&65535|0,s=0;0!==a;){s=a>2e3?2e3:a,a-=s;do n=n+e[i++]|0,r=r+n|0;while(--s);n%=65521,r%=65521}return n|r<<16|0}e.exports=i},{}],6:[function(t,e,a){"use strict";e.exports={Z_NO_FLUSH:0,Z_PARTIAL_FLUSH:1,Z_SYNC_FLUSH:2,Z_FULL_FLUSH:3,Z_FINISH:4,Z_BLOCK:5,Z_TREES:6,Z_OK:0,Z_STREAM_END:1,Z_NEED_DICT:2,Z_ERRNO:-1,Z_STREAM_ERROR:-2,Z_DATA_ERROR:-3,Z_BUF_ERROR:-5,Z_NO_COMPRESSION:0,Z_BEST_SPEED:1,Z_BEST_COMPRESSION:9,Z_DEFAULT_COMPRESSION:-1,Z_FILTERED:1,Z_HUFFMAN_ONLY:2,Z_RLE:3,Z_FIXED:4,Z_DEFAULT_STRATEGY:0,Z_BINARY:0,Z_TEXT:1,Z_UNKNOWN:2,Z_DEFLATED:8}},{}],7:[function(t,e,a){"use strict";function i(){for(var t,e=[],a=0;a<256;a++){t=a;for(var i=0;i<8;i++)t=1&t?3988292384^t>>>1:t>>>1;e[a]=t}return e}function n(t,e,a,i){var n=r,s=i+a;t^=-1;for(var o=i;o<s;o++)t=t>>>8^n[255&(t^e[o])];return t^-1}var r=i();e.exports=n},{}],8:[function(t,e,a){"use strict";function i(t,e){return t.msg=D[e],e}function n(t){return(t<<1)-(t>4?9:0)}function r(t){for(var e=t.length;--e>=0;)t[e]=0}function s(t){var e=t.state,a=e.pending;a>t.avail_out&&(a=t.avail_out),0!==a&&(R.arraySet(t.output,e.pending_buf,e.pending_out,a,t.next_out),t.next_out+=a,e.pending_out+=a,t.total_out+=a,t.avail_out-=a,e.pending-=a,0===e.pending&&(e.pending_out=0))}function o(t,e){C._tr_flush_block(t,t.block_start>=0?t.block_start:-1,t.strstart-t.block_start,e),t.block_start=t.strstart,s(t.strm)}function l(t,e){t.pending_buf[t.pending++]=e}function h(t,e){t.pending_buf[t.pending++]=e>>>8&255,t.pending_buf[t.pending++]=255&e}function d(t,e,a,i){var n=t.avail_in;return n>i&&(n=i),0===n?0:(t.avail_in-=n,R.arraySet(e,t.input,t.next_in,n,a),1===t.state.wrap?t.adler=N(t.adler,e,n,a):2===t.state.wrap&&(t.adler=O(t.adler,e,n,a)),t.next_in+=n,t.total_in+=n,n)}function f(t,e){var a,i,n=t.max_chain_length,r=t.strstart,s=t.prev_length,o=t.nice_match,l=t.strstart>t.w_size-ft?t.strstart-(t.w_size-ft):0,h=t.window,d=t.w_mask,f=t.prev,_=t.strstart+dt,u=h[r+s-1],c=h[r+s];t.prev_length>=t.good_match&&(n>>=2),o>t.lookahead&&(o=t.lookahead);do if(a=e,h[a+s]===c&&h[a+s-1]===u&&h[a]===h[r]&&h[++a]===h[r+1]){r+=2,a++;do;while(h[++r]===h[++a]&&h[++r]===h[++a]&&h[++r]===h[++a]&&h[++r]===h[++a]&&h[++r]===h[++a]&&h[++r]===h[++a]&&h[++r]===h[++a]&&h[++r]===h[++a]&&r<_);if(i=dt-(_-r),r=_-dt,i>s){if(t.match_start=e,s=i,i>=o)break;u=h[r+s-1],c=h[r+s]}}while((e=f[e&d])>l&&0!==--n);return s<=t.lookahead?s:t.lookahead}function _(t){var e,a,i,n,r,s=t.w_size;do{if(n=t.window_size-t.lookahead-t.strstart,t.strstart>=s+(s-ft)){R.arraySet(t.window,t.window,s,s,0),t.match_start-=s,t.strstart-=s,t.block_start-=s,a=t.hash_size,e=a;do i=t.head[--e],t.head[e]=i>=s?i-s:0;while(--a);a=s,e=a;do i=t.prev[--e],t.prev[e]=i>=s?i-s:0;while(--a);n+=s}if(0===t.strm.avail_in)break;if(a=d(t.strm,t.window,t.strstart+t.lookahead,n),t.lookahead+=a,t.lookahead+t.insert>=ht)for(r=t.strstart-t.insert,t.ins_h=t.window[r],t.ins_h=(t.ins_h<<t.hash_shift^t.window[r+1])&t.hash_mask;t.insert&&(t.ins_h=(t.ins_h<<t.hash_shift^t.window[r+ht-1])&t.hash_mask,t.prev[r&t.w_mask]=t.head[t.ins_h],t.head[t.ins_h]=r,r++,t.insert--,!(t.lookahead+t.insert<ht)););}while(t.lookahead<ft&&0!==t.strm.avail_in)}function u(t,e){var a=65535;for(a>t.pending_buf_size-5&&(a=t.pending_buf_size-5);;){if(t.lookahead<=1){if(_(t),0===t.lookahead&&e===I)return vt;if(0===t.lookahead)break}t.strstart+=t.lookahead,t.lookahead=0;var i=t.block_start+a;if((0===t.strstart||t.strstart>=i)&&(t.lookahead=t.strstart-i,t.strstart=i,o(t,!1),0===t.strm.avail_out))return vt;if(t.strstart-t.block_start>=t.w_size-ft&&(o(t,!1),0===t.strm.avail_out))return vt}return t.insert=0,e===F?(o(t,!0),0===t.strm.avail_out?yt:xt):t.strstart>t.block_start&&(o(t,!1),0===t.strm.avail_out)?vt:vt}function c(t,e){for(var a,i;;){if(t.lookahead<ft){if(_(t),t.lookahead<ft&&e===I)return vt;if(0===t.lookahead)break}if(a=0,t.lookahead>=ht&&(t.ins_h=(t.ins_h<<t.hash_shift^t.window[t.strstart+ht-1])&t.hash_mask,a=t.prev[t.strstart&t.w_mask]=t.head[t.ins_h],t.head[t.ins_h]=t.strstart),0!==a&&t.strstart-a<=t.w_size-ft&&(t.match_length=f(t,a)),t.match_length>=ht)if(i=C._tr_tally(t,t.strstart-t.match_start,t.match_length-ht),t.lookahead-=t.match_length,t.match_length<=t.max_lazy_match&&t.lookahead>=ht){t.match_length--;do t.strstart++,t.ins_h=(t.ins_h<<t.hash_shift^t.window[t.strstart+ht-1])&t.hash_mask,a=t.prev[t.strstart&t.w_mask]=t.head[t.ins_h],t.head[t.ins_h]=t.strstart;while(0!==--t.match_length);t.strstart++}else t.strstart+=t.match_length,t.match_length=0,t.ins_h=t.window[t.strstart],t.ins_h=(t.ins_h<<t.hash_shift^t.window[t.strstart+1])&t.hash_mask;else i=C._tr_tally(t,0,t.window[t.strstart]),t.lookahead--,t.strstart++;if(i&&(o(t,!1),0===t.strm.avail_out))return vt}return t.insert=t.strstart<ht-1?t.strstart:ht-1,e===F?(o(t,!0),0===t.strm.avail_out?yt:xt):t.last_lit&&(o(t,!1),0===t.strm.avail_out)?vt:kt}function b(t,e){for(var a,i,n;;){if(t.lookahead<ft){if(_(t),t.lookahead<ft&&e===I)return vt;if(0===t.lookahead)break}if(a=0,t.lookahead>=ht&&(t.ins_h=(t.ins_h<<t.hash_shift^t.window[t.strstart+ht-1])&t.hash_mask,a=t.prev[t.strstart&t.w_mask]=t.head[t.ins_h],t.head[t.ins_h]=t.strstart),t.prev_length=t.match_length,t.prev_match=t.match_start,t.match_length=ht-1,0!==a&&t.prev_length<t.max_lazy_match&&t.strstart-a<=t.w_size-ft&&(t.match_length=f(t,a),t.match_length<=5&&(t.strategy===q||t.match_length===ht&&t.strstart-t.match_start>4096)&&(t.match_length=ht-1)),t.prev_length>=ht&&t.match_length<=t.prev_length){n=t.strstart+t.lookahead-ht,i=C._tr_tally(t,t.strstart-1-t.prev_match,t.prev_length-ht),t.lookahead-=t.prev_length-1,t.prev_length-=2;do++t.strstart<=n&&(t.ins_h=(t.ins_h<<t.hash_shift^t.window[t.strstart+ht-1])&t.hash_mask,a=t.prev[t.strstart&t.w_mask]=t.head[t.ins_h],t.head[t.ins_h]=t.strstart);while(0!==--t.prev_length);if(t.match_available=0,t.match_length=ht-1,t.strstart++,i&&(o(t,!1),0===t.strm.avail_out))return vt}else if(t.match_available){if(i=C._tr_tally(t,0,t.window[t.strstart-1]),i&&o(t,!1),t.strstart++,t.lookahead--,0===t.strm.avail_out)return vt}else t.match_available=1,t.strstart++,t.lookahead--}return t.match_available&&(i=C._tr_tally(t,0,t.window[t.strstart-1]),t.match_available=0),t.insert=t.strstart<ht-1?t.strstart:ht-1,e===F?(o(t,!0),0===t.strm.avail_out?yt:xt):t.last_lit&&(o(t,!1),0===t.strm.avail_out)?vt:kt}function g(t,e){for(var a,i,n,r,s=t.window;;){if(t.lookahead<=dt){if(_(t),t.lookahead<=dt&&e===I)return vt;if(0===t.lookahead)break}if(t.match_length=0,t.lookahead>=ht&&t.strstart>0&&(n=t.strstart-1,i=s[n],i===s[++n]&&i===s[++n]&&i===s[++n])){r=t.strstart+dt;do;while(i===s[++n]&&i===s[++n]&&i===s[++n]&&i===s[++n]&&i===s[++n]&&i===s[++n]&&i===s[++n]&&i===s[++n]&&n<r);t.match_length=dt-(r-n),t.match_length>t.lookahead&&(t.match_length=t.lookahead)}if(t.match_length>=ht?(a=C._tr_tally(t,1,t.match_length-ht),t.lookahead-=t.match_length,t.strstart+=t.match_length,t.match_length=0):(a=C._tr_tally(t,0,t.window[t.strstart]),t.lookahead--,t.strstart++),a&&(o(t,!1),0===t.strm.avail_out))return vt}return t.insert=0,e===F?(o(t,!0),0===t.strm.avail_out?yt:xt):t.last_lit&&(o(t,!1),0===t.strm.avail_out)?vt:kt}function m(t,e){for(var a;;){if(0===t.lookahead&&(_(t),0===t.lookahead)){if(e===I)return vt;break}if(t.match_length=0,a=C._tr_tally(t,0,t.window[t.strstart]),t.lookahead--,t.strstart++,a&&(o(t,!1),0===t.strm.avail_out))return vt}return t.insert=0,e===F?(o(t,!0),0===t.strm.avail_out?yt:xt):t.last_lit&&(o(t,!1),0===t.strm.avail_out)?vt:kt}function w(t,e,a,i,n){this.good_length=t,this.max_lazy=e,this.nice_length=a,this.max_chain=i,this.func=n}function p(t){t.window_size=2*t.w_size,r(t.head),t.max_lazy_match=Z[t.level].max_lazy,t.good_match=Z[t.level].good_length,t.nice_match=Z[t.level].nice_length,t.max_chain_length=Z[t.level].max_chain,t.strstart=0,t.block_start=0,t.lookahead=0,t.insert=0,t.match_length=t.prev_length=ht-1,t.match_available=0,t.ins_h=0}function v(){this.strm=null,this.status=0,this.pending_buf=null,this.pending_buf_size=0,this.pending_out=0,this.pending=0,this.wrap=0,this.gzhead=null,this.gzindex=0,this.method=V,this.last_flush=-1,this.w_size=0,this.w_bits=0,this.w_mask=0,this.window=null,this.window_size=0,this.prev=null,this.head=null,this.ins_h=0,this.hash_size=0,this.hash_bits=0,this.hash_mask=0,this.hash_shift=0,this.block_start=0,this.match_length=0,this.prev_match=0,this.match_available=0,this.strstart=0,this.match_start=0,this.lookahead=0,this.prev_length=0,this.max_chain_length=0,this.max_lazy_match=0,this.level=0,this.strategy=0,this.good_match=0,this.nice_match=0,this.dyn_ltree=new R.Buf16(2*ot),this.dyn_dtree=new R.Buf16(2*(2*rt+1)),this.bl_tree=new R.Buf16(2*(2*st+1)),r(this.dyn_ltree),r(this.dyn_dtree),r(this.bl_tree),this.l_desc=null,this.d_desc=null,this.bl_desc=null,this.bl_count=new R.Buf16(lt+1),this.heap=new R.Buf16(2*nt+1),r(this.heap),this.heap_len=0,this.heap_max=0,this.depth=new R.Buf16(2*nt+1),r(this.depth),this.l_buf=0,this.lit_bufsize=0,this.last_lit=0,this.d_buf=0,this.opt_len=0,this.static_len=0,this.matches=0,this.insert=0,this.bi_buf=0,this.bi_valid=0}function k(t){var e;return t&&t.state?(t.total_in=t.total_out=0,t.data_type=Q,e=t.state,e.pending=0,e.pending_out=0,e.wrap<0&&(e.wrap=-e.wrap),e.status=e.wrap?ut:wt,t.adler=2===e.wrap?0:1,e.last_flush=I,C._tr_init(e),H):i(t,K)}function y(t){var e=k(t);return e===H&&p(t.state),e}function x(t,e){return t&&t.state?2!==t.state.wrap?K:(t.state.gzhead=e,H):K}function z(t,e,a,n,r,s){if(!t)return K;var o=1;if(e===Y&&(e=6),n<0?(o=0,n=-n):n>15&&(o=2,n-=16),r<1||r>$||a!==V||n<8||n>15||e<0||e>9||s<0||s>W)return i(t,K);8===n&&(n=9);var l=new v;return t.state=l,l.strm=t,l.wrap=o,l.gzhead=null,l.w_bits=n,l.w_size=1<<l.w_bits,l.w_mask=l.w_size-1,l.hash_bits=r+7,l.hash_size=1<<l.hash_bits,l.hash_mask=l.hash_size-1,l.hash_shift=~~((l.hash_bits+ht-1)/ht),l.window=new R.Buf8(2*l.w_size),l.head=new R.Buf16(l.hash_size),l.prev=new R.Buf16(l.w_size),l.lit_bufsize=1<<r+6,l.pending_buf_size=4*l.lit_bufsize,l.pending_buf=new R.Buf8(l.pending_buf_size),l.d_buf=1*l.lit_bufsize,l.l_buf=3*l.lit_bufsize,l.level=e,l.strategy=s,l.method=a,y(t)}function B(t,e){return z(t,e,V,tt,et,J)}function S(t,e){var a,o,d,f;if(!t||!t.state||e>L||e<0)return t?i(t,K):K;if(o=t.state,!t.output||!t.input&&0!==t.avail_in||o.status===pt&&e!==F)return i(t,0===t.avail_out?P:K);if(o.strm=t,a=o.last_flush,o.last_flush=e,o.status===ut)if(2===o.wrap)t.adler=0,l(o,31),l(o,139),l(o,8),o.gzhead?(l(o,(o.gzhead.text?1:0)+(o.gzhead.hcrc?2:0)+(o.gzhead.extra?4:0)+(o.gzhead.name?8:0)+(o.gzhead.comment?16:0)),l(o,255&o.gzhead.time),l(o,o.gzhead.time>>8&255),l(o,o.gzhead.time>>16&255),l(o,o.gzhead.time>>24&255),l(o,9===o.level?2:o.strategy>=G||o.level<2?4:0),l(o,255&o.gzhead.os),o.gzhead.extra&&o.gzhead.extra.length&&(l(o,255&o.gzhead.extra.length),l(o,o.gzhead.extra.length>>8&255)),o.gzhead.hcrc&&(t.adler=O(t.adler,o.pending_buf,o.pending,0)),o.gzindex=0,o.status=ct):(l(o,0),l(o,0),l(o,0),l(o,0),l(o,0),l(o,9===o.level?2:o.strategy>=G||o.level<2?4:0),l(o,zt),o.status=wt);else{var _=V+(o.w_bits-8<<4)<<8,u=-1;u=o.strategy>=G||o.level<2?0:o.level<6?1:6===o.level?2:3,_|=u<<6,0!==o.strstart&&(_|=_t),_+=31-_%31,o.status=wt,h(o,_),0!==o.strstart&&(h(o,t.adler>>>16),h(o,65535&t.adler)),t.adler=1}if(o.status===ct)if(o.gzhead.extra){for(d=o.pending;o.gzindex<(65535&o.gzhead.extra.length)&&(o.pending!==o.pending_buf_size||(o.gzhead.hcrc&&o.pending>d&&(t.adler=O(t.adler,o.pending_buf,o.pending-d,d)),s(t),d=o.pending,o.pending!==o.pending_buf_size));)l(o,255&o.gzhead.extra[o.gzindex]),o.gzindex++;o.gzhead.hcrc&&o.pending>d&&(t.adler=O(t.adler,o.pending_buf,o.pending-d,d)),o.gzindex===o.gzhead.extra.length&&(o.gzindex=0,o.status=bt)}else o.status=bt;if(o.status===bt)if(o.gzhead.name){d=o.pending;do{if(o.pending===o.pending_buf_size&&(o.gzhead.hcrc&&o.pending>d&&(t.adler=O(t.adler,o.pending_buf,o.pending-d,d)),s(t),d=o.pending,o.pending===o.pending_buf_size)){f=1;break}f=o.gzindex<o.gzhead.name.length?255&o.gzhead.name.charCodeAt(o.gzindex++):0,l(o,f)}while(0!==f);o.gzhead.hcrc&&o.pending>d&&(t.adler=O(t.adler,o.pending_buf,o.pending-d,d)),0===f&&(o.gzindex=0,o.status=gt)}else o.status=gt;if(o.status===gt)if(o.gzhead.comment){d=o.pending;do{if(o.pending===o.pending_buf_size&&(o.gzhead.hcrc&&o.pending>d&&(t.adler=O(t.adler,o.pending_buf,o.pending-d,d)),s(t),d=o.pending,o.pending===o.pending_buf_size)){f=1;break}f=o.gzindex<o.gzhead.comment.length?255&o.gzhead.comment.charCodeAt(o.gzindex++):0,l(o,f)}while(0!==f);o.gzhead.hcrc&&o.pending>d&&(t.adler=O(t.adler,o.pending_buf,o.pending-d,d)),0===f&&(o.status=mt)}else o.status=mt;if(o.status===mt&&(o.gzhead.hcrc?(o.pending+2>o.pending_buf_size&&s(t),o.pending+2<=o.pending_buf_size&&(l(o,255&t.adler),l(o,t.adler>>8&255),t.adler=0,o.status=wt)):o.status=wt),0!==o.pending){if(s(t),0===t.avail_out)return o.last_flush=-1,H}else if(0===t.avail_in&&n(e)<=n(a)&&e!==F)return i(t,P);if(o.status===pt&&0!==t.avail_in)return i(t,P);if(0!==t.avail_in||0!==o.lookahead||e!==I&&o.status!==pt){var c=o.strategy===G?m(o,e):o.strategy===X?g(o,e):Z[o.level].func(o,e);if(c!==yt&&c!==xt||(o.status=pt),c===vt||c===yt)return 0===t.avail_out&&(o.last_flush=-1),H;if(c===kt&&(e===U?C._tr_align(o):e!==L&&(C._tr_stored_block(o,0,0,!1),e===T&&(r(o.head),0===o.lookahead&&(o.strstart=0,o.block_start=0,o.insert=0))),s(t),0===t.avail_out))return o.last_flush=-1,H}return e!==F?H:o.wrap<=0?j:(2===o.wrap?(l(o,255&t.adler),l(o,t.adler>>8&255),l(o,t.adler>>16&255),l(o,t.adler>>24&255),l(o,255&t.total_in),l(o,t.total_in>>8&255),l(o,t.total_in>>16&255),l(o,t.total_in>>24&255)):(h(o,t.adler>>>16),h(o,65535&t.adler)),s(t),o.wrap>0&&(o.wrap=-o.wrap),0!==o.pending?H:j)}function E(t){var e;return t&&t.state?(e=t.state.status,e!==ut&&e!==ct&&e!==bt&&e!==gt&&e!==mt&&e!==wt&&e!==pt?i(t,K):(t.state=null,e===wt?i(t,M):H)):K}function A(t,e){var a,i,n,s,o,l,h,d,f=e.length;if(!t||!t.state)return K;if(a=t.state,s=a.wrap,2===s||1===s&&a.status!==ut||a.lookahead)return K;for(1===s&&(t.adler=N(t.adler,e,f,0)),a.wrap=0,f>=a.w_size&&(0===s&&(r(a.head),a.strstart=0,a.block_start=0,a.insert=0),d=new R.Buf8(a.w_size),R.arraySet(d,e,f-a.w_size,a.w_size,0),e=d,f=a.w_size),o=t.avail_in,l=t.next_in,h=t.input,t.avail_in=f,t.next_in=0,t.input=e,_(a);a.lookahead>=ht;){i=a.strstart,n=a.lookahead-(ht-1);do a.ins_h=(a.ins_h<<a.hash_shift^a.window[i+ht-1])&a.hash_mask,a.prev[i&a.w_mask]=a.head[a.ins_h],a.head[a.ins_h]=i,i++;while(--n);a.strstart=i,a.lookahead=ht-1,_(a)}return a.strstart+=a.lookahead,a.block_start=a.strstart,a.insert=a.lookahead,a.lookahead=0,a.match_length=a.prev_length=ht-1,a.match_available=0,t.next_in=l,t.input=h,t.avail_in=o,a.wrap=s,H}var Z,R=t("../utils/common"),C=t("./trees"),N=t("./adler32"),O=t("./crc32"),D=t("./messages"),I=0,U=1,T=3,F=4,L=5,H=0,j=1,K=-2,M=-3,P=-5,Y=-1,q=1,G=2,X=3,W=4,J=0,Q=2,V=8,$=9,tt=15,et=8,at=29,it=256,nt=it+1+at,rt=30,st=19,ot=2*nt+1,lt=15,ht=3,dt=258,ft=dt+ht+1,_t=32,ut=42,ct=69,bt=73,gt=91,mt=103,wt=113,pt=666,vt=1,kt=2,yt=3,xt=4,zt=3;Z=[new w(0,0,0,0,u),new w(4,4,8,4,c),new w(4,5,16,8,c),new w(4,6,32,32,c),new w(4,4,16,16,b),new w(8,16,32,32,b),new w(8,16,128,128,b),new w(8,32,128,256,b),new w(32,128,258,1024,b),new w(32,258,258,4096,b)],a.deflateInit=B,a.deflateInit2=z,a.deflateReset=y,a.deflateResetKeep=k,a.deflateSetHeader=x,a.deflate=S,a.deflateEnd=E,a.deflateSetDictionary=A,a.deflateInfo="pako deflate (from Nodeca project)"},{"../utils/common":3,"./adler32":5,"./crc32":7,"./messages":13,"./trees":14}],9:[function(t,e,a){"use strict";function i(){this.text=0,this.time=0,this.xflags=0,this.os=0,this.extra=null,this.extra_len=0,this.name="",this.comment="",this.hcrc=0,this.done=!1}e.exports=i},{}],10:[function(t,e,a){"use strict";var i=30,n=12;e.exports=function(t,e){var a,r,s,o,l,h,d,f,_,u,c,b,g,m,w,p,v,k,y,x,z,B,S,E,A;a=t.state,r=t.next_in,E=t.input,s=r+(t.avail_in-5),o=t.next_out,A=t.output,l=o-(e-t.avail_out),h=o+(t.avail_out-257),d=a.dmax,f=a.wsize,_=a.whave,u=a.wnext,c=a.window,b=a.hold,g=a.bits,m=a.lencode,w=a.distcode,p=(1<<a.lenbits)-1,v=(1<<a.distbits)-1;t:do{g<15&&(b+=E[r++]<<g,g+=8,b+=E[r++]<<g,g+=8),k=m[b&p];e:for(;;){if(y=k>>>24,b>>>=y,g-=y,y=k>>>16&255,0===y)A[o++]=65535&k;else{if(!(16&y)){if(0===(64&y)){k=m[(65535&k)+(b&(1<<y)-1)];continue e}if(32&y){a.mode=n;break t}t.msg="invalid literal/length code",a.mode=i;break t}x=65535&k,y&=15,y&&(g<y&&(b+=E[r++]<<g,g+=8),x+=b&(1<<y)-1,b>>>=y,g-=y),g<15&&(b+=E[r++]<<g,g+=8,b+=E[r++]<<g,g+=8),k=w[b&v];a:for(;;){if(y=k>>>24,b>>>=y,g-=y,y=k>>>16&255,!(16&y)){if(0===(64&y)){k=w[(65535&k)+(b&(1<<y)-1)];continue a}t.msg="invalid distance code",a.mode=i;break t}if(z=65535&k,y&=15,g<y&&(b+=E[r++]<<g,g+=8,g<y&&(b+=E[r++]<<g,g+=8)),z+=b&(1<<y)-1,z>d){t.msg="invalid distance too far back",a.mode=i;break t}if(b>>>=y,g-=y,y=o-l,z>y){if(y=z-y,y>_&&a.sane){t.msg="invalid distance too far back",a.mode=i;break t}if(B=0,S=c,0===u){if(B+=f-y,y<x){x-=y;do A[o++]=c[B++];while(--y);B=o-z,S=A}}else if(u<y){if(B+=f+u-y,y-=u,y<x){x-=y;do A[o++]=c[B++];while(--y);if(B=0,u<x){y=u,x-=y;do A[o++]=c[B++];while(--y);B=o-z,S=A}}}else if(B+=u-y,y<x){x-=y;do A[o++]=c[B++];while(--y);B=o-z,S=A}for(;x>2;)A[o++]=S[B++],A[o++]=S[B++],A[o++]=S[B++],x-=3;x&&(A[o++]=S[B++],x>1&&(A[o++]=S[B++]))}else{B=o-z;do A[o++]=A[B++],A[o++]=A[B++],A[o++]=A[B++],x-=3;while(x>2);x&&(A[o++]=A[B++],x>1&&(A[o++]=A[B++]))}break}}break}}while(r<s&&o<h);x=g>>3,r-=x,g-=x<<3,b&=(1<<g)-1,t.next_in=r,t.next_out=o,t.avail_in=r<s?5+(s-r):5-(r-s),t.avail_out=o<h?257+(h-o):257-(o-h),a.hold=b,a.bits=g}},{}],11:[function(t,e,a){"use strict";function i(t){return(t>>>24&255)+(t>>>8&65280)+((65280&t)<<8)+((255&t)<<24)}function n(){this.mode=0,this.last=!1,this.wrap=0,this.havedict=!1,this.flags=0,this.dmax=0,this.check=0,this.total=0,this.head=null,this.wbits=0,this.wsize=0,this.whave=0,this.wnext=0,this.window=null,this.hold=0,this.bits=0,this.length=0,this.offset=0,this.extra=0,this.lencode=null,this.distcode=null,this.lenbits=0,this.distbits=0,this.ncode=0,this.nlen=0,this.ndist=0,this.have=0,this.next=null,this.lens=new w.Buf16(320),this.work=new w.Buf16(288),this.lendyn=null,this.distdyn=null,this.sane=0,this.back=0,this.was=0}function r(t){var e;return t&&t.state?(e=t.state,t.total_in=t.total_out=e.total=0,t.msg="",e.wrap&&(t.adler=1&e.wrap),e.mode=T,e.last=0,e.havedict=0,e.dmax=32768,e.head=null,e.hold=0,e.bits=0,e.lencode=e.lendyn=new w.Buf32(bt),e.distcode=e.distdyn=new w.Buf32(gt),e.sane=1,e.back=-1,Z):N}function s(t){var e;return t&&t.state?(e=t.state,e.wsize=0,e.whave=0,e.wnext=0,r(t)):N}function o(t,e){var a,i;return t&&t.state?(i=t.state,e<0?(a=0,e=-e):(a=(e>>4)+1,e<48&&(e&=15)),e&&(e<8||e>15)?N:(null!==i.window&&i.wbits!==e&&(i.window=null),i.wrap=a,i.wbits=e,s(t))):N}function l(t,e){var a,i;return t?(i=new n,t.state=i,i.window=null,a=o(t,e),a!==Z&&(t.state=null),a):N}function h(t){return l(t,wt)}function d(t){if(pt){var e;for(g=new w.Buf32(512),m=new w.Buf32(32),e=0;e<144;)t.lens[e++]=8;for(;e<256;)t.lens[e++]=9;for(;e<280;)t.lens[e++]=7;for(;e<288;)t.lens[e++]=8;for(y(z,t.lens,0,288,g,0,t.work,{bits:9}),e=0;e<32;)t.lens[e++]=5;y(B,t.lens,0,32,m,0,t.work,{bits:5}),pt=!1}t.lencode=g,t.lenbits=9,t.distcode=m,t.distbits=5}function f(t,e,a,i){var n,r=t.state;return null===r.window&&(r.wsize=1<<r.wbits,r.wnext=0,r.whave=0,r.window=new w.Buf8(r.wsize)),i>=r.wsize?(w.arraySet(r.window,e,a-r.wsize,r.wsize,0),r.wnext=0,r.whave=r.wsize):(n=r.wsize-r.wnext,n>i&&(n=i),w.arraySet(r.window,e,a-i,n,r.wnext),i-=n,i?(w.arraySet(r.window,e,a-i,i,0),r.wnext=i,r.whave=r.wsize):(r.wnext+=n,r.wnext===r.wsize&&(r.wnext=0),r.whave<r.wsize&&(r.whave+=n))),0}function _(t,e){var a,n,r,s,o,l,h,_,u,c,b,g,m,bt,gt,mt,wt,pt,vt,kt,yt,xt,zt,Bt,St=0,Et=new w.Buf8(4),At=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];if(!t||!t.state||!t.output||!t.input&&0!==t.avail_in)return N;a=t.state,a.mode===X&&(a.mode=W),o=t.next_out,r=t.output,h=t.avail_out,s=t.next_in,n=t.input,l=t.avail_in,_=a.hold,u=a.bits,c=l,b=h,xt=Z;t:for(;;)switch(a.mode){case T:if(0===a.wrap){a.mode=W;break}for(;u<16;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}if(2&a.wrap&&35615===_){a.check=0,Et[0]=255&_,Et[1]=_>>>8&255,a.check=v(a.check,Et,2,0),_=0,u=0,a.mode=F;break}if(a.flags=0,a.head&&(a.head.done=!1),!(1&a.wrap)||(((255&_)<<8)+(_>>8))%31){t.msg="incorrect header check",a.mode=_t;break}if((15&_)!==U){t.msg="unknown compression method",a.mode=_t;break}if(_>>>=4,u-=4,yt=(15&_)+8,0===a.wbits)a.wbits=yt;else if(yt>a.wbits){t.msg="invalid window size",a.mode=_t;break}a.dmax=1<<yt,t.adler=a.check=1,a.mode=512&_?q:X,_=0,u=0;break;case F:for(;u<16;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}if(a.flags=_,(255&a.flags)!==U){t.msg="unknown compression method",a.mode=_t;break}if(57344&a.flags){t.msg="unknown header flags set",a.mode=_t;break}a.head&&(a.head.text=_>>8&1),512&a.flags&&(Et[0]=255&_,Et[1]=_>>>8&255,a.check=v(a.check,Et,2,0)),_=0,u=0,a.mode=L;case L:for(;u<32;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}a.head&&(a.head.time=_),512&a.flags&&(Et[0]=255&_,Et[1]=_>>>8&255,Et[2]=_>>>16&255,Et[3]=_>>>24&255,a.check=v(a.check,Et,4,0)),_=0,u=0,a.mode=H;case H:for(;u<16;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}a.head&&(a.head.xflags=255&_,a.head.os=_>>8),512&a.flags&&(Et[0]=255&_,Et[1]=_>>>8&255,a.check=v(a.check,Et,2,0)),_=0,u=0,a.mode=j;case j:if(1024&a.flags){for(;u<16;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}a.length=_,a.head&&(a.head.extra_len=_),512&a.flags&&(Et[0]=255&_,Et[1]=_>>>8&255,a.check=v(a.check,Et,2,0)),_=0,u=0}else a.head&&(a.head.extra=null);a.mode=K;case K:if(1024&a.flags&&(g=a.length,g>l&&(g=l),g&&(a.head&&(yt=a.head.extra_len-a.length,a.head.extra||(a.head.extra=new Array(a.head.extra_len)),w.arraySet(a.head.extra,n,s,g,yt)),512&a.flags&&(a.check=v(a.check,n,g,s)),l-=g,s+=g,a.length-=g),a.length))break t;a.length=0,a.mode=M;case M:if(2048&a.flags){if(0===l)break t;g=0;do yt=n[s+g++],a.head&&yt&&a.length<65536&&(a.head.name+=String.fromCharCode(yt));while(yt&&g<l);if(512&a.flags&&(a.check=v(a.check,n,g,s)),l-=g,s+=g,yt)break t}else a.head&&(a.head.name=null);a.length=0,a.mode=P;case P:if(4096&a.flags){if(0===l)break t;g=0;do yt=n[s+g++],a.head&&yt&&a.length<65536&&(a.head.comment+=String.fromCharCode(yt));while(yt&&g<l);if(512&a.flags&&(a.check=v(a.check,n,g,s)),l-=g,s+=g,yt)break t}else a.head&&(a.head.comment=null);a.mode=Y;case Y:if(512&a.flags){for(;u<16;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}if(_!==(65535&a.check)){t.msg="header crc mismatch",a.mode=_t;break}_=0,u=0}a.head&&(a.head.hcrc=a.flags>>9&1,a.head.done=!0),t.adler=a.check=0,a.mode=X;break;case q:for(;u<32;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}t.adler=a.check=i(_),_=0,u=0,a.mode=G;case G:if(0===a.havedict)return t.next_out=o,t.avail_out=h,t.next_in=s,t.avail_in=l,a.hold=_,a.bits=u,C;t.adler=a.check=1,a.mode=X;case X:if(e===E||e===A)break t;case W:if(a.last){_>>>=7&u,u-=7&u,a.mode=ht;break}for(;u<3;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}switch(a.last=1&_,_>>>=1,u-=1,3&_){case 0:a.mode=J;break;case 1:if(d(a),a.mode=at,e===A){_>>>=2,u-=2;break t}break;case 2:a.mode=$;break;case 3:t.msg="invalid block type",a.mode=_t}_>>>=2,u-=2;break;case J:for(_>>>=7&u,u-=7&u;u<32;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}if((65535&_)!==(_>>>16^65535)){t.msg="invalid stored block lengths",a.mode=_t;break}if(a.length=65535&_,_=0,u=0,a.mode=Q,e===A)break t;case Q:a.mode=V;case V:if(g=a.length){if(g>l&&(g=l),g>h&&(g=h),0===g)break t;w.arraySet(r,n,s,g,o),l-=g,s+=g,h-=g,o+=g,a.length-=g;break}a.mode=X;break;case $:for(;u<14;){if(0===l)break t;
 l--,_+=n[s++]<<u,u+=8}if(a.nlen=(31&_)+257,_>>>=5,u-=5,a.ndist=(31&_)+1,_>>>=5,u-=5,a.ncode=(15&_)+4,_>>>=4,u-=4,a.nlen>286||a.ndist>30){t.msg="too many length or distance symbols",a.mode=_t;break}a.have=0,a.mode=tt;case tt:for(;a.have<a.ncode;){for(;u<3;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}a.lens[At[a.have++]]=7&_,_>>>=3,u-=3}for(;a.have<19;)a.lens[At[a.have++]]=0;if(a.lencode=a.lendyn,a.lenbits=7,zt={bits:a.lenbits},xt=y(x,a.lens,0,19,a.lencode,0,a.work,zt),a.lenbits=zt.bits,xt){t.msg="invalid code lengths set",a.mode=_t;break}a.have=0,a.mode=et;case et:for(;a.have<a.nlen+a.ndist;){for(;St=a.lencode[_&(1<<a.lenbits)-1],gt=St>>>24,mt=St>>>16&255,wt=65535&St,!(gt<=u);){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}if(wt<16)_>>>=gt,u-=gt,a.lens[a.have++]=wt;else{if(16===wt){for(Bt=gt+2;u<Bt;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}if(_>>>=gt,u-=gt,0===a.have){t.msg="invalid bit length repeat",a.mode=_t;break}yt=a.lens[a.have-1],g=3+(3&_),_>>>=2,u-=2}else if(17===wt){for(Bt=gt+3;u<Bt;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}_>>>=gt,u-=gt,yt=0,g=3+(7&_),_>>>=3,u-=3}else{for(Bt=gt+7;u<Bt;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}_>>>=gt,u-=gt,yt=0,g=11+(127&_),_>>>=7,u-=7}if(a.have+g>a.nlen+a.ndist){t.msg="invalid bit length repeat",a.mode=_t;break}for(;g--;)a.lens[a.have++]=yt}}if(a.mode===_t)break;if(0===a.lens[256]){t.msg="invalid code -- missing end-of-block",a.mode=_t;break}if(a.lenbits=9,zt={bits:a.lenbits},xt=y(z,a.lens,0,a.nlen,a.lencode,0,a.work,zt),a.lenbits=zt.bits,xt){t.msg="invalid literal/lengths set",a.mode=_t;break}if(a.distbits=6,a.distcode=a.distdyn,zt={bits:a.distbits},xt=y(B,a.lens,a.nlen,a.ndist,a.distcode,0,a.work,zt),a.distbits=zt.bits,xt){t.msg="invalid distances set",a.mode=_t;break}if(a.mode=at,e===A)break t;case at:a.mode=it;case it:if(l>=6&&h>=258){t.next_out=o,t.avail_out=h,t.next_in=s,t.avail_in=l,a.hold=_,a.bits=u,k(t,b),o=t.next_out,r=t.output,h=t.avail_out,s=t.next_in,n=t.input,l=t.avail_in,_=a.hold,u=a.bits,a.mode===X&&(a.back=-1);break}for(a.back=0;St=a.lencode[_&(1<<a.lenbits)-1],gt=St>>>24,mt=St>>>16&255,wt=65535&St,!(gt<=u);){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}if(mt&&0===(240&mt)){for(pt=gt,vt=mt,kt=wt;St=a.lencode[kt+((_&(1<<pt+vt)-1)>>pt)],gt=St>>>24,mt=St>>>16&255,wt=65535&St,!(pt+gt<=u);){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}_>>>=pt,u-=pt,a.back+=pt}if(_>>>=gt,u-=gt,a.back+=gt,a.length=wt,0===mt){a.mode=lt;break}if(32&mt){a.back=-1,a.mode=X;break}if(64&mt){t.msg="invalid literal/length code",a.mode=_t;break}a.extra=15&mt,a.mode=nt;case nt:if(a.extra){for(Bt=a.extra;u<Bt;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}a.length+=_&(1<<a.extra)-1,_>>>=a.extra,u-=a.extra,a.back+=a.extra}a.was=a.length,a.mode=rt;case rt:for(;St=a.distcode[_&(1<<a.distbits)-1],gt=St>>>24,mt=St>>>16&255,wt=65535&St,!(gt<=u);){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}if(0===(240&mt)){for(pt=gt,vt=mt,kt=wt;St=a.distcode[kt+((_&(1<<pt+vt)-1)>>pt)],gt=St>>>24,mt=St>>>16&255,wt=65535&St,!(pt+gt<=u);){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}_>>>=pt,u-=pt,a.back+=pt}if(_>>>=gt,u-=gt,a.back+=gt,64&mt){t.msg="invalid distance code",a.mode=_t;break}a.offset=wt,a.extra=15&mt,a.mode=st;case st:if(a.extra){for(Bt=a.extra;u<Bt;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}a.offset+=_&(1<<a.extra)-1,_>>>=a.extra,u-=a.extra,a.back+=a.extra}if(a.offset>a.dmax){t.msg="invalid distance too far back",a.mode=_t;break}a.mode=ot;case ot:if(0===h)break t;if(g=b-h,a.offset>g){if(g=a.offset-g,g>a.whave&&a.sane){t.msg="invalid distance too far back",a.mode=_t;break}g>a.wnext?(g-=a.wnext,m=a.wsize-g):m=a.wnext-g,g>a.length&&(g=a.length),bt=a.window}else bt=r,m=o-a.offset,g=a.length;g>h&&(g=h),h-=g,a.length-=g;do r[o++]=bt[m++];while(--g);0===a.length&&(a.mode=it);break;case lt:if(0===h)break t;r[o++]=a.length,h--,a.mode=it;break;case ht:if(a.wrap){for(;u<32;){if(0===l)break t;l--,_|=n[s++]<<u,u+=8}if(b-=h,t.total_out+=b,a.total+=b,b&&(t.adler=a.check=a.flags?v(a.check,r,b,o-b):p(a.check,r,b,o-b)),b=h,(a.flags?_:i(_))!==a.check){t.msg="incorrect data check",a.mode=_t;break}_=0,u=0}a.mode=dt;case dt:if(a.wrap&&a.flags){for(;u<32;){if(0===l)break t;l--,_+=n[s++]<<u,u+=8}if(_!==(4294967295&a.total)){t.msg="incorrect length check",a.mode=_t;break}_=0,u=0}a.mode=ft;case ft:xt=R;break t;case _t:xt=O;break t;case ut:return D;case ct:default:return N}return t.next_out=o,t.avail_out=h,t.next_in=s,t.avail_in=l,a.hold=_,a.bits=u,(a.wsize||b!==t.avail_out&&a.mode<_t&&(a.mode<ht||e!==S))&&f(t,t.output,t.next_out,b-t.avail_out)?(a.mode=ut,D):(c-=t.avail_in,b-=t.avail_out,t.total_in+=c,t.total_out+=b,a.total+=b,a.wrap&&b&&(t.adler=a.check=a.flags?v(a.check,r,b,t.next_out-b):p(a.check,r,b,t.next_out-b)),t.data_type=a.bits+(a.last?64:0)+(a.mode===X?128:0)+(a.mode===at||a.mode===Q?256:0),(0===c&&0===b||e===S)&&xt===Z&&(xt=I),xt)}function u(t){if(!t||!t.state)return N;var e=t.state;return e.window&&(e.window=null),t.state=null,Z}function c(t,e){var a;return t&&t.state?(a=t.state,0===(2&a.wrap)?N:(a.head=e,e.done=!1,Z)):N}function b(t,e){var a,i,n,r=e.length;return t&&t.state?(a=t.state,0!==a.wrap&&a.mode!==G?N:a.mode===G&&(i=1,i=p(i,e,r,0),i!==a.check)?O:(n=f(t,e,r,r))?(a.mode=ut,D):(a.havedict=1,Z)):N}var g,m,w=t("../utils/common"),p=t("./adler32"),v=t("./crc32"),k=t("./inffast"),y=t("./inftrees"),x=0,z=1,B=2,S=4,E=5,A=6,Z=0,R=1,C=2,N=-2,O=-3,D=-4,I=-5,U=8,T=1,F=2,L=3,H=4,j=5,K=6,M=7,P=8,Y=9,q=10,G=11,X=12,W=13,J=14,Q=15,V=16,$=17,tt=18,et=19,at=20,it=21,nt=22,rt=23,st=24,ot=25,lt=26,ht=27,dt=28,ft=29,_t=30,ut=31,ct=32,bt=852,gt=592,mt=15,wt=mt,pt=!0;a.inflateReset=s,a.inflateReset2=o,a.inflateResetKeep=r,a.inflateInit=h,a.inflateInit2=l,a.inflate=_,a.inflateEnd=u,a.inflateGetHeader=c,a.inflateSetDictionary=b,a.inflateInfo="pako inflate (from Nodeca project)"},{"../utils/common":3,"./adler32":5,"./crc32":7,"./inffast":10,"./inftrees":12}],12:[function(t,e,a){"use strict";var i=t("../utils/common"),n=15,r=852,s=592,o=0,l=1,h=2,d=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258,0,0],f=[16,16,16,16,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,16,72,78],_=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577,0,0],u=[16,16,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,64,64];e.exports=function(t,e,a,c,b,g,m,w){var p,v,k,y,x,z,B,S,E,A=w.bits,Z=0,R=0,C=0,N=0,O=0,D=0,I=0,U=0,T=0,F=0,L=null,H=0,j=new i.Buf16(n+1),K=new i.Buf16(n+1),M=null,P=0;for(Z=0;Z<=n;Z++)j[Z]=0;for(R=0;R<c;R++)j[e[a+R]]++;for(O=A,N=n;N>=1&&0===j[N];N--);if(O>N&&(O=N),0===N)return b[g++]=20971520,b[g++]=20971520,w.bits=1,0;for(C=1;C<N&&0===j[C];C++);for(O<C&&(O=C),U=1,Z=1;Z<=n;Z++)if(U<<=1,U-=j[Z],U<0)return-1;if(U>0&&(t===o||1!==N))return-1;for(K[1]=0,Z=1;Z<n;Z++)K[Z+1]=K[Z]+j[Z];for(R=0;R<c;R++)0!==e[a+R]&&(m[K[e[a+R]]++]=R);if(t===o?(L=M=m,z=19):t===l?(L=d,H-=257,M=f,P-=257,z=256):(L=_,M=u,z=-1),F=0,R=0,Z=C,x=g,D=O,I=0,k=-1,T=1<<O,y=T-1,t===l&&T>r||t===h&&T>s)return 1;for(var Y=0;;){Y++,B=Z-I,m[R]<z?(S=0,E=m[R]):m[R]>z?(S=M[P+m[R]],E=L[H+m[R]]):(S=96,E=0),p=1<<Z-I,v=1<<D,C=v;do v-=p,b[x+(F>>I)+v]=B<<24|S<<16|E|0;while(0!==v);for(p=1<<Z-1;F&p;)p>>=1;if(0!==p?(F&=p-1,F+=p):F=0,R++,0===--j[Z]){if(Z===N)break;Z=e[a+m[R]]}if(Z>O&&(F&y)!==k){for(0===I&&(I=O),x+=C,D=Z-I,U=1<<D;D+I<N&&(U-=j[D+I],!(U<=0));)D++,U<<=1;if(T+=1<<D,t===l&&T>r||t===h&&T>s)return 1;k=F&y,b[k]=O<<24|D<<16|x-g|0}}return 0!==F&&(b[x+F]=Z-I<<24|64<<16|0),w.bits=O,0}},{"../utils/common":3}],13:[function(t,e,a){"use strict";e.exports={2:"need dictionary",1:"stream end",0:"","-1":"file error","-2":"stream error","-3":"data error","-4":"insufficient memory","-5":"buffer error","-6":"incompatible version"}},{}],14:[function(t,e,a){"use strict";function i(t){for(var e=t.length;--e>=0;)t[e]=0}function n(t,e,a,i,n){this.static_tree=t,this.extra_bits=e,this.extra_base=a,this.elems=i,this.max_length=n,this.has_stree=t&&t.length}function r(t,e){this.dyn_tree=t,this.max_code=0,this.stat_desc=e}function s(t){return t<256?lt[t]:lt[256+(t>>>7)]}function o(t,e){t.pending_buf[t.pending++]=255&e,t.pending_buf[t.pending++]=e>>>8&255}function l(t,e,a){t.bi_valid>W-a?(t.bi_buf|=e<<t.bi_valid&65535,o(t,t.bi_buf),t.bi_buf=e>>W-t.bi_valid,t.bi_valid+=a-W):(t.bi_buf|=e<<t.bi_valid&65535,t.bi_valid+=a)}function h(t,e,a){l(t,a[2*e],a[2*e+1])}function d(t,e){var a=0;do a|=1&t,t>>>=1,a<<=1;while(--e>0);return a>>>1}function f(t){16===t.bi_valid?(o(t,t.bi_buf),t.bi_buf=0,t.bi_valid=0):t.bi_valid>=8&&(t.pending_buf[t.pending++]=255&t.bi_buf,t.bi_buf>>=8,t.bi_valid-=8)}function _(t,e){var a,i,n,r,s,o,l=e.dyn_tree,h=e.max_code,d=e.stat_desc.static_tree,f=e.stat_desc.has_stree,_=e.stat_desc.extra_bits,u=e.stat_desc.extra_base,c=e.stat_desc.max_length,b=0;for(r=0;r<=X;r++)t.bl_count[r]=0;for(l[2*t.heap[t.heap_max]+1]=0,a=t.heap_max+1;a<G;a++)i=t.heap[a],r=l[2*l[2*i+1]+1]+1,r>c&&(r=c,b++),l[2*i+1]=r,i>h||(t.bl_count[r]++,s=0,i>=u&&(s=_[i-u]),o=l[2*i],t.opt_len+=o*(r+s),f&&(t.static_len+=o*(d[2*i+1]+s)));if(0!==b){do{for(r=c-1;0===t.bl_count[r];)r--;t.bl_count[r]--,t.bl_count[r+1]+=2,t.bl_count[c]--,b-=2}while(b>0);for(r=c;0!==r;r--)for(i=t.bl_count[r];0!==i;)n=t.heap[--a],n>h||(l[2*n+1]!==r&&(t.opt_len+=(r-l[2*n+1])*l[2*n],l[2*n+1]=r),i--)}}function u(t,e,a){var i,n,r=new Array(X+1),s=0;for(i=1;i<=X;i++)r[i]=s=s+a[i-1]<<1;for(n=0;n<=e;n++){var o=t[2*n+1];0!==o&&(t[2*n]=d(r[o]++,o))}}function c(){var t,e,a,i,r,s=new Array(X+1);for(a=0,i=0;i<K-1;i++)for(dt[i]=a,t=0;t<1<<et[i];t++)ht[a++]=i;for(ht[a-1]=i,r=0,i=0;i<16;i++)for(ft[i]=r,t=0;t<1<<at[i];t++)lt[r++]=i;for(r>>=7;i<Y;i++)for(ft[i]=r<<7,t=0;t<1<<at[i]-7;t++)lt[256+r++]=i;for(e=0;e<=X;e++)s[e]=0;for(t=0;t<=143;)st[2*t+1]=8,t++,s[8]++;for(;t<=255;)st[2*t+1]=9,t++,s[9]++;for(;t<=279;)st[2*t+1]=7,t++,s[7]++;for(;t<=287;)st[2*t+1]=8,t++,s[8]++;for(u(st,P+1,s),t=0;t<Y;t++)ot[2*t+1]=5,ot[2*t]=d(t,5);_t=new n(st,et,M+1,P,X),ut=new n(ot,at,0,Y,X),ct=new n(new Array(0),it,0,q,J)}function b(t){var e;for(e=0;e<P;e++)t.dyn_ltree[2*e]=0;for(e=0;e<Y;e++)t.dyn_dtree[2*e]=0;for(e=0;e<q;e++)t.bl_tree[2*e]=0;t.dyn_ltree[2*Q]=1,t.opt_len=t.static_len=0,t.last_lit=t.matches=0}function g(t){t.bi_valid>8?o(t,t.bi_buf):t.bi_valid>0&&(t.pending_buf[t.pending++]=t.bi_buf),t.bi_buf=0,t.bi_valid=0}function m(t,e,a,i){g(t),i&&(o(t,a),o(t,~a)),N.arraySet(t.pending_buf,t.window,e,a,t.pending),t.pending+=a}function w(t,e,a,i){var n=2*e,r=2*a;return t[n]<t[r]||t[n]===t[r]&&i[e]<=i[a]}function p(t,e,a){for(var i=t.heap[a],n=a<<1;n<=t.heap_len&&(n<t.heap_len&&w(e,t.heap[n+1],t.heap[n],t.depth)&&n++,!w(e,i,t.heap[n],t.depth));)t.heap[a]=t.heap[n],a=n,n<<=1;t.heap[a]=i}function v(t,e,a){var i,n,r,o,d=0;if(0!==t.last_lit)do i=t.pending_buf[t.d_buf+2*d]<<8|t.pending_buf[t.d_buf+2*d+1],n=t.pending_buf[t.l_buf+d],d++,0===i?h(t,n,e):(r=ht[n],h(t,r+M+1,e),o=et[r],0!==o&&(n-=dt[r],l(t,n,o)),i--,r=s(i),h(t,r,a),o=at[r],0!==o&&(i-=ft[r],l(t,i,o)));while(d<t.last_lit);h(t,Q,e)}function k(t,e){var a,i,n,r=e.dyn_tree,s=e.stat_desc.static_tree,o=e.stat_desc.has_stree,l=e.stat_desc.elems,h=-1;for(t.heap_len=0,t.heap_max=G,a=0;a<l;a++)0!==r[2*a]?(t.heap[++t.heap_len]=h=a,t.depth[a]=0):r[2*a+1]=0;for(;t.heap_len<2;)n=t.heap[++t.heap_len]=h<2?++h:0,r[2*n]=1,t.depth[n]=0,t.opt_len--,o&&(t.static_len-=s[2*n+1]);for(e.max_code=h,a=t.heap_len>>1;a>=1;a--)p(t,r,a);n=l;do a=t.heap[1],t.heap[1]=t.heap[t.heap_len--],p(t,r,1),i=t.heap[1],t.heap[--t.heap_max]=a,t.heap[--t.heap_max]=i,r[2*n]=r[2*a]+r[2*i],t.depth[n]=(t.depth[a]>=t.depth[i]?t.depth[a]:t.depth[i])+1,r[2*a+1]=r[2*i+1]=n,t.heap[1]=n++,p(t,r,1);while(t.heap_len>=2);t.heap[--t.heap_max]=t.heap[1],_(t,e),u(r,h,t.bl_count)}function y(t,e,a){var i,n,r=-1,s=e[1],o=0,l=7,h=4;for(0===s&&(l=138,h=3),e[2*(a+1)+1]=65535,i=0;i<=a;i++)n=s,s=e[2*(i+1)+1],++o<l&&n===s||(o<h?t.bl_tree[2*n]+=o:0!==n?(n!==r&&t.bl_tree[2*n]++,t.bl_tree[2*V]++):o<=10?t.bl_tree[2*$]++:t.bl_tree[2*tt]++,o=0,r=n,0===s?(l=138,h=3):n===s?(l=6,h=3):(l=7,h=4))}function x(t,e,a){var i,n,r=-1,s=e[1],o=0,d=7,f=4;for(0===s&&(d=138,f=3),i=0;i<=a;i++)if(n=s,s=e[2*(i+1)+1],!(++o<d&&n===s)){if(o<f){do h(t,n,t.bl_tree);while(0!==--o)}else 0!==n?(n!==r&&(h(t,n,t.bl_tree),o--),h(t,V,t.bl_tree),l(t,o-3,2)):o<=10?(h(t,$,t.bl_tree),l(t,o-3,3)):(h(t,tt,t.bl_tree),l(t,o-11,7));o=0,r=n,0===s?(d=138,f=3):n===s?(d=6,f=3):(d=7,f=4)}}function z(t){var e;for(y(t,t.dyn_ltree,t.l_desc.max_code),y(t,t.dyn_dtree,t.d_desc.max_code),k(t,t.bl_desc),e=q-1;e>=3&&0===t.bl_tree[2*nt[e]+1];e--);return t.opt_len+=3*(e+1)+5+5+4,e}function B(t,e,a,i){var n;for(l(t,e-257,5),l(t,a-1,5),l(t,i-4,4),n=0;n<i;n++)l(t,t.bl_tree[2*nt[n]+1],3);x(t,t.dyn_ltree,e-1),x(t,t.dyn_dtree,a-1)}function S(t){var e,a=4093624447;for(e=0;e<=31;e++,a>>>=1)if(1&a&&0!==t.dyn_ltree[2*e])return D;if(0!==t.dyn_ltree[18]||0!==t.dyn_ltree[20]||0!==t.dyn_ltree[26])return I;for(e=32;e<M;e++)if(0!==t.dyn_ltree[2*e])return I;return D}function E(t){bt||(c(),bt=!0),t.l_desc=new r(t.dyn_ltree,_t),t.d_desc=new r(t.dyn_dtree,ut),t.bl_desc=new r(t.bl_tree,ct),t.bi_buf=0,t.bi_valid=0,b(t)}function A(t,e,a,i){l(t,(T<<1)+(i?1:0),3),m(t,e,a,!0)}function Z(t){l(t,F<<1,3),h(t,Q,st),f(t)}function R(t,e,a,i){var n,r,s=0;t.level>0?(t.strm.data_type===U&&(t.strm.data_type=S(t)),k(t,t.l_desc),k(t,t.d_desc),s=z(t),n=t.opt_len+3+7>>>3,r=t.static_len+3+7>>>3,r<=n&&(n=r)):n=r=a+5,a+4<=n&&e!==-1?A(t,e,a,i):t.strategy===O||r===n?(l(t,(F<<1)+(i?1:0),3),v(t,st,ot)):(l(t,(L<<1)+(i?1:0),3),B(t,t.l_desc.max_code+1,t.d_desc.max_code+1,s+1),v(t,t.dyn_ltree,t.dyn_dtree)),b(t),i&&g(t)}function C(t,e,a){return t.pending_buf[t.d_buf+2*t.last_lit]=e>>>8&255,t.pending_buf[t.d_buf+2*t.last_lit+1]=255&e,t.pending_buf[t.l_buf+t.last_lit]=255&a,t.last_lit++,0===e?t.dyn_ltree[2*a]++:(t.matches++,e--,t.dyn_ltree[2*(ht[a]+M+1)]++,t.dyn_dtree[2*s(e)]++),t.last_lit===t.lit_bufsize-1}var N=t("../utils/common"),O=4,D=0,I=1,U=2,T=0,F=1,L=2,H=3,j=258,K=29,M=256,P=M+1+K,Y=30,q=19,G=2*P+1,X=15,W=16,J=7,Q=256,V=16,$=17,tt=18,et=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0],at=[0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13],it=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7],nt=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15],rt=512,st=new Array(2*(P+2));i(st);var ot=new Array(2*Y);i(ot);var lt=new Array(rt);i(lt);var ht=new Array(j-H+1);i(ht);var dt=new Array(K);i(dt);var ft=new Array(Y);i(ft);var _t,ut,ct,bt=!1;a._tr_init=E,a._tr_stored_block=A,a._tr_flush_block=R,a._tr_tally=C,a._tr_align=Z},{"../utils/common":3}],15:[function(t,e,a){"use strict";function i(){this.input=null,this.next_in=0,this.avail_in=0,this.total_in=0,this.output=null,this.next_out=0,this.avail_out=0,this.total_out=0,this.msg="",this.state=null,this.data_type=2,this.adler=0}e.exports=i},{}],"/":[function(t,e,a){"use strict";var i=t("./lib/utils/common").assign,n=t("./lib/deflate"),r=t("./lib/inflate"),s=t("./lib/zlib/constants"),o={};i(o,n,r,s),e.exports=o},{"./lib/deflate":1,"./lib/inflate":2,"./lib/utils/common":3,"./lib/zlib/constants":6}]},{},[])("/")});
 
-/*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
+if(typeof self === "undefined" || !self.constructor.name.includes("Worker")) { var e=function(){"use strict";function r(e,r){postMessage({action:xt,cbn:r,result:e})}function t(e){var r=[];return r[e-1]=void 0,r}function o(e,r){return i(e[0]+r[0],e[1]+r[1])}function n(e,r){return u(~~Math.max(Math.min(e[1]/Ot,2147483647),-2147483648)&~~Math.max(Math.min(r[1]/Ot,2147483647),-2147483648),c(e)&c(r))}function s(e,r){var t,o;return e[0]==r[0]&&e[1]==r[1]?0:(t=0>e[1],o=0>r[1],t&&!o?-1:!t&&o?1:h(e,r)[1]<0?-1:1)}function i(e,r){var t,o;for(r%=0x10000000000000000,e%=0x10000000000000000,t=r%Ot,o=Math.floor(e/Ot)*Ot,r=r-t+o,e=e-o+t;0>e;)e+=Ot,r-=Ot;for(;e>4294967295;)e-=Ot,r+=Ot;for(r%=0x10000000000000000;r>0x7fffffff00000000;)r-=0x10000000000000000;for(;-0x8000000000000000>r;)r+=0x10000000000000000;return[e,r]}function _(e,r){return e[0]==r[0]&&e[1]==r[1]}function a(e){return e>=0?[e,0]:[e+Ot,-Ot]}function c(e){return e[0]>=2147483648?~~Math.max(Math.min(e[0]-Ot,2147483647),-2147483648):~~Math.max(Math.min(e[0],2147483647),-2147483648)}function u(e,r){var t,o;return t=e*Ot,o=r,0>r&&(o+=Ot),[o,t]}function f(e){return 30>=e?1<<e:f(30)*f(e-30)}function m(e,r){var t,o,n,s;if(r&=63,_(e,Ht))return r?Gt:e;if(0>e[1])throw Error("Neg");return s=f(r),o=e[1]*s%0x10000000000000000,n=e[0]*s,t=n-n%Ot,o+=t,n-=t,o>=0x8000000000000000&&(o-=0x10000000000000000),[n,o]}function d(e,r){var t;return r&=63,t=f(r),i(Math.floor(e[0]/t),e[1]/t)}function p(e,r){var t;return r&=63,t=d(e,r),0>e[1]&&(t=o(t,m([2,0],63-r))),t}function h(e,r){return i(e[0]-r[0],e[1]-r[1])}function P(e,r){return e.Mc=r,e.Lc=0,e.Yb=r.length,e}function l(e){return e.Lc>=e.Yb?-1:255&e.Mc[e.Lc++]}function v(e,r,t,o){return e.Lc>=e.Yb?-1:(o=Math.min(o,e.Yb-e.Lc),M(e.Mc,e.Lc,r,t,o),e.Lc+=o,o)}function B(e){return e.Mc=t(32),e.Yb=0,e}function S(e){var r=e.Mc;return r.length=e.Yb,r}function g(e,r){e.Mc[e.Yb++]=r<<24>>24}function k(e,r,t,o){M(r,t,e.Mc,e.Yb,o),e.Yb+=o}function R(e,r,t,o,n){var s;for(s=r;t>s;++s)o[n++]=e.charCodeAt(s)}function M(e,r,t,o,n){for(var s=0;n>s;++s)t[o+s]=e[r+s]}function D(e,r){Ar(r,1<<e.s),r.n=e.f,Hr(r,e.m),r.eb=0,r.fb=3,r.Y=2,r.y=3}function b(r,t,o,n,i){var _,a;if(s(n,At)<0)throw Error("invalid length "+n);for(r.Tb=n,_=Dr({}),D(i,_),_.Gc=void 0===e.disableEndMark,Gr(_,o),a=0;64>a;a+=8)g(o,255&c(d(n,a)));r.yb=(_.W=0,_.oc=t,_.pc=0,Mr(_),_.d.Ab=o,Fr(_),wr(_),br(_),_.$.rb=_.n+1-2,Qr(_.$,1<<_.Y),_.i.rb=_.n+1-2,Qr(_.i,1<<_.Y),void(_.g=Gt),X({},_))}function w(e,r,t){return e.Nb=B({}),b(e,P({},r),e.Nb,a(r.length),t),e}function E(e,r,t){var o,n,s,i,_="",c=[];for(n=0;5>n;++n){if(s=l(r),-1==s)throw Error("truncated input");c[n]=s<<24>>24}if(o=ir({}),!ar(o,c))throw Error("corrupted input");for(n=0;64>n;n+=8){if(s=l(r),-1==s)throw Error("truncated input");s=s.toString(16),1==s.length&&(s="0"+s),_=s+""+_}/^0+$|^f+$/i.test(_)?e.Tb=At:(i=parseInt(_,16),e.Tb=i>4294967295?At:a(i)),e.yb=nr(o,r,t,e.Tb)}function L(e,r){return e.Nb=B({}),E(e,P({},r),e.Nb),e}function y(e,r,o,n){var s;e.Bc=r,e._b=o,s=r+o+n,(null==e.c||e.Kb!=s)&&(e.c=null,e.Kb=s,e.c=t(e.Kb)),e.H=e.Kb-o}function C(e,r){return e.c[e.f+e.o+r]}function z(e,r,t,o){var n,s;for(e.T&&e.o+r+o>e.h&&(o=e.h-(e.o+r)),++t,s=e.f+e.o+r,n=0;o>n&&e.c[s+n]==e.c[s+n-t];++n);return n}function F(e){return e.h-e.o}function I(e){var r,t,o;for(o=e.f+e.o-e.Bc,o>0&&--o,t=e.f+e.h-o,r=0;t>r;++r)e.c[r]=e.c[o+r];e.f-=o}function x(e){var r;++e.o,e.o>e.zb&&(r=e.f+e.o,r>e.H&&I(e),N(e))}function N(e){var r,t,o;if(!e.T)for(;;){if(o=-e.f+e.Kb-e.h,!o)return;if(r=v(e.cc,e.c,e.f+e.h,o),-1==r)return e.zb=e.h,t=e.f+e.zb,t>e.H&&(e.zb=e.H-e.f),void(e.T=1);e.h+=r,e.h>=e.o+e._b&&(e.zb=e.h-e._b)}}function O(e,r){e.f+=r,e.zb-=r,e.o-=r,e.h-=r}function A(e,r,o,n,s){var i,_,a;1073741567>r&&(e.Fc=16+(n>>1),a=~~((r+o+n+s)/2)+256,y(e,r+o,n+s,a),e.ob=n,i=r+1,e.p!=i&&(e.L=t(2*(e.p=i))),_=65536,e.qb&&(_=r-1,_|=_>>1,_|=_>>2,_|=_>>4,_|=_>>8,_>>=1,_|=65535,_>16777216&&(_>>=1),e.Ec=_,++_,_+=e.R),_!=e.rc&&(e.ub=t(e.rc=_)))}function H(e,r){var t,o,n,s,i,_,a,c,u,f,m,d,p,h,P,l,v,B,S,g,k;if(e.h>=e.o+e.ob)h=e.ob;else if(h=e.h-e.o,e.xb>h)return W(e),0;for(v=0,P=e.o>e.p?e.o-e.p:0,o=e.f+e.o,l=1,c=0,u=0,e.qb?(k=Tt[255&e.c[o]]^255&e.c[o+1],c=1023&k,k^=(255&e.c[o+2])<<8,u=65535&k,f=(k^Tt[255&e.c[o+3]]<<5)&e.Ec):f=255&e.c[o]^(255&e.c[o+1])<<8,n=e.ub[e.R+f]||0,e.qb&&(s=e.ub[c]||0,i=e.ub[1024+u]||0,e.ub[c]=e.o,e.ub[1024+u]=e.o,s>P&&e.c[e.f+s]==e.c[o]&&(r[v++]=l=2,r[v++]=e.o-s-1),i>P&&e.c[e.f+i]==e.c[o]&&(i==s&&(v-=2),r[v++]=l=3,r[v++]=e.o-i-1,s=i),0!=v&&s==n&&(v-=2,l=1)),e.ub[e.R+f]=e.o,S=(e.k<<1)+1,g=e.k<<1,d=p=e.w,0!=e.w&&n>P&&e.c[e.f+n+e.w]!=e.c[o+e.w]&&(r[v++]=l=e.w,r[v++]=e.o-n-1),t=e.Fc;;){if(P>=n||0==t--){e.L[S]=e.L[g]=0;break}if(a=e.o-n,_=(e.k>=a?e.k-a:e.k-a+e.p)<<1,B=e.f+n,m=p>d?d:p,e.c[B+m]==e.c[o+m]){for(;++m!=h&&e.c[B+m]==e.c[o+m];);if(m>l&&(r[v++]=l=m,r[v++]=a-1,m==h)){e.L[g]=e.L[_],e.L[S]=e.L[_+1];break}}(255&e.c[o+m])>(255&e.c[B+m])?(e.L[g]=n,g=_+1,n=e.L[g],p=m):(e.L[S]=n,S=_,n=e.L[S],d=m)}return W(e),v}function G(e){e.f=0,e.o=0,e.h=0,e.T=0,N(e),e.k=0,O(e,-1)}function W(e){var r;++e.k>=e.p&&(e.k=0),x(e),1073741823==e.o&&(r=e.o-e.p,T(e.L,2*e.p,r),T(e.ub,e.rc,r),O(e,r))}function T(e,r,t){var o,n;for(o=0;r>o;++o)n=e[o]||0,t>=n?n=0:n-=t,e[o]=n}function Z(e,r){e.qb=r>2,e.qb?(e.w=0,e.xb=4,e.R=66560):(e.w=2,e.xb=3,e.R=0)}function Y(e,r){var t,o,n,s,i,_,a,c,u,f,m,d,p,h,P,l,v;do{if(e.h>=e.o+e.ob)d=e.ob;else if(d=e.h-e.o,e.xb>d){W(e);continue}for(p=e.o>e.p?e.o-e.p:0,o=e.f+e.o,e.qb?(v=Tt[255&e.c[o]]^255&e.c[o+1],_=1023&v,e.ub[_]=e.o,v^=(255&e.c[o+2])<<8,a=65535&v,e.ub[1024+a]=e.o,c=(v^Tt[255&e.c[o+3]]<<5)&e.Ec):c=255&e.c[o]^(255&e.c[o+1])<<8,n=e.ub[e.R+c],e.ub[e.R+c]=e.o,P=(e.k<<1)+1,l=e.k<<1,f=m=e.w,t=e.Fc;;){if(p>=n||0==t--){e.L[P]=e.L[l]=0;break}if(i=e.o-n,s=(e.k>=i?e.k-i:e.k-i+e.p)<<1,h=e.f+n,u=m>f?f:m,e.c[h+u]==e.c[o+u]){for(;++u!=d&&e.c[h+u]==e.c[o+u];);if(u==d){e.L[l]=e.L[s],e.L[P]=e.L[s+1];break}}(255&e.c[o+u])>(255&e.c[h+u])?(e.L[l]=n,l=s+1,n=e.L[l],m=u):(e.L[P]=n,P=s,n=e.L[P],f=u)}W(e)}while(0!=--r)}function V(e,r,t){var o=e.o-r-1;for(0>o&&(o+=e.M);0!=t;--t)o>=e.M&&(o=0),e.Lb[e.o++]=e.Lb[o++],e.o>=e.M&&$(e)}function j(e,r){(null==e.Lb||e.M!=r)&&(e.Lb=t(r)),e.M=r,e.o=0,e.h=0}function $(e){var r=e.o-e.h;r&&(k(e.cc,e.Lb,e.h,r),e.o>=e.M&&(e.o=0),e.h=e.o)}function K(e,r){var t=e.o-r-1;return 0>t&&(t+=e.M),e.Lb[t]}function q(e,r){e.Lb[e.o++]=r,e.o>=e.M&&$(e)}function J(e){$(e),e.cc=null}function Q(e){return e-=2,4>e?e:3}function U(e){return 4>e?0:10>e?e-3:e-6}function X(e,r){return e.cb=r,e.Z=null,e.zc=1,e}function er(e,r){return e.Z=r,e.cb=null,e.zc=1,e}function rr(e){if(!e.zc)throw Error("bad state");return e.cb?or(e):tr(e),e.zc}function tr(e){var r=sr(e.Z);if(-1==r)throw Error("corrupted input");e.Pb=At,e.Pc=e.Z.g,(r||s(e.Z.Nc,Gt)>=0&&s(e.Z.g,e.Z.Nc)>=0)&&($(e.Z.B),J(e.Z.B),e.Z.e.Ab=null,e.zc=0)}function or(e){Rr(e.cb,e.cb.Xb,e.cb.uc,e.cb.Kc),e.Pb=e.cb.Xb[0],e.cb.Kc[0]&&(Or(e.cb),e.zc=0)}function nr(e,r,t,o){return e.e.Ab=r,J(e.B),e.B.cc=t,_r(e),e.U=0,e.ib=0,e.Jc=0,e.Ic=0,e.Qc=0,e.Nc=o,e.g=Gt,e.jc=0,er({},e)}function sr(e){var r,t,n,i,_,u;if(u=c(e.g)&e.Dc,vt(e.e,e.Gb,(e.U<<4)+u)){if(vt(e.e,e.Zb,e.U))n=0,vt(e.e,e.Cb,e.U)?(vt(e.e,e.Db,e.U)?(vt(e.e,e.Eb,e.U)?(t=e.Qc,e.Qc=e.Ic):t=e.Ic,e.Ic=e.Jc):t=e.Jc,e.Jc=e.ib,e.ib=t):vt(e.e,e.pb,(e.U<<4)+u)||(e.U=7>e.U?9:11,n=1),n||(n=mr(e.sb,e.e,u)+2,e.U=7>e.U?8:11);else if(e.Qc=e.Ic,e.Ic=e.Jc,e.Jc=e.ib,n=2+mr(e.Rb,e.e,u),e.U=7>e.U?7:10,_=at(e.kb[Q(n)],e.e),_>=4){if(i=(_>>1)-1,e.ib=(2|1&_)<<i,14>_)e.ib+=ut(e.kc,e.ib-_-1,e.e,i);else if(e.ib+=Bt(e.e,i-4)<<4,e.ib+=ct(e.Fb,e.e),0>e.ib)return-1==e.ib?1:-1}else e.ib=_;if(s(a(e.ib),e.g)>=0||e.ib>=e.nb)return-1;V(e.B,e.ib,n),e.g=o(e.g,a(n)),e.jc=K(e.B,0)}else r=Pr(e.gb,c(e.g),e.jc),e.jc=7>e.U?vr(r,e.e):Br(r,e.e,K(e.B,e.ib)),q(e.B,e.jc),e.U=U(e.U),e.g=o(e.g,Wt);return 0}function ir(e){e.B={},e.e={},e.Gb=t(192),e.Zb=t(12),e.Cb=t(12),e.Db=t(12),e.Eb=t(12),e.pb=t(192),e.kb=t(4),e.kc=t(114),e.Fb=_t({},4),e.Rb=dr({}),e.sb=dr({}),e.gb={};for(var r=0;4>r;++r)e.kb[r]=_t({},6);return e}function _r(e){e.B.h=0,e.B.o=0,gt(e.Gb),gt(e.pb),gt(e.Zb),gt(e.Cb),gt(e.Db),gt(e.Eb),gt(e.kc),lr(e.gb);for(var r=0;4>r;++r)gt(e.kb[r].G);pr(e.Rb),pr(e.sb),gt(e.Fb.G),St(e.e)}function ar(e,r){var t,o,n,s,i,_,a;if(5>r.length)return 0;for(a=255&r[0],n=a%9,_=~~(a/9),s=_%5,i=~~(_/5),t=0,o=0;4>o;++o)t+=(255&r[1+o])<<8*o;return t>99999999||!ur(e,n,s,i)?0:cr(e,t)}function cr(e,r){return 0>r?0:(e.Ob!=r&&(e.Ob=r,e.nb=Math.max(e.Ob,1),j(e.B,Math.max(e.nb,4096))),1)}function ur(e,r,t,o){if(r>8||t>4||o>4)return 0;hr(e.gb,t,r);var n=1<<o;return fr(e.Rb,n),fr(e.sb,n),e.Dc=n-1,1}function fr(e,r){for(;r>e.O;++e.O)e.ec[e.O]=_t({},3),e.hc[e.O]=_t({},3)}function mr(e,r,t){if(!vt(r,e.wc,0))return at(e.ec[t],r);var o=8;return o+=vt(r,e.wc,1)?8+at(e.tc,r):at(e.hc[t],r)}function dr(e){return e.wc=t(2),e.ec=t(16),e.hc=t(16),e.tc=_t({},8),e.O=0,e}function pr(e){gt(e.wc);for(var r=0;e.O>r;++r)gt(e.ec[r].G),gt(e.hc[r].G);gt(e.tc.G)}function hr(e,r,o){var n,s;if(null==e.V||e.u!=o||e.I!=r)for(e.I=r,e.qc=(1<<r)-1,e.u=o,s=1<<e.u+e.I,e.V=t(s),n=0;s>n;++n)e.V[n]=Sr({})}function Pr(e,r,t){return e.V[((r&e.qc)<<e.u)+((255&t)>>>8-e.u)]}function lr(e){var r,t;for(t=1<<e.u+e.I,r=0;t>r;++r)gt(e.V[r].Ib)}function vr(e,r){var t=1;do t=t<<1|vt(r,e.Ib,t);while(256>t);return t<<24>>24}function Br(e,r,t){var o,n,s=1;do if(n=t>>7&1,t<<=1,o=vt(r,e.Ib,(1+n<<8)+s),s=s<<1|o,n!=o){for(;256>s;)s=s<<1|vt(r,e.Ib,s);break}while(256>s);return s<<24>>24}function Sr(e){return e.Ib=t(768),e}function gr(e,r){var t,o,n,s;e.jb=r,n=e.a[r].r,o=e.a[r].j;do e.a[r].t&&(st(e.a[n]),e.a[n].r=n-1,e.a[r].Ac&&(e.a[n-1].t=0,e.a[n-1].r=e.a[r].r2,e.a[n-1].j=e.a[r].j2)),s=n,t=o,o=e.a[s].j,n=e.a[s].r,e.a[s].j=t,e.a[s].r=r,r=s;while(r>0);return e.mb=e.a[0].j,e.q=e.a[0].r}function kr(e){e.l=0,e.J=0;for(var r=0;4>r;++r)e.v[r]=0}function Rr(e,r,t,n){var i,u,f,m,d,p,P,l,v,B,S,g,k,R,M;if(r[0]=Gt,t[0]=Gt,n[0]=1,e.oc&&(e.b.cc=e.oc,G(e.b),e.W=1,e.oc=null),!e.pc){if(e.pc=1,R=e.g,_(e.g,Gt)){if(!F(e.b))return void Er(e,c(e.g));xr(e),k=c(e.g)&e.y,kt(e.d,e.C,(e.l<<4)+k,0),e.l=U(e.l),f=C(e.b,-e.s),rt(Xr(e.A,c(e.g),e.J),e.d,f),e.J=f,--e.s,e.g=o(e.g,Wt)}if(!F(e.b))return void Er(e,c(e.g));for(;;){if(P=Lr(e,c(e.g)),B=e.mb,k=c(e.g)&e.y,u=(e.l<<4)+k,1==P&&-1==B)kt(e.d,e.C,u,0),f=C(e.b,-e.s),M=Xr(e.A,c(e.g),e.J),7>e.l?rt(M,e.d,f):(v=C(e.b,-e.v[0]-1-e.s),tt(M,e.d,v,f)),e.J=f,e.l=U(e.l);else{if(kt(e.d,e.C,u,1),4>B){if(kt(e.d,e.bb,e.l,1),B?(kt(e.d,e.hb,e.l,1),1==B?kt(e.d,e.Ub,e.l,0):(kt(e.d,e.Ub,e.l,1),kt(e.d,e.vc,e.l,B-2))):(kt(e.d,e.hb,e.l,0),1==P?kt(e.d,e._,u,0):kt(e.d,e._,u,1)),1==P?e.l=7>e.l?9:11:(Kr(e.i,e.d,P-2,k),e.l=7>e.l?8:11),m=e.v[B],0!=B){for(p=B;p>=1;--p)e.v[p]=e.v[p-1];e.v[0]=m}}else{for(kt(e.d,e.bb,e.l,0),e.l=7>e.l?7:10,Kr(e.$,e.d,P-2,k),B-=4,g=Tr(B),l=Q(P),mt(e.K[l],e.d,g),g>=4&&(d=(g>>1)-1,i=(2|1&g)<<d,S=B-i,14>g?Pt(e.Sb,i-g-1,e.d,d,S):(Rt(e.d,S>>4,d-4),pt(e.S,e.d,15&S),++e.Qb)),m=B,p=3;p>=1;--p)e.v[p]=e.v[p-1];e.v[0]=m,++e.Mb}e.J=C(e.b,P-1-e.s)}if(e.s-=P,e.g=o(e.g,a(P)),!e.s){if(e.Mb>=128&&wr(e),e.Qb>=16&&br(e),r[0]=e.g,t[0]=Mt(e.d),!F(e.b))return void Er(e,c(e.g));if(s(h(e.g,R),[4096,0])>=0)return e.pc=0,void(n[0]=0)}}}}function Mr(e){var r,t;e.b||(r={},t=4,e.X||(t=2),Z(r,t),e.b=r),Ur(e.A,e.eb,e.fb),(e.ab!=e.wb||e.Hb!=e.n)&&(A(e.b,e.ab,4096,e.n,274),e.wb=e.ab,e.Hb=e.n)}function Dr(e){var r;for(e.v=t(4),e.a=[],e.d={},e.C=t(192),e.bb=t(12),e.hb=t(12),e.Ub=t(12),e.vc=t(12),e._=t(192),e.K=[],e.Sb=t(114),e.S=ft({},4),e.$=qr({}),e.i=qr({}),e.A={},e.m=[],e.P=[],e.lb=[],e.nc=t(16),e.x=t(4),e.Q=t(4),e.Xb=[Gt],e.uc=[Gt],e.Kc=[0],e.fc=t(5),e.yc=t(128),e.vb=0,e.X=1,e.D=0,e.Hb=-1,e.mb=0,r=0;4096>r;++r)e.a[r]={};for(r=0;4>r;++r)e.K[r]=ft({},6);return e}function br(e){for(var r=0;16>r;++r)e.nc[r]=ht(e.S,r);e.Qb=0}function wr(e){var r,t,o,n,s,i,_,a;for(n=4;128>n;++n)i=Tr(n),o=(i>>1)-1,r=(2|1&i)<<o,e.yc[n]=lt(e.Sb,r-i-1,o,n-r);for(s=0;4>s;++s){for(t=e.K[s],_=s<<6,i=0;e.$b>i;++i)e.P[_+i]=dt(t,i);for(i=14;e.$b>i;++i)e.P[_+i]+=(i>>1)-1-4<<6;for(a=128*s,n=0;4>n;++n)e.lb[a+n]=e.P[_+n];for(;128>n;++n)e.lb[a+n]=e.P[_+Tr(n)]+e.yc[n]}e.Mb=0}function Er(e,r){Nr(e),Wr(e,r&e.y);for(var t=0;5>t;++t)bt(e.d)}function Lr(e,r){var t,o,n,s,i,_,a,c,u,f,m,d,p,h,P,l,v,B,S,g,k,R,M,D,b,w,E,L,y,I,x,N,O,A,H,G,W,T,Z,Y,V,j,$,K,q,J,Q,X,er,rr;if(e.jb!=e.q)return p=e.a[e.q].r-e.q,e.mb=e.a[e.q].j,e.q=e.a[e.q].r,p;if(e.q=e.jb=0,e.N?(d=e.vb,e.N=0):d=xr(e),E=e.D,b=F(e.b)+1,2>b)return e.mb=-1,1;for(b>273&&(b=273),Y=0,u=0;4>u;++u)e.x[u]=e.v[u],e.Q[u]=z(e.b,-1,e.x[u],273),e.Q[u]>e.Q[Y]&&(Y=u);if(e.Q[Y]>=e.n)return e.mb=Y,p=e.Q[Y],Ir(e,p-1),p;if(d>=e.n)return e.mb=e.m[E-1]+4,Ir(e,d-1),d;if(a=C(e.b,-1),v=C(e.b,-e.v[0]-1-1),2>d&&a!=v&&2>e.Q[Y])return e.mb=-1,1;if(e.a[0].Hc=e.l,A=r&e.y,e.a[1].z=Yt[e.C[(e.l<<4)+A]>>>2]+nt(Xr(e.A,r,e.J),e.l>=7,v,a),st(e.a[1]),B=Yt[2048-e.C[(e.l<<4)+A]>>>2],Z=B+Yt[2048-e.bb[e.l]>>>2],v==a&&(V=Z+zr(e,e.l,A),e.a[1].z>V&&(e.a[1].z=V,it(e.a[1]))),m=d>=e.Q[Y]?d:e.Q[Y],2>m)return e.mb=e.a[1].j,1;e.a[1].r=0,e.a[0].bc=e.x[0],e.a[0].ac=e.x[1],e.a[0].dc=e.x[2],e.a[0].lc=e.x[3],f=m;do e.a[f--].z=268435455;while(f>=2);for(u=0;4>u;++u)if(T=e.Q[u],!(2>T)){G=Z+Cr(e,u,e.l,A);do s=G+Jr(e.i,T-2,A),x=e.a[T],x.z>s&&(x.z=s,x.r=0,x.j=u,x.t=0);while(--T>=2)}if(D=B+Yt[e.bb[e.l]>>>2],f=e.Q[0]>=2?e.Q[0]+1:2,d>=f){for(L=0;f>e.m[L];)L+=2;for(;c=e.m[L+1],s=D+yr(e,c,f,A),x=e.a[f],x.z>s&&(x.z=s,x.r=0,x.j=c+4,x.t=0),f!=e.m[L]||(L+=2,L!=E);++f);}for(t=0;;){if(++t,t==m)return gr(e,t);if(S=xr(e),E=e.D,S>=e.n)return e.vb=S,e.N=1,gr(e,t);if(++r,O=e.a[t].r,e.a[t].t?(--O,e.a[t].Ac?($=e.a[e.a[t].r2].Hc,$=4>e.a[t].j2?7>$?8:11:7>$?7:10):$=e.a[O].Hc,$=U($)):$=e.a[O].Hc,O==t-1?$=e.a[t].j?U($):7>$?9:11:(e.a[t].t&&e.a[t].Ac?(O=e.a[t].r2,N=e.a[t].j2,$=7>$?8:11):(N=e.a[t].j,$=4>N?7>$?8:11:7>$?7:10),I=e.a[O],4>N?N?1==N?(e.x[0]=I.ac,e.x[1]=I.bc,e.x[2]=I.dc,e.x[3]=I.lc):2==N?(e.x[0]=I.dc,e.x[1]=I.bc,e.x[2]=I.ac,e.x[3]=I.lc):(e.x[0]=I.lc,e.x[1]=I.bc,e.x[2]=I.ac,e.x[3]=I.dc):(e.x[0]=I.bc,e.x[1]=I.ac,e.x[2]=I.dc,e.x[3]=I.lc):(e.x[0]=N-4,e.x[1]=I.bc,e.x[2]=I.ac,e.x[3]=I.dc)),e.a[t].Hc=$,e.a[t].bc=e.x[0],e.a[t].ac=e.x[1],e.a[t].dc=e.x[2],e.a[t].lc=e.x[3],_=e.a[t].z,a=C(e.b,-1),v=C(e.b,-e.x[0]-1-1),A=r&e.y,o=_+Yt[e.C[($<<4)+A]>>>2]+nt(Xr(e.A,r,C(e.b,-2)),$>=7,v,a),R=e.a[t+1],g=0,R.z>o&&(R.z=o,R.r=t,R.j=-1,R.t=0,g=1),B=_+Yt[2048-e.C[($<<4)+A]>>>2],Z=B+Yt[2048-e.bb[$]>>>2],v!=a||t>R.r&&!R.j||(V=Z+(Yt[e.hb[$]>>>2]+Yt[e._[($<<4)+A]>>>2]),R.z>=V&&(R.z=V,R.r=t,R.j=0,R.t=0,g=1)),w=F(e.b)+1,w=w>4095-t?4095-t:w,b=w,!(2>b)){if(b>e.n&&(b=e.n),!g&&v!=a&&(q=Math.min(w-1,e.n),P=z(e.b,0,e.x[0],q),P>=2)){for(K=U($),H=r+1&e.y,M=o+Yt[2048-e.C[(K<<4)+H]>>>2]+Yt[2048-e.bb[K]>>>2],y=t+1+P;y>m;)e.a[++m].z=268435455;s=M+(J=Jr(e.i,P-2,H),J+Cr(e,0,K,H)),x=e.a[y],x.z>s&&(x.z=s,x.r=t+1,x.j=0,x.t=1,x.Ac=0)}for(j=2,W=0;4>W;++W)if(h=z(e.b,-1,e.x[W],b),!(2>h)){l=h;do{for(;t+h>m;)e.a[++m].z=268435455;s=Z+(Q=Jr(e.i,h-2,A),Q+Cr(e,W,$,A)),x=e.a[t+h],x.z>s&&(x.z=s,x.r=t,x.j=W,x.t=0)}while(--h>=2);if(h=l,W||(j=h+1),w>h&&(q=Math.min(w-1-h,e.n),P=z(e.b,h,e.x[W],q),P>=2)){for(K=7>$?8:11,H=r+h&e.y,n=Z+(X=Jr(e.i,h-2,A),X+Cr(e,W,$,A))+Yt[e.C[(K<<4)+H]>>>2]+nt(Xr(e.A,r+h,C(e.b,h-1-1)),1,C(e.b,h-1-(e.x[W]+1)),C(e.b,h-1)),K=U(K),H=r+h+1&e.y,k=n+Yt[2048-e.C[(K<<4)+H]>>>2],M=k+Yt[2048-e.bb[K]>>>2],y=h+1+P;t+y>m;)e.a[++m].z=268435455;s=M+(er=Jr(e.i,P-2,H),er+Cr(e,0,K,H)),x=e.a[t+y],x.z>s&&(x.z=s,x.r=t+h+1,x.j=0,x.t=1,x.Ac=1,x.r2=t,x.j2=W)}}if(S>b){for(S=b,E=0;S>e.m[E];E+=2);e.m[E]=S,E+=2}if(S>=j){for(D=B+Yt[e.bb[$]>>>2];t+S>m;)e.a[++m].z=268435455;for(L=0;j>e.m[L];)L+=2;for(h=j;;++h)if(i=e.m[L+1],s=D+yr(e,i,h,A),x=e.a[t+h],x.z>s&&(x.z=s,x.r=t,x.j=i+4,x.t=0),h==e.m[L]){if(w>h&&(q=Math.min(w-1-h,e.n),P=z(e.b,h,i,q),P>=2)){for(K=7>$?7:10,H=r+h&e.y,n=s+Yt[e.C[(K<<4)+H]>>>2]+nt(Xr(e.A,r+h,C(e.b,h-1-1)),1,C(e.b,h-(i+1)-1),C(e.b,h-1)),K=U(K),H=r+h+1&e.y,k=n+Yt[2048-e.C[(K<<4)+H]>>>2],M=k+Yt[2048-e.bb[K]>>>2],y=h+1+P;t+y>m;)e.a[++m].z=268435455;s=M+(rr=Jr(e.i,P-2,H),rr+Cr(e,0,K,H)),x=e.a[t+y],x.z>s&&(x.z=s,x.r=t+h+1,x.j=0,x.t=1,x.Ac=1,x.r2=t,x.j2=i+4)}if(L+=2,L==E)break}}}}}function yr(e,r,t,o){var n,s=Q(t);return n=128>r?e.lb[128*s+r]:e.P[(s<<6)+Zr(r)]+e.nc[15&r],n+Jr(e.$,t-2,o)}function Cr(e,r,t,o){var n;return r?(n=Yt[2048-e.hb[t]>>>2],1==r?n+=Yt[e.Ub[t]>>>2]:(n+=Yt[2048-e.Ub[t]>>>2],n+=wt(e.vc[t],r-2))):(n=Yt[e.hb[t]>>>2],n+=Yt[2048-e._[(t<<4)+o]>>>2]),n}function zr(e,r,t){return Yt[e.hb[r]>>>2]+Yt[e._[(r<<4)+t]>>>2]}function Fr(e){kr(e),Dt(e.d),gt(e.C),gt(e._),gt(e.bb),gt(e.hb),gt(e.Ub),gt(e.vc),gt(e.Sb),et(e.A);for(var r=0;4>r;++r)gt(e.K[r].G);jr(e.$,1<<e.Y),jr(e.i,1<<e.Y),gt(e.S.G),e.N=0,e.jb=0,e.q=0,e.s=0}function Ir(e,r){r>0&&(Y(e.b,r),e.s+=r)}function xr(e){var r=0;return e.D=H(e.b,e.m),e.D>0&&(r=e.m[e.D-2],r==e.n&&(r+=z(e.b,r-1,e.m[e.D-1],273-r))),++e.s,r}function Nr(e){e.b&&e.W&&(e.b.cc=null,e.W=0)}function Or(e){Nr(e),e.d.Ab=null}function Ar(e,r){e.ab=r;for(var t=0;r>1<<t;++t);e.$b=2*t}function Hr(e,r){var t=e.X;e.X=r,e.b&&t!=e.X&&(e.wb=-1,e.b=null)}function Gr(e,r){e.fc[0]=9*(5*e.Y+e.eb)+e.fb<<24>>24;for(var t=0;4>t;++t)e.fc[1+t]=e.ab>>8*t<<24>>24;k(r,e.fc,0,5)}function Wr(e,r){if(e.Gc){kt(e.d,e.C,(e.l<<4)+r,1),kt(e.d,e.bb,e.l,0),e.l=7>e.l?7:10,Kr(e.$,e.d,0,r);var t=Q(2);mt(e.K[t],e.d,63),Rt(e.d,67108863,26),pt(e.S,e.d,15)}}function Tr(e){return 2048>e?Zt[e]:2097152>e?Zt[e>>10]+20:Zt[e>>20]+40}function Zr(e){return 131072>e?Zt[e>>6]+12:134217728>e?Zt[e>>16]+32:Zt[e>>26]+52}function Yr(e,r,t,o){8>t?(kt(r,e.db,0,0),mt(e.Vb[o],r,t)):(t-=8,kt(r,e.db,0,1),8>t?(kt(r,e.db,1,0),mt(e.Wb[o],r,t)):(kt(r,e.db,1,1),mt(e.ic,r,t-8)))}function Vr(e){e.db=t(2),e.Vb=t(16),e.Wb=t(16),e.ic=ft({},8);for(var r=0;16>r;++r)e.Vb[r]=ft({},3),e.Wb[r]=ft({},3);return e}function jr(e,r){gt(e.db);for(var t=0;r>t;++t)gt(e.Vb[t].G),gt(e.Wb[t].G);gt(e.ic.G)}function $r(e,r,t,o,n){var s,i,_,a,c;for(s=Yt[e.db[0]>>>2],i=Yt[2048-e.db[0]>>>2],_=i+Yt[e.db[1]>>>2],a=i+Yt[2048-e.db[1]>>>2],c=0,c=0;8>c;++c){if(c>=t)return;o[n+c]=s+dt(e.Vb[r],c)}for(;16>c;++c){if(c>=t)return;o[n+c]=_+dt(e.Wb[r],c-8)}for(;t>c;++c)o[n+c]=a+dt(e.ic,c-8-8)}function Kr(e,r,t,o){Yr(e,r,t,o),0==--e.sc[o]&&($r(e,o,e.rb,e.Cc,272*o),e.sc[o]=e.rb)}function qr(e){return Vr(e),e.Cc=[],e.sc=[],e}function Jr(e,r,t){return e.Cc[272*t+r]}function Qr(e,r){for(var t=0;r>t;++t)$r(e,t,e.rb,e.Cc,272*t),e.sc[t]=e.rb}function Ur(e,r,o){var n,s;if(null==e.V||e.u!=o||e.I!=r)for(e.I=r,e.qc=(1<<r)-1,e.u=o,s=1<<e.u+e.I,e.V=t(s),n=0;s>n;++n)e.V[n]=ot({})}function Xr(e,r,t){return e.V[((r&e.qc)<<e.u)+((255&t)>>>8-e.u)]}function et(e){var r,t=1<<e.u+e.I;for(r=0;t>r;++r)gt(e.V[r].tb)}function rt(e,r,t){var o,n,s=1;for(n=7;n>=0;--n)o=t>>n&1,kt(r,e.tb,s,o),s=s<<1|o}function tt(e,r,t,o){var n,s,i,_,a=1,c=1;for(s=7;s>=0;--s)n=o>>s&1,_=c,a&&(i=t>>s&1,_+=1+i<<8,a=i==n),kt(r,e.tb,_,n),c=c<<1|n}function ot(e){return e.tb=t(768),e}function nt(e,r,t,o){var n,s,i=1,_=7,a=0;if(r)for(;_>=0;--_)if(s=t>>_&1,n=o>>_&1,a+=wt(e.tb[(1+s<<8)+i],n),i=i<<1|n,s!=n){--_;break}for(;_>=0;--_)n=o>>_&1,a+=wt(e.tb[i],n),i=i<<1|n;return a}function st(e){e.j=-1,e.t=0}function it(e){e.j=0,e.t=0}function _t(e,r){return e.F=r,e.G=t(1<<r),e}function at(e,r){var t,o=1;for(t=e.F;0!=t;--t)o=(o<<1)+vt(r,e.G,o);return o-(1<<e.F)}function ct(e,r){var t,o,n=1,s=0;for(o=0;e.F>o;++o)t=vt(r,e.G,n),n<<=1,n+=t,s|=t<<o;return s}function ut(e,r,t,o){var n,s,i=1,_=0;for(s=0;o>s;++s)n=vt(t,e,r+i),i<<=1,i+=n,_|=n<<s;return _}function ft(e,r){return e.F=r,e.G=t(1<<r),e}function mt(e,r,t){var o,n,s=1;for(n=e.F;0!=n;)--n,o=t>>>n&1,kt(r,e.G,s,o),s=s<<1|o}function dt(e,r){var t,o,n=1,s=0;for(o=e.F;0!=o;)--o,t=r>>>o&1,s+=wt(e.G[n],t),n=(n<<1)+t;return s}function pt(e,r,t){var o,n,s=1;for(n=0;e.F>n;++n)o=1&t,kt(r,e.G,s,o),s=s<<1|o,t>>=1}function ht(e,r){var t,o,n=1,s=0;for(o=e.F;0!=o;--o)t=1&r,r>>>=1,s+=wt(e.G[n],t),n=n<<1|t;return s}function Pt(e,r,t,o,n){var s,i,_=1;for(i=0;o>i;++i)s=1&n,kt(t,e,r+_,s),_=_<<1|s,n>>=1}function lt(e,r,t,o){var n,s,i=1,_=0;for(s=t;0!=s;--s)n=1&o,o>>>=1,_+=Yt[(2047&(e[r+i]-n^-n))>>>2],i=i<<1|n;return _}function vt(e,r,t){var o,n=r[t];return o=(e.E>>>11)*n,(-2147483648^o)>(-2147483648^e.Bb)?(e.E=o,r[t]=n+(2048-n>>>5)<<16>>16,-16777216&e.E||(e.Bb=e.Bb<<8|l(e.Ab),e.E<<=8),0):(e.E-=o,e.Bb-=o,r[t]=n-(n>>>5)<<16>>16,-16777216&e.E||(e.Bb=e.Bb<<8|l(e.Ab),e.E<<=8),1)}function Bt(e,r){var t,o,n=0;for(t=r;0!=t;--t)e.E>>>=1,o=e.Bb-e.E>>>31,e.Bb-=e.E&o-1,n=n<<1|1-o,-16777216&e.E||(e.Bb=e.Bb<<8|l(e.Ab),e.E<<=8);return n}function St(e){e.Bb=0,e.E=-1;for(var r=0;5>r;++r)e.Bb=e.Bb<<8|l(e.Ab)}function gt(e){for(var r=e.length-1;r>=0;--r)e[r]=1024}function kt(e,r,t,s){var i,_=r[t];i=(e.E>>>11)*_,s?(e.xc=o(e.xc,n(a(i),[4294967295,0])),e.E-=i,r[t]=_-(_>>>5)<<16>>16):(e.E=i,r[t]=_+(2048-_>>>5)<<16>>16),-16777216&e.E||(e.E<<=8,bt(e))}function Rt(e,r,t){for(var n=t-1;n>=0;--n)e.E>>>=1,1==(r>>>n&1)&&(e.xc=o(e.xc,a(e.E))),-16777216&e.E||(e.E<<=8,bt(e))}function Mt(e){return o(o(a(e.Jb),e.mc),[4,0])}function Dt(e){e.mc=Gt,e.xc=Gt,e.E=-1,e.Jb=1,e.Oc=0}function bt(e){var r,t=c(p(e.xc,32));if(0!=t||s(e.xc,[4278190080,0])<0){e.mc=o(e.mc,a(e.Jb)),r=e.Oc;do g(e.Ab,r+t),r=255;while(0!=--e.Jb);e.Oc=c(e.xc)>>>24}++e.Jb,e.xc=m(n(e.xc,[16777215,0]),8)}function wt(e,r){return Yt[(2047&(e-r^-r))>>>2]}function Et(e){for(var r,t,o,n=0,s=0,i=e.length,_=[],a=[];i>n;++n,++s){if(r=255&e[n],128&r)if(192==(224&r)){if(n+1>=i)return e;if(t=255&e[++n],128!=(192&t))return e;a[s]=(31&r)<<6|63&t}else{if(224!=(240&r))return e;
+if(n+2>=i)return e;if(t=255&e[++n],128!=(192&t))return e;if(o=255&e[++n],128!=(192&o))return e;a[s]=(15&r)<<12|(63&t)<<6|63&o}else{if(!r)return e;a[s]=r}16383==s&&(_.push(String.fromCharCode.apply(String,a)),s=-1)}return s>0&&(a.length=s,_.push(String.fromCharCode.apply(String,a))),_.join("")}function Lt(e){var r,t,o,n=[],s=0,i=e.length;if("object"==typeof e)return e;for(R(e,0,i,n,0),o=0;i>o;++o)r=n[o],r>=1&&127>=r?++s:s+=!r||r>=128&&2047>=r?2:3;for(t=[],s=0,o=0;i>o;++o)r=n[o],r>=1&&127>=r?t[s++]=r<<24>>24:!r||r>=128&&2047>=r?(t[s++]=(192|r>>6&31)<<24>>24,t[s++]=(128|63&r)<<24>>24):(t[s++]=(224|r>>12&15)<<24>>24,t[s++]=(128|r>>6&63)<<24>>24,t[s++]=(128|63&r)<<24>>24);return t}function yt(e){return e[1]+e[0]}function Ct(e,t,o,n){function s(){try{for(var e,r=(new Date).getTime();rr(a.c.yb);)if(i=yt(a.c.yb.Pb)/yt(a.c.Tb),(new Date).getTime()-r>200)return n(i),Nt(s,0),0;n(1),e=S(a.c.Nb),Nt(o.bind(null,e),0)}catch(t){o(null,t)}}var i,_,a={},c=void 0===o&&void 0===n;if("function"!=typeof o&&(_=o,o=n=0),n=n||function(e){return void 0!==_?r(e,_):void 0},o=o||function(e,r){return void 0!==_?postMessage({action:Ft,cbn:_,result:e,error:r}):void 0},c){for(a.c=w({},Lt(e),Vt(t));rr(a.c.yb););return S(a.c.Nb)}try{a.c=w({},Lt(e),Vt(t)),n(0)}catch(u){return o(null,u)}Nt(s,0)}function zt(e,t,o){function n(){try{for(var e,r=0,i=(new Date).getTime();rr(c.d.yb);)if(++r%1e3==0&&(new Date).getTime()-i>200)return _&&(s=yt(c.d.yb.Z.g)/a,o(s)),Nt(n,0),0;o(1),e=Et(S(c.d.Nb)),Nt(t.bind(null,e),0)}catch(u){t(null,u)}}var s,i,_,a,c={},u=void 0===t&&void 0===o;if("function"!=typeof t&&(i=t,t=o=0),o=o||function(e){return void 0!==i?r(_?e:-1,i):void 0},t=t||function(e,r){return void 0!==i?postMessage({action:It,cbn:i,result:e,error:r}):void 0},u){for(c.d=L({},e);rr(c.d.yb););return Et(S(c.d.Nb))}try{c.d=L({},e),a=yt(c.d.Tb),_=a>-1,o(0)}catch(f){return t(null,f)}Nt(n,0)}var Ft=1,It=2,xt=3,Nt="function"==typeof setImmediate?setImmediate:setTimeout,Ot=4294967296,At=[4294967295,-Ot],Ht=[0,-0x8000000000000000],Gt=[0,0],Wt=[1,0],Tt=function(){var e,r,t,o=[];for(e=0;256>e;++e){for(t=e,r=0;8>r;++r)0!=(1&t)?t=t>>>1^-306674912:t>>>=1;o[e]=t}return o}(),Zt=function(){var e,r,t,o=2,n=[0,1];for(t=2;22>t;++t)for(r=1<<(t>>1)-1,e=0;r>e;++e,++o)n[o]=t<<24>>24;return n}(),Yt=function(){var e,r,t,o,n=[];for(r=8;r>=0;--r)for(o=1<<9-r-1,e=1<<9-r,t=o;e>t;++t)n[t]=(r<<6)+(e-t<<6>>>9-r-1);return n}(),Vt=function(){var e=[{s:16,f:64,m:0},{s:20,f:64,m:0},{s:19,f:64,m:1},{s:20,f:64,m:1},{s:21,f:128,m:1},{s:22,f:128,m:1},{s:23,f:128,m:1},{s:24,f:255,m:1},{s:25,f:255,m:1}];return function(r){return e[r-1]||e[6]}}();return"undefined"==typeof onmessage||"undefined"!=typeof window&&void 0!==window.document||!function(){onmessage=function(r){r&&r.gc&&(r.gc.action==It?e.decompress(r.gc.gc,r.gc.cbn):r.gc.action==Ft&&e.compress(r.gc.gc,r.gc.Rc,r.gc.cbn))}}(),{compress:Ct,decompress:zt}}();this.LZMA=this.LZMA_WORKER=e; }
+if(typeof self === "undefined" || !self.constructor.name.includes("Worker")) { /*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
 var saveAs=saveAs||function(e){"use strict";if(typeof e==="undefined"||typeof navigator!=="undefined"&&/MSIE [1-9]\./.test(navigator.userAgent)){return}var t=e.document,n=function(){return e.URL||e.webkitURL||e},r=t.createElementNS("http://www.w3.org/1999/xhtml","a"),o="download"in r,a=function(e){var t=new MouseEvent("click");e.dispatchEvent(t)},i=/constructor/i.test(e.HTMLElement)||e.safari,f=/CriOS\/[\d]+/.test(navigator.userAgent),u=function(t){(e.setImmediate||e.setTimeout)(function(){throw t},0)},s="application/octet-stream",d=1e3*40,c=function(e){var t=function(){if(typeof e==="string"){n().revokeObjectURL(e)}else{e.remove()}};setTimeout(t,d)},l=function(e,t,n){t=[].concat(t);var r=t.length;while(r--){var o=e["on"+t[r]];if(typeof o==="function"){try{o.call(e,n||e)}catch(a){u(a)}}}},p=function(e){if(/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(e.type)){return new Blob([String.fromCharCode(65279),e],{type:e.type})}return e},v=function(t,u,d){if(!d){t=p(t)}var v=this,w=t.type,m=w===s,y,h=function(){l(v,"writestart progress write writeend".split(" "))},S=function(){if((f||m&&i)&&e.FileReader){var r=new FileReader;r.onloadend=function(){var t=f?r.result:r.result.replace(/^data:[^;]*;/,"data:attachment/file;");var n=e.open(t,"_blank");if(!n)e.location.href=t;t=undefined;v.readyState=v.DONE;h()};r.readAsDataURL(t);v.readyState=v.INIT;return}if(!y){y=n().createObjectURL(t)}if(m){e.location.href=y}else{var o=e.open(y,"_blank");if(!o){e.location.href=y}}v.readyState=v.DONE;h();c(y)};v.readyState=v.INIT;if(o){y=n().createObjectURL(t);setTimeout(function(){r.href=y;r.download=u;a(r);h();c(y);v.readyState=v.DONE});return}S()},w=v.prototype,m=function(e,t,n){return new v(e,t||e.name||"download",n)};if(typeof navigator!=="undefined"&&navigator.msSaveOrOpenBlob){return function(e,t,n){t=t||e.name||"download";if(!n){e=p(e)}return navigator.msSaveOrOpenBlob(e,t)}}w.abort=function(){};w.readyState=w.INIT=0;w.WRITING=1;w.DONE=2;w.error=w.onwritestart=w.onprogress=w.onwrite=w.onabort=w.onerror=w.onwriteend=null;return m}(typeof self!=="undefined"&&self||typeof window!=="undefined"&&window||this.content);if(typeof module!=="undefined"&&module.exports){module.exports.saveAs=saveAs}else if(typeof define!=="undefined"&&define!==null&&define.amd!==null){define("FileSaver.js",function(){return saveAs})}
+ }
 
-if(typeof define == "function" && define.__amd) {
+if (typeof define === "function" && define.__amd) {
 	define.amd = define.__amd;
 	delete define.__amd;
 }
