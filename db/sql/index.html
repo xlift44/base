@@ -101,6 +101,17 @@ CREATE TABLE название_таблицы(
 
 Названия и типы обязательны, атрибуты - нет.
 
+CREATE TABLE patients (
+  full_name VARCHAR(100),
+  sex CHAR(1),
+  birth_date DATE,
+  oms_num BIGINT
+);
+
+CREATE TABLE med_area (
+  area_num TINYINT,
+  area_address VARCHAR(1000)
+);
 </pre>
 
 <a href="../../index.html" class="previous">&laquo; back &laquo;</a>
