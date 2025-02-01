@@ -112,6 +112,33 @@ CREATE TABLE med_area (
   area_num TINYINT,
   area_address VARCHAR(1000)
 );
+
+<hr><h3>Правила целостности:</h3>
+not null - запрет неопределенных значений
+CREATE TABLE patients (
+    full_name VARCHAR(100) NOT NULL,
+    sex CHAR(1),
+    birth_date DATE,
+    oms_num BIGINT
+);
+
+ALTER TABLE название_таблицы
+CHANGE текущее_название_столбца новое_название_столбца новый_тип_столбца новые_атрибуты_столбца;
+
+ALTER TABLE patients CHANGE full_name full_name VARCHAR(100) NOT NULL;
+ALTER TABLE patients MODIFY full_name VARCHAR(100) NOT NULL;
+
+СУБД не позволит создать новое правило, пока все данные не будут удовлетворять новому правилу
+ALTER меняет структуру таблицы, свойства полей, то есть физическую структуру
+(проверить) Если у вас создана таблица, то писать нужно не change, а modify
+
+unique - уникальность значения
+неопределенные значения не считаются одинаковыми
+
+primary key - первичный ключ
+foreign key - внешние ключи (для ограничения ссылочной целостности)
+
+
 </pre>
 
 <a href="../../index.html" class="previous">&laquo; back &laquo;</a>
