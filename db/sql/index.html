@@ -159,6 +159,20 @@ CREATE TABLE название_таблицы(
 ,FOREIGN KEY (название_поля) REFERENCES название_родительской_таблицы(название_поля_родит_таблицы)
 );
 
+CREATE TABLE patients(
+    full_name VARCHAR(100) NOT NULL,
+    sex CHAR(1),
+    birth_date DATE,
+    oms_num BIGINT UNIQUE,
+    card_num INT,
+    area_num TINYINT,
+    FOREIGN KEY (area_num) REFERENCES med_area(area_num)
+);
+
+Добавление FOREIGN KEY в уже существующую таблицу patients:
+
+ALTER TABLE patients ADD FOREIGN KEY (area_num) REFERENCES med_area(area_num);
+
 <hr><h3>Добавление столбца:</h3>
 ALTER TABLE название_таблицы
 ADD COLUMN название_нового_столбца тип_нового_столбца атрибуты_нового столбца;
