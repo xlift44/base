@@ -6,21 +6,21 @@ import openfl.display.Bitmap;
 
 import openfl.Assets;
 
-class Sticker extends Sprite
+class KeyButton extends Sprite
 {
 	public var keyCode:Int = 0;
 
 	public var tText1:TextField;
 	public var tText2:TextField;
 
-	public function new(name:String, info:String) {
+	public function new(name:String, info:String)	{
 		super();
 		//this.x = 10;
 		//this.y = 10;
-    // this.width = 500;
-    // this.height = 500;
+        // this.width = 500;
+        // this.height = 500;
 
-    var color = View.colorOn;
+        var color = View.colorOn;
 
 		graphics.lineStyle(3, View.colorOff);
 		graphics.beginFill(0x222222, 1);

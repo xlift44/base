@@ -19,7 +19,7 @@ import openfl.events.MouseEvent;
  */
 
 
-class Main extends Sprite 
+class Main extends Sprite
 {
 
 	public var view:View;
@@ -27,8 +27,8 @@ class Main extends Sprite
 
 	public function new() {
 		super();
-		
-		trace("Start");
+
+		trace("Main start");
 
 		view = new View();
 		addChild(view);
@@ -37,9 +37,9 @@ class Main extends Sprite
 		stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
 		stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
 		stage.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-		stage.addEventListener(Event.ENTER_FRAME, enterFrame);	
+		stage.addEventListener(Event.ENTER_FRAME, enterFrame);
 
-		trace("Done");
+		trace("Main done");
 	}
 
 
@@ -60,25 +60,25 @@ class Main extends Sprite
 	public function mouseDown(e:MouseEvent) { // Нажатие на кнопку мыши
 		trace("mouseDown", e);
 	}
-	
-	
+
+
 	public function mouseUp(e:MouseEvent) { // Отпускание кнопки мыши
 		trace("mouseUp", e);
 	}
-	
-	
+
+
 	public function keyDown(e:KeyboardEvent) { // Нажатие на клавишу клавиатуры
 		// trace("keyDown", e);
-		view.drawButton(e, true);
+		view.drawKey(e, true);
 	}
-	
-	
+
+
 	public function keyUp(e:KeyboardEvent) { // Отпускание клавиши клавиатуры
 		// trace("keyUp", e);
-		view.drawButton(e, false);
+		view.drawKey(e, false);
 	}
-	
-	
-	
+
+
+
 }
 

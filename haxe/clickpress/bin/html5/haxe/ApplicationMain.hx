@@ -19,8 +19,8 @@ class ApplicationMain
 		lime.system.System.__registerEntryPoint("clickpress", create);
 
 		#if (js && html5)
-		#if (munit || (utest && openfl_enable_utest_legacy_mode))
-		lime.system.System.embed("clickpress", null, 810, 1066);
+		#if (munit || utest)
+		lime.system.System.embed("clickpress", null, 1280, 1024);
 		#end
 		#else
 		create(null);
@@ -35,7 +35,7 @@ class ApplicationMain
 		ManifestResources.init(config);
 		#end
 
-		app.meta["build"] = "91";
+		app.meta["build"] = "39";
 		app.meta["company"] = "xlift44";
 		app.meta["file"] = "clickpress";
 		app.meta["name"] = "clickpress";
@@ -54,14 +54,14 @@ class ApplicationMain
 			element: null,
 			frameRate: 30,
 			#if !web fullscreen: false, #end
-			height: 1066,
+			height: 1024,
 			hidden: #if munit true #else false #end,
 			maximized: false,
 			minimized: false,
 			parameters: {},
 			resizable: true,
 			title: "clickpress",
-			width: 810,
+			width: 1280,
 			x: null,
 			y: null,
 		};
