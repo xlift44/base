@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "39";
+	app.meta.h["build"] = "41";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -4061,14 +4061,13 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 	,drawKey: function(e,on) {
 		var keyParam = [];
 		keyParam[49] = [1,2,1,1,"1"];
+		keyParam[50] = [2,2,1,1,"1"];
 		keyParam[32] = [4.5,6,4.5,1,"Space"];
 		var keyCode = e.keyCode;
 		var charCode = e.charCode;
 		var xBut = 0;
 		var yBut = 0;
 		var text = "";
-		haxe_Log.trace(keyParam[49],{ fileName : "src/View.hx", lineNumber : 76, className : "View", methodName : "drawKey"});
-		haxe_Log.trace(keyParam[32],{ fileName : "src/View.hx", lineNumber : 77, className : "View", methodName : "drawKey"});
 		if(on) {
 			text = String.fromCodePoint(charCode);
 			xBut = this.xBorder + this.stepGridX * 2;
@@ -4079,7 +4078,7 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 			this.stickers.push(sticker);
 			sticker.set_x(xBut);
 			sticker.set_y(300 + yBut);
-			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 94, className : "View", methodName : "drawKey", customParams : [sticker.get_x(),sticker.get_y()]});
+			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 91, className : "View", methodName : "drawKey", customParams : [sticker.get_x(),sticker.get_y()]});
 		}
 	}
 	,drawButton: function(e,on) {
@@ -4140,7 +4139,7 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 			this.stickers.push(sticker);
 			sticker.set_x(xBut);
 			sticker.set_y(yBut);
-			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 157, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
+			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 154, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
 		} else {
 			var _g = 0;
 			var _g1 = this.stickers;
@@ -23316,7 +23315,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 911302;
+	this.version = 23922;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";

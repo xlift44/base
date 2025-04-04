@@ -17,10 +17,10 @@ class KeyButton extends Sprite
 		super();
 		//this.x = 10;
 		//this.y = 10;
-        // this.width = 500;
-        // this.height = 500;
+    // this.width = 500;
+    // this.height = 500;
 
-        var color = View.colorOn;
+    var color = View.colorOn;
 
 		graphics.lineStyle(3, View.colorOff);
 		graphics.beginFill(0x222222, 1);
