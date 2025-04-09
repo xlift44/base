@@ -13,31 +13,26 @@ class KeyButton extends Sprite
 	public var tText1:TextField;
 	public var tText2:TextField;
 
-	public function new(name:String, info:String)	{
+
+	public function new(name:String)	{
 		super();
-		//this.x = 10;
-		//this.y = 10;
-    // this.width = 500;
-    // this.height = 500;
 
-    var color = View.colorOn;
+    var color = View.colorOff;
 
-		graphics.lineStyle(3, View.colorOff);
-		graphics.beginFill(0x222222, 1);
-    graphics.drawRoundRect(10, 10, 180, 80, 15, 15);
+		// graphics.lineStyle(3, View.colorOff);
+		// graphics.beginFill(0x222222, 1);
+    // graphics.drawRoundRect(10, 10, 180, 80, 15, 15);
 
     graphics.lineStyle(3, color);
 		graphics.beginFill(0, 1);
-		graphics.drawRoundRect(10, 10, 80, 80, 15, 15);
-
+    graphics.drawRoundRect(0, 0, 50, 50, 20, 20);
 		graphics.endFill();
-
 
     var text1:String = name;
     var tf:TextFormat = new TextFormat();
 
     tf.font = "Arial";
-		tf.size = 24;
+		tf.size = 20;
 		tf.bold = true;
 		tf.align = "center";
 		tf.color = color;
@@ -47,44 +42,40 @@ class KeyButton extends Sprite
 
     addChild(tText1);
 		tText1.text = text1;
-		tText1.x = 0;
-		tText1.y = 32;
+		tText1.x = -25;
+		tText1.y = 10;
 
+		// var text2:String = info;
+    // var tf2:TextFormat = new TextFormat();
 
-		var text2:String = info;
-    var tf2:TextFormat = new TextFormat();
+    // tf2.font = "Arial";
+		// tf2.size = 12;
+		// tf2.bold = true;
+		// tf2.align = "left";
+		// tf2.color = View.colorOn;
 
-    tf2.font = "Arial";
-		tf2.size = 12;
-		tf2.bold = true;
-		tf2.align = "left";
-		tf2.color = View.colorOn;
+		// tText2 = new TextField();
+    // tText2.defaultTextFormat = tf2;
 
-		tText2 = new TextField();
-    tText2.defaultTextFormat = tf2;
-
-    addChild(tText2);
-		tText2.text = text2;
-		tText2.x = 100;
-		tText2.y = 17;
+    // addChild(tText2);
+		// tText2.text = text2;
+		// tText2.x = 100;
+		// tText2.y = 17;
 
 	}
 
-	public function off () {
-		var color = 0x444444;
+	// public function on () {
+	// 	graphics.lineStyle(3, View.colorOn);
+	// 	graphics.drawRoundRect(10, 10, 80, 80, 15, 15);
+	// 	tText1.textColor = View.colorOn;
+	// 	tText2.textColor = View.colorOn;
+	// }
 
-		graphics.lineStyle(3, View.colorOff);
-		//graphics.beginFill(0, 1);
-		graphics.drawRoundRect(10, 10, 80, 80, 15, 15);
-		//graphics.endFill();
-
-		tText1.textColor = View.colorOff;
-		tText2.textColor = View.colorOff;
-	}
-
-	public function slide () {
-
-		y += 60;
-	}
+	// public function off () {
+	// 	graphics.lineStyle(3, View.colorOff);
+	// 	graphics.drawRoundRect(10, 10, 80, 80, 15, 15);
+	// 	tText1.textColor = View.colorOff;
+	// 	tText2.textColor = View.colorOff;
+	// }
 
 }

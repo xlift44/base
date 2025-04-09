@@ -9,6 +9,8 @@ import openfl.events.MouseEvent;
 
 class View extends Sprite
 {
+    // public var maxX:Int = 810;
+	  // public var maxY:Int = 1066;
     public var maxX:Int = 1280;
 	  public var maxY:Int = 1024;
   	public var stepGridX:Int = 50;
@@ -31,55 +33,36 @@ class View extends Sprite
     xBorder = Std.int((maxX - stepGridX * countX) / 2);
     yBorder = xBorder;
 
-    startScreen();
+    // startScreen();
     startKeyboard();
-
-    var keyButton = new KeyButton("Esc");
-    addChild(keyButton);
-    keyButton.x = xBorder;
-    keyButton.y = yBorder;
-
-    keyButton = new KeyButton("~");
-    addChild(keyButton);
-    keyButton.x = xBorder;
-    keyButton.y = yBorder + 100;
-
-    keyButton = new KeyButton("1");
-    addChild(keyButton);
-    keyButton.x = xBorder + 50;
-    keyButton.y = yBorder + 100;
-
-    keyButton = new KeyButton("2");
-    addChild(keyButton);
-    keyButton.x = xBorder + 100;
-    keyButton.y = yBorder + 100;
-
-    trace("---->", keyButton.width, keyButton.height);
-
 	}
 
     public function startScreen() {
       graphics.clear();
-      graphics.lineStyle(1, colorGrey);
-      graphics.drawRect(0, 0, maxX, maxY);
     }
 
     public function startKeyboard() {
+      graphics.lineStyle(1, colorGrey);
+      graphics.drawRect(0, 0, maxX, maxY);
+
       for (y in 0...countY + 1) {
         graphics.moveTo(xBorder, yBorder + y * stepGridY);
         graphics.lineTo(xBorder + countX * stepGridX, yBorder + y * stepGridY);
       }
+
       for (x in 0...countX + 1) {
         graphics.moveTo(xBorder + x * stepGridX, yBorder);
         graphics.lineTo(xBorder + x * stepGridX, yBorder + countY * stepGridY);
       }
+
       graphics.lineStyle(0, 0, 0);
+
+
     }
 
     public function drawKey(e:KeyboardEvent, on: Bool) {
       var keyParam:Array<Array<Dynamic>> = [];
       // x, y, xx, yy, text
-      //keyParam[??] = [1, 1, 1, 1, "Esc"];
       keyParam[49] = [1, 2, 1, 1, "1"];
       keyParam[50] = [2, 2, 1, 1, "1"];
       keyParam[32] = [4.5, 6, 4.5, 1, "Space"];
@@ -90,26 +73,26 @@ class View extends Sprite
       var yBut:Int = 0;
       var text:String = "";
 
-      // if (on) {
-      //     text = String.fromCharCode(charCode);
-      //     xBut = xBorder + stepGridX * 2; // Std.int(stepGridX * (countX / 2 - 1) * 2) ;
-      //     yBut = yBorder + stepGridY;
+      if (on) {
+          text = String.fromCharCode(charCode);
+          xBut = xBorder + stepGridX * 2; // Std.int(stepGridX * (countX / 2 - 1) * 2) ;
+          yBut = yBorder + stepGridY;
 
-      //     var keyButton = new KeyButton(text, "\n"
-      //     + "keyCode:" + keyCode + "\n"
-      //     + "charCode:" + charCode + "\n"+ "");
-      //     keyButton.keyCode = keyCode;
-      //     addChild(keyButton);
+          var sticker = new Sticker(text, "\n"
+          + "keyCode:" + keyCode + "\n"
+          + "charCode:" + charCode + "\n"+ "");
+          sticker.keyCode = keyCode;
+          addChild(sticker);
 
-      //     // stickers.push(keyButton);
+          stickers.push(sticker);
 
-      //     keyButton.x = xBut;
-      //     keyButton.y = 300 + yBut;
-      //     trace(text, keyButton.x, keyButton.y);
+          sticker.x = xBut;
+          sticker.y = 300 + yBut;
+          trace(text, sticker.x, sticker.y);
 
-      // } else {
-      //   // keyButton.off();
-      // }
+      } else {
+        // stick.off();
+      }
   }
 
     public function drawButton(e:KeyboardEvent, on: Bool) {

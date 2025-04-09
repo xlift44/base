@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "41";
+	app.meta.h["build"] = "66";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3387,16 +3387,14 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 	,enterFrame: function(e) {
 	}
 	,mouseDown: function(e) {
-		haxe_Log.trace("mouseDown",{ fileName : "src/Main.hx", lineNumber : 61, className : "Main", methodName : "mouseDown", customParams : [e]});
+		haxe_Log.trace("mouseDown",{ fileName : "src/Main.hx", lineNumber : 60, className : "Main", methodName : "mouseDown", customParams : [e]});
 	}
 	,mouseUp: function(e) {
-		haxe_Log.trace("mouseUp",{ fileName : "src/Main.hx", lineNumber : 66, className : "Main", methodName : "mouseUp", customParams : [e]});
+		haxe_Log.trace("mouseUp",{ fileName : "src/Main.hx", lineNumber : 65, className : "Main", methodName : "mouseUp", customParams : [e]});
 	}
 	,keyDown: function(e) {
-		this.view.drawKey(e,true);
 	}
 	,keyUp: function(e) {
-		this.view.drawKey(e,false);
 	}
 	,__class__: Main
 });
@@ -3555,6 +3553,34 @@ HxOverrides.remove = function(a,obj) {
 HxOverrides.now = function() {
 	return Date.now();
 };
+var KeyButton = function(name) {
+	this.keyCode = 0;
+	openfl_display_Sprite.call(this);
+	var color = 17408;
+	this.get_graphics().lineStyle(3,color);
+	this.get_graphics().beginFill(0,1);
+	this.get_graphics().drawRoundRect(0,0,50,50,20,20);
+	this.get_graphics().endFill();
+	var text1 = name;
+	var tf = new openfl_text_TextFormat();
+	tf.font = "Arial";
+	tf.size = 20;
+	tf.bold = true;
+	tf.align = openfl_text_TextFormatAlign.fromString("center");
+	tf.color = color;
+	this.tText1 = new openfl_text_TextField();
+	this.tText1.set_defaultTextFormat(tf);
+	this.addChild(this.tText1);
+	this.tText1.set_text(text1);
+	this.tText1.set_x(-25);
+	this.tText1.set_y(10);
+};
+$hxClasses["KeyButton"] = KeyButton;
+KeyButton.__name__ = "KeyButton";
+KeyButton.__super__ = openfl_display_Sprite;
+KeyButton.prototype = $extend(openfl_display_Sprite.prototype,{
+	__class__: KeyButton
+});
 var Lambda = function() { };
 $hxClasses["Lambda"] = Lambda;
 Lambda.__name__ = "Lambda";
@@ -4030,7 +4056,25 @@ var View = function() {
 	openfl_display_Sprite.call(this);
 	this.xBorder = (this.maxX - this.stepGridX * this.countX) / 2 | 0;
 	this.yBorder = this.xBorder;
+	this.startScreen();
 	this.startKeyboard();
+	var keyButton = new KeyButton("Esc");
+	this.addChild(keyButton);
+	keyButton.set_x(this.xBorder);
+	keyButton.set_y(this.yBorder);
+	keyButton = new KeyButton("~");
+	this.addChild(keyButton);
+	keyButton.set_x(this.xBorder);
+	keyButton.set_y(this.yBorder + 100);
+	keyButton = new KeyButton("1");
+	this.addChild(keyButton);
+	keyButton.set_x(this.xBorder + 50);
+	keyButton.set_y(this.yBorder + 100);
+	keyButton = new KeyButton("2");
+	this.addChild(keyButton);
+	keyButton.set_x(this.xBorder + 100);
+	keyButton.set_y(this.yBorder + 100);
+	haxe_Log.trace("---->",{ fileName : "src/View.hx", lineNumber : 57, className : "View", methodName : "new", customParams : [keyButton.get_width(),keyButton.get_height()]});
 };
 $hxClasses["View"] = View;
 View.__name__ = "View";
@@ -4038,10 +4082,10 @@ View.__super__ = openfl_display_Sprite;
 View.prototype = $extend(openfl_display_Sprite.prototype,{
 	startScreen: function() {
 		this.get_graphics().clear();
-	}
-	,startKeyboard: function() {
 		this.get_graphics().lineStyle(1,4473924);
 		this.get_graphics().drawRect(0,0,this.maxX,this.maxY);
+	}
+	,startKeyboard: function() {
 		var _g = 0;
 		var _g1 = this.countY + 1;
 		while(_g < _g1) {
@@ -4068,18 +4112,6 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		var xBut = 0;
 		var yBut = 0;
 		var text = "";
-		if(on) {
-			text = String.fromCodePoint(charCode);
-			xBut = this.xBorder + this.stepGridX * 2;
-			yBut = this.yBorder + this.stepGridY;
-			var sticker = new Sticker(text,"\n" + "keyCode:" + keyCode + "\n" + "charCode:" + charCode + "\n" + "");
-			sticker.keyCode = keyCode;
-			this.addChild(sticker);
-			this.stickers.push(sticker);
-			sticker.set_x(xBut);
-			sticker.set_y(300 + yBut);
-			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 91, className : "View", methodName : "drawKey", customParams : [sticker.get_x(),sticker.get_y()]});
-		}
 	}
 	,drawButton: function(e,on) {
 		var keyCode = e.keyCode;
@@ -4139,7 +4171,7 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 			this.stickers.push(sticker);
 			sticker.set_x(xBut);
 			sticker.set_y(yBut);
-			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 154, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
+			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 171, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
 		} else {
 			var _g = 0;
 			var _g1 = this.stickers;
@@ -23315,7 +23347,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 23922;
+	this.version = 376162;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";

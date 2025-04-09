@@ -53,7 +53,6 @@ class Main extends Sprite
 
 
 	public function enterFrame(e:Event) {
-
 	}
 
 
@@ -69,13 +68,13 @@ class Main extends Sprite
 
 	public function keyDown(e:KeyboardEvent) { // Нажатие на клавишу клавиатуры
 		// trace("keyDown", e);
-		view.drawKey(e, true);
+		// view.drawKey(e, true);
 	}
 
 
 	public function keyUp(e:KeyboardEvent) { // Отпускание клавиши клавиатуры
 		// trace("keyUp", e);
-		view.drawKey(e, false);
+		// view.drawKey(e, false);
 	}
 
 
