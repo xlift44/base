@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "66";
+	app.meta.h["build"] = "80";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3756,60 +3756,6 @@ Std.parseInt = function(x) {
 	}
 	return null;
 };
-var Sticker = function(name,info) {
-	this.keyCode = 0;
-	openfl_display_Sprite.call(this);
-	var color = 65280;
-	this.get_graphics().lineStyle(3,17408);
-	this.get_graphics().beginFill(2236962,1);
-	this.get_graphics().drawRoundRect(10,10,180,80,15,15);
-	this.get_graphics().lineStyle(3,color);
-	this.get_graphics().beginFill(0,1);
-	this.get_graphics().drawRoundRect(10,10,80,80,15,15);
-	this.get_graphics().endFill();
-	var text1 = name;
-	var tf = new openfl_text_TextFormat();
-	tf.font = "Arial";
-	tf.size = 24;
-	tf.bold = true;
-	tf.align = openfl_text_TextFormatAlign.fromString("center");
-	tf.color = color;
-	this.tText1 = new openfl_text_TextField();
-	this.tText1.set_defaultTextFormat(tf);
-	this.addChild(this.tText1);
-	this.tText1.set_text(text1);
-	this.tText1.set_x(0);
-	this.tText1.set_y(32);
-	var text2 = info;
-	var tf2 = new openfl_text_TextFormat();
-	tf2.font = "Arial";
-	tf2.size = 12;
-	tf2.bold = true;
-	tf2.align = openfl_text_TextFormatAlign.fromString("left");
-	tf2.color = 65280;
-	this.tText2 = new openfl_text_TextField();
-	this.tText2.set_defaultTextFormat(tf2);
-	this.addChild(this.tText2);
-	this.tText2.set_text(text2);
-	this.tText2.set_x(100);
-	this.tText2.set_y(17);
-};
-$hxClasses["Sticker"] = Sticker;
-Sticker.__name__ = "Sticker";
-Sticker.__super__ = openfl_display_Sprite;
-Sticker.prototype = $extend(openfl_display_Sprite.prototype,{
-	off: function() {
-		var color = 4473924;
-		this.get_graphics().lineStyle(3,17408);
-		this.get_graphics().drawRoundRect(10,10,80,80,15,15);
-		this.tText1.set_textColor(17408);
-		this.tText2.set_textColor(17408);
-	}
-	,slide: function() {
-		this.set_y(this.get_y() + 60);
-	}
-	,__class__: Sticker
-});
 var _$String_String_$Impl_$ = function() { };
 $hxClasses["_String.String_Impl_"] = _$String_String_$Impl_$;
 _$String_String_$Impl_$.__name__ = "_String.String_Impl_";
@@ -4046,7 +3992,7 @@ UInt.toFloat = function(this1) {
 	}
 };
 var View = function() {
-	this.stickers = [];
+	this.keys = [];
 	this.countY = 7;
 	this.countX = 24;
 	this.stepGridY = 50;
@@ -4058,29 +4004,35 @@ var View = function() {
 	this.yBorder = this.xBorder;
 	this.startScreen();
 	this.startKeyboard();
+	this.initKeys();
 	var keyButton = new KeyButton("Esc");
-	this.addChild(keyButton);
 	keyButton.set_x(this.xBorder);
 	keyButton.set_y(this.yBorder);
-	keyButton = new KeyButton("~");
 	this.addChild(keyButton);
+	keyButton = new KeyButton("~");
 	keyButton.set_x(this.xBorder);
 	keyButton.set_y(this.yBorder + 100);
-	keyButton = new KeyButton("1");
 	this.addChild(keyButton);
+	keyButton = new KeyButton("1");
 	keyButton.set_x(this.xBorder + 50);
 	keyButton.set_y(this.yBorder + 100);
-	keyButton = new KeyButton("2");
 	this.addChild(keyButton);
+	keyButton = new KeyButton("2");
 	keyButton.set_x(this.xBorder + 100);
 	keyButton.set_y(this.yBorder + 100);
-	haxe_Log.trace("---->",{ fileName : "src/View.hx", lineNumber : 57, className : "View", methodName : "new", customParams : [keyButton.get_width(),keyButton.get_height()]});
+	this.addChild(keyButton);
 };
 $hxClasses["View"] = View;
 View.__name__ = "View";
 View.__super__ = openfl_display_Sprite;
 View.prototype = $extend(openfl_display_Sprite.prototype,{
-	startScreen: function() {
+	initKeys: function() {
+		this.keys.push([2,3,1,1,"1"]);
+		this.keys.push([3,3,1,1,"2"]);
+		this.keys.push([4.5,6,4.5,1,"Space"]);
+		haxe_Log.trace(this.keys,{ fileName : "src/View.hx", lineNumber : 75, className : "View", methodName : "initKeys"});
+	}
+	,startScreen: function() {
 		this.get_graphics().clear();
 		this.get_graphics().lineStyle(1,4473924);
 		this.get_graphics().drawRect(0,0,this.maxX,this.maxY);
@@ -4112,77 +4064,6 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		var xBut = 0;
 		var yBut = 0;
 		var text = "";
-	}
-	,drawButton: function(e,on) {
-		var keyCode = e.keyCode;
-		var charCode = e.charCode;
-		var xBut = 0;
-		var yBut = 0;
-		var text = "";
-		if(on) {
-			var needSlide = true;
-			if(!(keyCode == 17 || keyCode == 16 || keyCode == 18)) {
-				var _g = 0;
-				var _g1 = this.stickers;
-				while(_g < _g1.length) {
-					var stick = _g1[_g];
-					++_g;
-					if(stick.keyCode == keyCode) {
-						needSlide = false;
-						break;
-					}
-				}
-				if(needSlide) {
-					var _g = 0;
-					var _g1 = this.stickers;
-					while(_g < _g1.length) {
-						var stick = _g1[_g];
-						++_g;
-						if(!(stick.keyCode == 17 || stick.keyCode == 16 || stick.keyCode == 18)) {
-							stick.slide();
-						}
-					}
-				}
-			}
-			switch(keyCode) {
-			case 16:
-				text = "SHIFT";
-				xBut = this.xBorder;
-				yBut = this.yBorder + this.stepGridY * 2;
-				break;
-			case 17:
-				text = "CTRL";
-				xBut = this.xBorder;
-				yBut = this.yBorder + this.stepGridY;
-				break;
-			case 18:
-				text = "ALT";
-				xBut = this.xBorder;
-				yBut = this.yBorder + this.stepGridY * 3;
-				break;
-			default:
-				text = String.fromCodePoint(charCode);
-				xBut = this.xBorder + this.stepGridX * 2;
-				yBut = this.yBorder + this.stepGridY;
-			}
-			var sticker = new Sticker(text,"\n" + "keyCode:" + keyCode + "\n" + "charCode:" + charCode + "\n" + "");
-			sticker.keyCode = keyCode;
-			this.addChild(sticker);
-			this.stickers.push(sticker);
-			sticker.set_x(xBut);
-			sticker.set_y(yBut);
-			haxe_Log.trace(text,{ fileName : "src/View.hx", lineNumber : 171, className : "View", methodName : "drawButton", customParams : [sticker.get_x(),sticker.get_y()]});
-		} else {
-			var _g = 0;
-			var _g1 = this.stickers;
-			while(_g < _g1.length) {
-				var stick = _g1[_g];
-				++_g;
-				if(stick.keyCode == keyCode) {
-					stick.off();
-				}
-			}
-		}
 	}
 	,__class__: View
 });
@@ -23347,7 +23228,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 376162;
+	this.version = 551910;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
