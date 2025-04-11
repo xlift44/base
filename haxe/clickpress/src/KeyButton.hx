@@ -14,7 +14,7 @@ class KeyButton extends Sprite
 	public var tText2:TextField;
 
 
-	public function new(name:String)	{
+	public function new(w:Float, h:Float, name:String)	{
 		super();
 
     var color = View.colorOff;
@@ -25,7 +25,7 @@ class KeyButton extends Sprite
 
     graphics.lineStyle(3, color);
 		graphics.beginFill(0, 1);
-    graphics.drawRoundRect(0, 0, 50, 50, 20, 20);
+    graphics.drawRoundRect(0, 0, 50 * w, 50 * h, 20, 20);
 		graphics.endFill();
 
     var text1:String = name;
@@ -42,8 +42,8 @@ class KeyButton extends Sprite
 
     addChild(tText1);
 		tText1.text = text1;
-		tText1.x = -25;
-		tText1.y = 10;
+		tText1.x = -25 + (w - 1) * 25;
+		tText1.y = 10 + (h - 1) * 25;
 
 		// var text2:String = info;
     // var tf2:TextFormat = new TextFormat();

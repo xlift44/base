@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "80";
+	app.meta.h["build"] = "123";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3553,13 +3553,13 @@ HxOverrides.remove = function(a,obj) {
 HxOverrides.now = function() {
 	return Date.now();
 };
-var KeyButton = function(name) {
+var KeyButton = function(w,h,name) {
 	this.keyCode = 0;
 	openfl_display_Sprite.call(this);
 	var color = 17408;
 	this.get_graphics().lineStyle(3,color);
 	this.get_graphics().beginFill(0,1);
-	this.get_graphics().drawRoundRect(0,0,50,50,20,20);
+	this.get_graphics().drawRoundRect(0,0,50 * w,50 * h,20,20);
 	this.get_graphics().endFill();
 	var text1 = name;
 	var tf = new openfl_text_TextFormat();
@@ -3572,8 +3572,8 @@ var KeyButton = function(name) {
 	this.tText1.set_defaultTextFormat(tf);
 	this.addChild(this.tText1);
 	this.tText1.set_text(text1);
-	this.tText1.set_x(-25);
-	this.tText1.set_y(10);
+	this.tText1.set_x(-25 + (w - 1) * 25);
+	this.tText1.set_y(10 + (h - 1) * 25);
 };
 $hxClasses["KeyButton"] = KeyButton;
 KeyButton.__name__ = "KeyButton";
@@ -4005,32 +4005,24 @@ var View = function() {
 	this.startScreen();
 	this.startKeyboard();
 	this.initKeys();
-	var keyButton = new KeyButton("Esc");
-	keyButton.set_x(this.xBorder);
-	keyButton.set_y(this.yBorder);
-	this.addChild(keyButton);
-	keyButton = new KeyButton("~");
-	keyButton.set_x(this.xBorder);
-	keyButton.set_y(this.yBorder + 100);
-	this.addChild(keyButton);
-	keyButton = new KeyButton("1");
-	keyButton.set_x(this.xBorder + 50);
-	keyButton.set_y(this.yBorder + 100);
-	this.addChild(keyButton);
-	keyButton = new KeyButton("2");
-	keyButton.set_x(this.xBorder + 100);
-	keyButton.set_y(this.yBorder + 100);
-	this.addChild(keyButton);
+	var keyButton;
+	var _g = 0;
+	var _g1 = this.keys;
+	while(_g < _g1.length) {
+		var k = _g1[_g];
+		++_g;
+		keyButton = new KeyButton(k[2],k[3],k[4]);
+		keyButton.set_x(this.xBorder + (k[0] - 1) * 50);
+		keyButton.set_y(this.yBorder + (k[1] - 1) * 50);
+		this.addChild(keyButton);
+	}
 };
 $hxClasses["View"] = View;
 View.__name__ = "View";
 View.__super__ = openfl_display_Sprite;
 View.prototype = $extend(openfl_display_Sprite.prototype,{
 	initKeys: function() {
-		this.keys.push([2,3,1,1,"1"]);
-		this.keys.push([3,3,1,1,"2"]);
-		this.keys.push([4.5,6,4.5,1,"Space"]);
-		haxe_Log.trace(this.keys,{ fileName : "src/View.hx", lineNumber : 75, className : "View", methodName : "initKeys"});
+		this.keys = [[1,1,1,1,"Esc"],[3,1,1,1,"F1"],[4,1,1,1,"F2"],[5,1,1,1,"F3"],[6,1,1,1,"F4"],[7.5,1,1,1,"F5"],[8.5,1,1,1,"F6"],[9.5,1,1,1,"F7"],[10.5,1,1,1,"F8"],[12,1,1,1,"F9"],[13,1,1,1,"F10"],[14,1,1,1,"F11"],[15,1,1,1,"F12"],[1,3,1,1,"~"],[2,3,1,1,"1"],[3,3,1,1,"2"],[4,3,1,1,"3"],[5,3,1,1,"4"],[6,3,1,1,"5"],[7,3,1,1,"6"],[8,3,1,1,"7"],[9,3,1,1,"8"],[10,3,1,1,"9"],[11,3,1,1,"0"],[12,3,1,1,"-"],[13,3,1,1,"="],[14,3,2,1,"<<"],[1,4,1.5,1,"TAB"],[2.5,4,1,1,"Q"],[3.5,4,1,1,"W"],[4.5,4,1,1,"E"],[5.5,4,1,1,"R"],[6.5,4,1,1,"T"],[7.5,4,1,1,"Y"],[8.5,4,1,1,"U"],[9.5,4,1,1,"I"],[10.5,4,1,1,"O"],[11.5,4,1,1,"P"],[12.5,4,1,1,"["],[13.5,4,1,1,"]"],[14.5,4,1.5,1,"\\"],[1,5,2,1,"CapsLock"],[3,5,1,1,"A"],[4,5,1,1,"S"],[5,5,1,1,"D"],[6,5,1,1,"F"],[7,5,1,1,"G"],[8,5,1,1,"H"],[9,5,1,1,"J"],[10,5,1,1,"K"],[11,5,1,1,"L"],[12,5,1,1,";"],[13,5,1,1,"'"],[14,5,2,1,"Enter"],[1,6,2.5,1,"Shift"],[3.5,6,1,1,"Z"],[4.5,6,1,1,"X"],[5.5,6,1,1,"C"],[6.5,6,1,1,"V"],[7.5,6,1,1,"B"],[8.5,6,1,1,"N"],[9.5,6,1,1,"M"],[10.5,6,1,1,"<"],[11.5,6,1,1,">"],[12.5,6,1,1,"/"],[13.5,6,2.5,1,"Shift"],[1,7,1.5,1,"Ctrl"],[2.5,7,1.5,1,"Win"],[4,7,1.5,1,"Alt"],[5.5,7,4.5,1,"Space"],[10,7,1.5,1,"Alt"],[11.5,7,1.5,1,"Win"],[13,7,1.5,1,"Menu"],[14.5,7,1.5,1,"Ctrl"],[17,1,1,1,"PS"],[18,1,1,1,"SL"],[19,1,1,1,"Pause"],[17,3,1,1,"Ins"],[18,3,1,1,"Home"],[19,3,1,1,"PgUp"],[17,4,1,1,"Del"],[18,4,1,1,"End"],[19,4,1,1,"PgDn"],[18,6,1,1,"Up"],[17,7,1,1,"Left"],[18,7,1,1,"Down"],[19,7,1,1,"Right"],[21,3,1,1,"NumLock"],[22,3,1,1,"/"],[23,3,1,1,"*"],[24,3,1,1,"-"],[21,4,1,1,"7"],[22,4,1,1,"8"],[23,4,1,1,"9"],[24,4,1,2,"+"],[21,5,1,1,"4"],[22,5,1,1,"5"],[23,5,1,1,"6"],[21,6,1,1,"1"],[22,6,1,1,"2"],[23,6,1,1,"3"],[24,6,1,2,"Enter"],[21,7,2,1,"0"],[23,7,1,1,"."]];
 	}
 	,startScreen: function() {
 		this.get_graphics().clear();
@@ -4058,7 +4050,7 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		var keyParam = [];
 		keyParam[49] = [1,2,1,1,"1"];
 		keyParam[50] = [2,2,1,1,"1"];
-		keyParam[32] = [4.5,6,4.5,1,"Space"];
+		keyParam[32] = [4.5,7,4.5,1,"Space"];
 		var keyCode = e.keyCode;
 		var charCode = e.charCode;
 		var xBut = 0;
@@ -23228,7 +23220,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 551910;
+	this.version = 96840;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
