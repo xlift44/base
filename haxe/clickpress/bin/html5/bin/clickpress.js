@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "123";
+	app.meta.h["build"] = "146";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3557,29 +3557,39 @@ var KeyButton = function(w,h,name) {
 	this.keyCode = 0;
 	openfl_display_Sprite.call(this);
 	var color = 17408;
-	this.get_graphics().lineStyle(3,color);
-	this.get_graphics().beginFill(0,1);
-	this.get_graphics().drawRoundRect(0,0,50 * w,50 * h,20,20);
-	this.get_graphics().endFill();
 	var text1 = name;
 	var tf = new openfl_text_TextFormat();
 	tf.font = "Arial";
 	tf.size = 20;
 	tf.bold = true;
 	tf.align = openfl_text_TextFormatAlign.fromString("center");
-	tf.color = color;
 	this.tText1 = new openfl_text_TextField();
 	this.tText1.set_defaultTextFormat(tf);
-	this.addChild(this.tText1);
 	this.tText1.set_text(text1);
 	this.tText1.set_x(-25 + (w - 1) * 25);
 	this.tText1.set_y(10 + (h - 1) * 25);
+	this.off();
+	this.addChild(this.tText1);
 };
 $hxClasses["KeyButton"] = KeyButton;
 KeyButton.__name__ = "KeyButton";
 KeyButton.__super__ = openfl_display_Sprite;
 KeyButton.prototype = $extend(openfl_display_Sprite.prototype,{
-	__class__: KeyButton
+	on: function() {
+		this.get_graphics().lineStyle(3,65280);
+		this.get_graphics().beginFill(17408,1);
+		this.get_graphics().drawRoundRect(0,0,50,50,20,20);
+		this.get_graphics().endFill();
+		this.tText1.set_textColor(65280);
+	}
+	,off: function() {
+		this.get_graphics().lineStyle(3,17408);
+		this.get_graphics().beginFill(0,1);
+		this.get_graphics().drawRoundRect(0,0,50,50,20,20);
+		this.get_graphics().endFill();
+		this.tText1.set_textColor(17408);
+	}
+	,__class__: KeyButton
 });
 var Lambda = function() { };
 $hxClasses["Lambda"] = Lambda;
@@ -4016,6 +4026,8 @@ var View = function() {
 		keyButton.set_y(this.yBorder + (k[1] - 1) * 50);
 		this.addChild(keyButton);
 	}
+	var keyButton = new KeyButton(2,1,"Enter");
+	keyButton.on();
 };
 $hxClasses["View"] = View;
 View.__name__ = "View";
@@ -23220,7 +23232,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 96840;
+	this.version = 243730;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -74682,7 +74694,9 @@ openfl_display_DisplayObject.__tempStack = new lime_utils_ObjectPool(function() 
 	stack.set_length(0);
 });
 View.colorOn = 65280;
+View.colorBkOn = 17408;
 View.colorOff = 17408;
+View.colorBkOff = 0;
 View.colorGrey = 4473924;
 haxe_Serializer.USE_CACHE = false;
 haxe_Serializer.USE_ENUM_INDEX = false;

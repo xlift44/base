@@ -20,17 +20,12 @@ class View extends Sprite
   public var yBorder:Int;
 
   static inline public var colorOn = 0x00FF00;
+  static inline public var colorBkOn = 0x004400;
   static inline public var colorOff = 0x004400;
+  static inline public var colorBkOff = 0x000000;
   static inline public var colorGrey = 0x444444;
 
   public var keys:Array<Array<Dynamic>> = [];
-  // x, y, xx, yy, text
-  //keys[??] = [1, 1, 1, 1, "Esc"];
-  // keys.push([1, 2, 1, 1, "1"]);
-  // keys[49] = [1, 2, 1, 1, "1"];
-  // keys[50] = [2, 2, 1, 1, "1"];
-  // keys[32] = [4.5, 6, 4.5, 1, "Space"];
-
   // public var keyButtons:Array<keyButton> = [];
 
   public function new() {
@@ -51,27 +46,11 @@ class View extends Sprite
       keyButton.y = yBorder + (k[1] - 1) * 50;
       // keyButton.text = yBorder;
       addChild(keyButton);
+
+      //keyButtons[0] = keyButton;
     }
-
-    // var keyButton = new KeyButton("Esc");
-    // keyButton.x = xBorder;
-    // keyButton.y = yBorder;
-    // addChild(1, 1, keyButton);
-
-    // keyButton = new KeyButton("~");
-    // keyButton.x = xBorder;
-    // keyButton.y = yBorder + 100;
-    // addChild(keyButton);
-
-    // keyButton = new KeyButton("1");
-    // keyButton.x = xBorder + 50;
-    // keyButton.y = yBorder + 100;
-    // addChild(keyButton);
-
-    // keyButton = new KeyButton("2");
-    // keyButton.x = xBorder + 100;
-    // keyButton.y = yBorder + 100;
-    // addChild(keyButton);
+    var keyButton: KeyButton = new KeyButton(2, 1, "Enter");
+    keyButton.on();
   }
 
   public function initKeys() {
@@ -190,11 +169,6 @@ class View extends Sprite
       [21, 7, 2, 1, "0"],
       [23, 7, 1, 1, "."],
     ];
-
-    // keys.push([1, 1, 1, 1, "Esc"]);
-    // keys.push([2, 3, 1, 1, "1"]);
-    // keys.push([3, 3, 1, 1, "2"]);
-    // keys.push([4.5, 6, 4.5, 1, "Space"]);
   }
 
   public function startScreen() {

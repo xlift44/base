@@ -23,27 +23,32 @@ class KeyButton extends Sprite
 		// graphics.beginFill(0x222222, 1);
     // graphics.drawRoundRect(10, 10, 180, 80, 15, 15);
 
-    graphics.lineStyle(3, color);
-		graphics.beginFill(0, 1);
-    graphics.drawRoundRect(0, 0, 50 * w, 50 * h, 20, 20);
-		graphics.endFill();
+
+    // graphics.lineStyle(3, color);
+		// graphics.beginFill(0, 1);
+    // graphics.drawRoundRect(0, 0, 50 * w, 50 * h, 20, 20);
+		// graphics.endFill();
+
 
     var text1:String = name;
     var tf:TextFormat = new TextFormat();
-
     tf.font = "Arial";
 		tf.size = 20;
 		tf.bold = true;
 		tf.align = "center";
-		tf.color = color;
+		// tf.color = color;
 
 		tText1 = new TextField();
     tText1.defaultTextFormat = tf;
 
-    addChild(tText1);
+
 		tText1.text = text1;
 		tText1.x = -25 + (w - 1) * 25;
 		tText1.y = 10 + (h - 1) * 25;
+
+    off();
+
+    addChild(tText1);
 
 		// var text2:String = info;
     // var tf2:TextFormat = new TextFormat();
@@ -64,18 +69,32 @@ class KeyButton extends Sprite
 
 	}
 
-	// public function on () {
+	public function on () {
+    graphics.lineStyle(3, View.colorOn);
+		graphics.beginFill(View.colorBkOn, 1);
+    graphics.drawRoundRect(0, 0, 50 * 1, 50 * 1, 20, 20);
+		graphics.endFill();
+
+    // tf.color = color;
+    tText1.textColor = View.colorOn;
+
 	// 	graphics.lineStyle(3, View.colorOn);
 	// 	graphics.drawRoundRect(10, 10, 80, 80, 15, 15);
 	// 	tText1.textColor = View.colorOn;
 	// 	tText2.textColor = View.colorOn;
-	// }
+	}
 
-	// public function off () {
+	public function off () {
+    graphics.lineStyle(3, View.colorOff);
+		graphics.beginFill(View.colorBkOff, 1);
+    graphics.drawRoundRect(0, 0, 50 * 1, 50 * 1, 20, 20);
+		graphics.endFill();
+
+    tText1.textColor = View.colorOff;
 	// 	graphics.lineStyle(3, View.colorOff);
 	// 	graphics.drawRoundRect(10, 10, 80, 80, 15, 15);
 	// 	tText1.textColor = View.colorOff;
 	// 	tText2.textColor = View.colorOff;
-	// }
+	}
 
 }
