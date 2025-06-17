@@ -1,5 +1,5 @@
 package;
-
+/* тест */
 import openfl.Vector;
 import openfl.display.Sprite;
 import openfl.display.Bitmap;
@@ -28,7 +28,7 @@ class Main extends Sprite
 	public function new() {
 		super();
 
-		trace("Main start");
+		trace("Start");
 
 		view = new View();
 		addChild(view);
@@ -39,7 +39,7 @@ class Main extends Sprite
 		stage.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 		stage.addEventListener(Event.ENTER_FRAME, enterFrame);
 
-		trace("Main done");
+		trace("Done");
 	}
 
 
@@ -53,6 +53,7 @@ class Main extends Sprite
 
 
 	public function enterFrame(e:Event) {
+
 	}
 
 
@@ -68,13 +69,13 @@ class Main extends Sprite
 
 	public function keyDown(e:KeyboardEvent) { // Нажатие на клавишу клавиатуры
 		// trace("keyDown", e);
-		// view.drawKey(e, true);
+		view.drawButton(e, true);
 	}
 
 
 	public function keyUp(e:KeyboardEvent) { // Отпускание клавиши клавиатуры
 		// trace("keyUp", e);
-		// view.drawKey(e, false);
+		view.drawButton(e, false);
 	}
 
 

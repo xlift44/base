@@ -35,7 +35,7 @@ class ApplicationMain
 		ManifestResources.init(config);
 		#end
 
-		app.meta["build"] = "146";
+		app.meta["build"] = "147";
 		app.meta["company"] = "xlift44";
 		app.meta["file"] = "clickpress";
 		app.meta["name"] = "clickpress";
