@@ -34,26 +34,10 @@ class View extends Sprite
     xBorder = Std.int((maxX - stepGridX * countX) / 2);
     yBorder = xBorder;
 
-    startScreen();
-    startKeyboard();
+    startScreen(); // стартовый экран, сетка
 
-    initKeys();
-    var keyButton: KeyButton;
-
-    for (k in keys) {
-      keyButton = new KeyButton(k[2], k[3], k[4]);
-      keyButton.x = xBorder + (k[0] - 1) * 50;
-      keyButton.y = yBorder + (k[1] - 1) * 50;
-      // keyButton.text = yBorder;
-      addChild(keyButton);
-
-      //keyButtons[0] = keyButton;
-    }
-    var keyButton: KeyButton = new KeyButton(2, 1, "Enter");
-    keyButton.on();
-  }
-
-  public function initKeys() {
+    // массив кнопок клавиатуры
+    // позиция X, позиция Y, ширина, высота, текст
     keys = [
       [1, 1, 1, 1, "Esc"],
       [3, 1, 1, 1, "F1"],
@@ -169,15 +153,28 @@ class View extends Sprite
       [21, 7, 2, 1, "0"],
       [23, 7, 1, 1, "."],
     ];
+
+    var keyButton: KeyButton;
+
+    for (k in keys) {
+      keyButton = new KeyButton(k[2], k[3], k[4]);
+      keyButton.x = xBorder + (k[0] - 1) * 50;
+      keyButton.y = yBorder + (k[1] - 1) * 50;
+      addChild(keyButton);
+
+      //keyButtons[0] = keyButton;
+    }
+    // var keyButton: KeyButton = new KeyButton(2, 1, "Enter");
+    // keyButton.on();
   }
 
   public function startScreen() {
+    // границы экрана
     graphics.clear();
     graphics.lineStyle(1, colorGrey);
     graphics.drawRect(0, 0, maxX, maxY);
-  }
 
-  public function startKeyboard() {
+    // сетка
     for (y in 0...countY + 1) {
       graphics.moveTo(xBorder, yBorder + y * stepGridY);
       graphics.lineTo(xBorder + countX * stepGridX, yBorder + y * stepGridY);
