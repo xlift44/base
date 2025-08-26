@@ -25,8 +25,9 @@ class View extends Sprite
   static inline public var colorBkOff = 0x000000;
   static inline public var colorGrey = 0x444444;
 
-  public var keys:Array<Array<Dynamic>> = [];
-  // public var keyButtons:Array<keyButton> = [];
+  public var keys:Array<Array<Dynamic>> = []; // данные кнопок клавиатуры
+
+  public var keyButtons:Array<KeyButton> = []; // кнопки клавиатуры на экране
 
   public function new() {
     super();
@@ -36,7 +37,6 @@ class View extends Sprite
 
     startScreen(); // сетка
 
-    // массив кнопок клавиатуры
     // позиция X, позиция Y, ширина, высота, текст, keycode
     keys = [
       [1, 1, 1, 1, "Esc", 27],
@@ -113,7 +113,7 @@ class View extends Sprite
       [1, 7, 1.5, 1, "Ctrl", 17],
       [2.5, 7, 1.5, 1, "Win", 15],
       [4, 7, 1.5, 1, "Alt", 18],
-      [5.5, 7, 4.5, 1, "Space", 132],
+      [5.5, 7, 4.5, 1, "Space", 32],
       [10, 7, 1.5, 1, "Alt", 18],
       [11.5, 7, 1.5, 1, "Win", 15],
       [13, 7, 1.5, 1, "Menu", 15],
@@ -154,18 +154,19 @@ class View extends Sprite
       [23, 7, 1, 1, ".", 110],
     ];
 
-    var keyButton: KeyButton;
-
     for (k in keys) {
-      keyButton = new KeyButton(k[2], k[3], k[4]);
+      // keyButtons[k[5]]= new KeyButton(k);
+      // keyButtons[k[5]].x = xBorder + (k[0] - 1) * 50;
+      // keyButtons[k[5]].y = yBorder + (k[1] - 1) * 50;
+      // addChild(keyButtons[k[5]]);
+      var keyButton = new KeyButton(k);
       keyButton.x = xBorder + (k[0] - 1) * 50;
       keyButton.y = yBorder + (k[1] - 1) * 50;
+      keyButton.keyCode = k[5];
       addChild(keyButton);
-
-      //keyButtons[0] = keyButton;
+      keyButtons.push(keyButton);
     }
-    // var keyButton: KeyButton = new KeyButton(2, 1, "Enter");
-    // keyButton.on();
+
   }
 
   public function startScreen() {
@@ -186,29 +187,36 @@ class View extends Sprite
     graphics.lineStyle(0, 0, 0);
   }
 
-  public function drawKey(e:KeyboardEvent, on: Bool) {
-    var keyParam:Array<Array<Dynamic>> = [];
-    // x, y, xx, yy, text
-    //keyParam[??] = [1, 1, 1, 1, "Esc"];
-    keyParam[49] = [1, 2, 1, 1, "1"];
-    keyParam[50] = [2, 2, 1, 1, "1"];
-    keyParam[32] = [4.5, 7, 4.5, 1, "Space"];
+  // public function drawKey(e:KeyboardEvent, on: Bool) {
+  //   var keyParam:Array<Array<Dynamic>> = [];
+  //   // x, y, xx, yy, text
+  //   //keyParam[??] = [1, 1, 1, 1, "Esc"];
+  //   keyParam[49] = [1, 2, 1, 1, "1"];
+  //   keyParam[50] = [2, 2, 1, 1, "1"];
+  //   keyParam[32] = [4.5, 7, 4.5, 1, "Space"];
 
-    var keyCode:Int = e.keyCode;
-    var charCode:Int = e.charCode;
-    var xBut:Int = 0;
-    var yBut:Int = 0;
-    var text:String = "";
-  }
+  //   var keyCode:Int = e.keyCode;
+  //   var charCode:Int = e.charCode;
+  //   var xBut:Int = 0;
+  //   var yBut:Int = 0;
+  //   var text:String = "";
+  // }
 
-  public function switchKeyButton(e:KeyboardEvent, on: Bool) {
-    var keyCode:Int = e.keyCode;
-    var charCode:Int = e.charCode;
-    var xBut:Int = 0;
-    var yBut:Int = 0;
-    var text:String = "";
+  public function switchKeyButton(keyCode:Int, on: Bool) {
+    // var keyCode:Int = e.keyCode;
+    // var charCode:Int = e.charCode;
+    // var xBut:Int = 0;
+    // var yBut:Int = 0;
+    // var text:String = "";
 
-    trace('keycode = ' + keyCode, on);
+    // trace('keycode = ' + keyCode, on);
+
+    for (k in keyButtons) {
+      if (k.keyCode == keyCode) {
+        if (on) k.on(); else k.off();
+      }
+    }
+
   }
 
 }

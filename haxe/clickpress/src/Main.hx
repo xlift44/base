@@ -67,13 +67,13 @@ class Main extends Sprite
 		trace("keyDown", e);
 		// view.drawButton(e, true);
     // найти каждый KeyButton c [e=?] и включить
-    view.switchKeyButton(e, true);
+    view.switchKeyButton(e.keyCode, true);
 	}
 
 	public function keyUp(e:KeyboardEvent) { // Отпускание клавиши клавиатуры
 		// trace("keyUp", e);
 		// view.drawButton(e, false);
-    view.switchKeyButton(e, false);
+    view.switchKeyButton(e.keyCode, false);
 	}
 
 

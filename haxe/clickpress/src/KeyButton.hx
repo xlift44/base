@@ -13,22 +13,18 @@ class KeyButton extends Sprite
 	public var tText1:TextField;
 	public var tText2:TextField;
 
+  var w:Float;
+  var h:Float;
 
-	public function new(w:Float, h:Float, name:String)	{
+
+	public function new(attr:Array<Dynamic>)	{
 		super();
 
     var color = View.colorOff;
 
-		// graphics.lineStyle(3, View.colorOff);
-		// graphics.beginFill(0x222222, 1);
-    // graphics.drawRoundRect(10, 10, 180, 80, 15, 15);
-
-
-    // graphics.lineStyle(3, color);
-		// graphics.beginFill(0, 1);
-    // graphics.drawRoundRect(0, 0, 50 * w, 50 * h, 20, 20);
-		// graphics.endFill();
-
+    w = attr[2];
+    h = attr[3];
+    var name = attr[4];
 
     var text1:String = name;
     var tf:TextFormat = new TextFormat();
@@ -72,7 +68,7 @@ class KeyButton extends Sprite
 	public function on () {
     graphics.lineStyle(3, View.colorOn);
 		graphics.beginFill(View.colorBkOn, 1);
-    graphics.drawRoundRect(0, 0, 50 * 1, 50 * 1, 20, 20);
+    graphics.drawRoundRect(0, 0, 50 * w, 50 * h, 20, 20);
 		graphics.endFill();
 
     // tf.color = color;
@@ -87,7 +83,7 @@ class KeyButton extends Sprite
 	public function off () {
     graphics.lineStyle(3, View.colorOff);
 		graphics.beginFill(View.colorBkOff, 1);
-    graphics.drawRoundRect(0, 0, 50 * 1, 50 * 1, 20, 20);
+    graphics.drawRoundRect(0, 0, 50 * w, 50 * h, 20, 20);
 		graphics.endFill();
 
     tText1.textColor = View.colorOff;

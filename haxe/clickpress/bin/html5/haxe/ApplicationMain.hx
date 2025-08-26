@@ -19,7 +19,7 @@ class ApplicationMain
 		lime.system.System.__registerEntryPoint("clickpress", create);
 
 		#if (js && html5)
-		#if (munit || utest)
+		#if (munit || (utest && openfl_enable_utest_legacy_mode))
 		lime.system.System.embed("clickpress", null, 1280, 1024);
 		#end
 		#else
@@ -35,7 +35,7 @@ class ApplicationMain
 		ManifestResources.init(config);
 		#end
 
-		app.meta["build"] = "163";
+		app.meta["build"] = "108";
 		app.meta["company"] = "xlift44";
 		app.meta["file"] = "clickpress";
 		app.meta["name"] = "clickpress";
