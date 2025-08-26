@@ -53,29 +53,27 @@ class Main extends Sprite
 
 
 	public function enterFrame(e:Event) {
-
 	}
-
 
 	public function mouseDown(e:MouseEvent) { // Нажатие на кнопку мыши
 		trace("mouseDown", e);
 	}
 
-
 	public function mouseUp(e:MouseEvent) { // Отпускание кнопки мыши
 		trace("mouseUp", e);
 	}
 
-
 	public function keyDown(e:KeyboardEvent) { // Нажатие на клавишу клавиатуры
-		// trace("keyDown", e);
+		trace("keyDown", e);
 		// view.drawButton(e, true);
+    // найти каждый KeyButton c [e=?] и включить
+    view.switchKeyButton(e, true);
 	}
-
 
 	public function keyUp(e:KeyboardEvent) { // Отпускание клавиши клавиатуры
 		// trace("keyUp", e);
 		// view.drawButton(e, false);
+    view.switchKeyButton(e, false);
 	}
 
 

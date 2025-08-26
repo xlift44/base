@@ -899,7 +899,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "154";
+	app.meta.h["build"] = "163";
 	app.meta.h["company"] = "xlift44";
 	app.meta.h["file"] = "clickpress";
 	app.meta.h["name"] = "clickpress";
@@ -3387,14 +3387,17 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 	,enterFrame: function(e) {
 	}
 	,mouseDown: function(e) {
-		haxe_Log.trace("mouseDown",{ fileName : "src/Main.hx", lineNumber : 61, className : "Main", methodName : "mouseDown", customParams : [e]});
+		haxe_Log.trace("mouseDown",{ fileName : "src/Main.hx", lineNumber : 59, className : "Main", methodName : "mouseDown", customParams : [e]});
 	}
 	,mouseUp: function(e) {
-		haxe_Log.trace("mouseUp",{ fileName : "src/Main.hx", lineNumber : 66, className : "Main", methodName : "mouseUp", customParams : [e]});
+		haxe_Log.trace("mouseUp",{ fileName : "src/Main.hx", lineNumber : 63, className : "Main", methodName : "mouseUp", customParams : [e]});
 	}
 	,keyDown: function(e) {
+		haxe_Log.trace("keyDown",{ fileName : "src/Main.hx", lineNumber : 67, className : "Main", methodName : "keyDown", customParams : [e]});
+		this.view.switchKeyButton(e,true);
 	}
 	,keyUp: function(e) {
+		this.view.switchKeyButton(e,false);
 	}
 	,__class__: Main
 });
@@ -3568,7 +3571,7 @@ var KeyButton = function(w,h,name) {
 	this.tText1.set_text(text1);
 	this.tText1.set_x(-25 + (w - 1) * 25);
 	this.tText1.set_y(10 + (h - 1) * 25);
-	this.off();
+	this.on();
 	this.addChild(this.tText1);
 };
 $hxClasses["KeyButton"] = KeyButton;
@@ -4013,7 +4016,7 @@ var View = function() {
 	this.xBorder = (this.maxX - this.stepGridX * this.countX) / 2 | 0;
 	this.yBorder = this.xBorder;
 	this.startScreen();
-	this.keys = [[1,1,1,1,"Esc"],[3,1,1,1,"F1"],[4,1,1,1,"F2"],[5,1,1,1,"F3"],[6,1,1,1,"F4"],[7.5,1,1,1,"F5"],[8.5,1,1,1,"F6"],[9.5,1,1,1,"F7"],[10.5,1,1,1,"F8"],[12,1,1,1,"F9"],[13,1,1,1,"F10"],[14,1,1,1,"F11"],[15,1,1,1,"F12"],[1,3,1,1,"~"],[2,3,1,1,"1"],[3,3,1,1,"2"],[4,3,1,1,"3"],[5,3,1,1,"4"],[6,3,1,1,"5"],[7,3,1,1,"6"],[8,3,1,1,"7"],[9,3,1,1,"8"],[10,3,1,1,"9"],[11,3,1,1,"0"],[12,3,1,1,"-"],[13,3,1,1,"="],[14,3,2,1,"<<"],[1,4,1.5,1,"TAB"],[2.5,4,1,1,"Q"],[3.5,4,1,1,"W"],[4.5,4,1,1,"E"],[5.5,4,1,1,"R"],[6.5,4,1,1,"T"],[7.5,4,1,1,"Y"],[8.5,4,1,1,"U"],[9.5,4,1,1,"I"],[10.5,4,1,1,"O"],[11.5,4,1,1,"P"],[12.5,4,1,1,"["],[13.5,4,1,1,"]"],[14.5,4,1.5,1,"\\"],[1,5,2,1,"CapsLock"],[3,5,1,1,"A"],[4,5,1,1,"S"],[5,5,1,1,"D"],[6,5,1,1,"F"],[7,5,1,1,"G"],[8,5,1,1,"H"],[9,5,1,1,"J"],[10,5,1,1,"K"],[11,5,1,1,"L"],[12,5,1,1,";"],[13,5,1,1,"'"],[14,5,2,1,"Enter"],[1,6,2.5,1,"Shift"],[3.5,6,1,1,"Z"],[4.5,6,1,1,"X"],[5.5,6,1,1,"C"],[6.5,6,1,1,"V"],[7.5,6,1,1,"B"],[8.5,6,1,1,"N"],[9.5,6,1,1,"M"],[10.5,6,1,1,"<"],[11.5,6,1,1,">"],[12.5,6,1,1,"/"],[13.5,6,2.5,1,"Shift"],[1,7,1.5,1,"Ctrl"],[2.5,7,1.5,1,"Win"],[4,7,1.5,1,"Alt"],[5.5,7,4.5,1,"Space"],[10,7,1.5,1,"Alt"],[11.5,7,1.5,1,"Win"],[13,7,1.5,1,"Menu"],[14.5,7,1.5,1,"Ctrl"],[17,1,1,1,"PS"],[18,1,1,1,"SL"],[19,1,1,1,"Pause"],[17,3,1,1,"Ins"],[18,3,1,1,"Home"],[19,3,1,1,"PgUp"],[17,4,1,1,"Del"],[18,4,1,1,"End"],[19,4,1,1,"PgDn"],[18,6,1,1,"Up"],[17,7,1,1,"Left"],[18,7,1,1,"Down"],[19,7,1,1,"Right"],[21,3,1,1,"NumLock"],[22,3,1,1,"/"],[23,3,1,1,"*"],[24,3,1,1,"-"],[21,4,1,1,"7"],[22,4,1,1,"8"],[23,4,1,1,"9"],[24,4,1,2,"+"],[21,5,1,1,"4"],[22,5,1,1,"5"],[23,5,1,1,"6"],[21,6,1,1,"1"],[22,6,1,1,"2"],[23,6,1,1,"3"],[24,6,1,2,"Enter"],[21,7,2,1,"0"],[23,7,1,1,"."]];
+	this.keys = [[1,1,1,1,"Esc",27],[3,1,1,1,"F1",112],[4,1,1,1,"F2",113],[5,1,1,1,"F3",114],[6,1,1,1,"F4",115],[7.5,1,1,1,"F5",116],[8.5,1,1,1,"F6",117],[9.5,1,1,1,"F7",118],[10.5,1,1,1,"F8",119],[12,1,1,1,"F9",120],[13,1,1,1,"F10",121],[14,1,1,1,"F11",122],[15,1,1,1,"F12",123],[1,3,1,1,"~",192],[2,3,1,1,"1",49],[3,3,1,1,"2",50],[4,3,1,1,"3",51],[5,3,1,1,"4",52],[6,3,1,1,"5",53],[7,3,1,1,"6",54],[8,3,1,1,"7",55],[9,3,1,1,"8",56],[10,3,1,1,"9",57],[11,3,1,1,"0",48],[12,3,1,1,"-",189],[13,3,1,1,"=",187],[14,3,2,1,"<<",8],[1,4,1.5,1,"TAB",9],[2.5,4,1,1,"Q",81],[3.5,4,1,1,"W",87],[4.5,4,1,1,"E",69],[5.5,4,1,1,"R",82],[6.5,4,1,1,"T",84],[7.5,4,1,1,"Y",89],[8.5,4,1,1,"U",85],[9.5,4,1,1,"I",73],[10.5,4,1,1,"O",79],[11.5,4,1,1,"P",80],[12.5,4,1,1,"[",219],[13.5,4,1,1,"]",221],[14.5,4,1.5,1,"\\",220],[1,5,2,1,"CapsLock",20],[3,5,1,1,"A",65],[4,5,1,1,"S",83],[5,5,1,1,"D",68],[6,5,1,1,"F",70],[7,5,1,1,"G",71],[8,5,1,1,"H",72],[9,5,1,1,"J",74],[10,5,1,1,"K",75],[11,5,1,1,"L",76],[12,5,1,1,";",186],[13,5,1,1,"'",222],[14,5,2,1,"Enter",13],[1,6,2.5,1,"Shift",16],[3.5,6,1,1,"Z",90],[4.5,6,1,1,"X",88],[5.5,6,1,1,"C",67],[6.5,6,1,1,"V",86],[7.5,6,1,1,"B",66],[8.5,6,1,1,"N",78],[9.5,6,1,1,"M",77],[10.5,6,1,1,"<",188],[11.5,6,1,1,">",190],[12.5,6,1,1,"/",191],[13.5,6,2.5,1,"Shift",16],[1,7,1.5,1,"Ctrl",17],[2.5,7,1.5,1,"Win",15],[4,7,1.5,1,"Alt",18],[5.5,7,4.5,1,"Space",132],[10,7,1.5,1,"Alt",18],[11.5,7,1.5,1,"Win",15],[13,7,1.5,1,"Menu",15],[14.5,7,1.5,1,"Ctrl",17],[17,1,1,1,"PS",301],[18,1,1,1,"SL",145],[19,1,1,1,"Pause",19],[17,3,1,1,"Ins",45],[18,3,1,1,"Home",36],[19,3,1,1,"PgUp",33],[17,4,1,1,"Del",46],[18,4,1,1,"End",35],[19,4,1,1,"PgDn",34],[18,6,1,1,"Up",38],[17,7,1,1,"Left",37],[18,7,1,1,"Down",40],[19,7,1,1,"Right",39],[21,3,1,1,"NumLock",144],[22,3,1,1,"/",111],[23,3,1,1,"*",106],[24,3,1,1,"-",109],[21,4,1,1,"7",103],[22,4,1,1,"8",104],[23,4,1,1,"9",105],[24,4,1,2,"+",107],[21,5,1,1,"4",100],[22,5,1,1,"5",101],[23,5,1,1,"6",102],[21,6,1,1,"1",97],[22,6,1,1,"2",98],[23,6,1,1,"3",99],[24,6,1,2,"Enter",13],[21,7,2,1,"0",96],[23,7,1,1,".",110]];
 	var keyButton;
 	var _g = 0;
 	var _g1 = this.keys;
@@ -4060,6 +4063,14 @@ View.prototype = $extend(openfl_display_Sprite.prototype,{
 		var xBut = 0;
 		var yBut = 0;
 		var text = "";
+	}
+	,switchKeyButton: function(e,on) {
+		var keyCode = e.keyCode;
+		var charCode = e.charCode;
+		var xBut = 0;
+		var yBut = 0;
+		var text = "";
+		haxe_Log.trace("keycode = " + keyCode,{ fileName : "src/View.hx", lineNumber : 211, className : "View", methodName : "switchKeyButton", customParams : [on]});
 	}
 	,__class__: View
 });
@@ -23224,7 +23235,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 129348;
+	this.version = 66660;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
