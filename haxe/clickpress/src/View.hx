@@ -14,7 +14,7 @@ class View extends Sprite
   public var stepGridX:Int = 50;
   public var stepGridY:Int = 50;
   public var countX = 24; // Std.int(maxX/stepGridX);
-  public var countY = 7; // Std.int(maxY/stepGridY);
+  public var countY = 19; // Std.int(maxY/stepGridY);
 
   public var xBorder:Int;
   public var yBorder:Int;
@@ -155,10 +155,6 @@ class View extends Sprite
     ];
 
     for (k in keys) {
-      // keyButtons[k[5]]= new KeyButton(k);
-      // keyButtons[k[5]].x = xBorder + (k[0] - 1) * 50;
-      // keyButtons[k[5]].y = yBorder + (k[1] - 1) * 50;
-      // addChild(keyButtons[k[5]]);
       var keyButton = new KeyButton(k);
       keyButton.x = xBorder + (k[0] - 1) * 50;
       keyButton.y = yBorder + (k[1] - 1) * 50;
@@ -185,38 +181,59 @@ class View extends Sprite
       graphics.lineTo(xBorder + x * stepGridX, yBorder + countY * stepGridY);
     }
     graphics.lineStyle(0, 0, 0);
+
+    // тачпад
+    graphics.lineStyle(3, View.colorOff);
+		graphics.beginFill(View.colorBkOff, 1);
+
+    graphics.drawRoundRect(
+      xBorder + 1, yBorder + stepGridY * 8 + 1,
+      stepGridX * 9 - 2, stepGridY * 6 - 2, 0, 0);
+    graphics.drawRoundRect(
+      xBorder + 1, yBorder + stepGridY * 14 + 1,
+      stepGridX * 4.5 - 2, stepGridY * 2 - 2, 20, 20);
+    graphics.drawRoundRect(
+      xBorder + stepGridX * 4.5 + 1, yBorder + stepGridY * 14 + 1,
+      stepGridX * 4.5 - 2, stepGridY * 2 - 2, 20, 20);
+
+    // мышь
+    graphics.lineStyle(3, View.colorOff);
+		graphics.beginFill(View.colorBkOff, 1);
+
+    graphics.drawRoundRectComplex(
+      xBorder + stepGridX * 10 + 1, yBorder + stepGridY * 8 + 1,
+      stepGridX * 2 - 2, stepGridY * 3 - 2, 100, 0, 0, 0);
+
+    graphics.drawRoundRect(
+      xBorder + stepGridX * 12 + 1, yBorder + stepGridY * 8 + 1,
+      stepGridX * 1 - 2, stepGridY * 3 - 2, 0, 0);
+
+    graphics.drawRoundRectComplex(
+      xBorder + stepGridX * 13 + 1, yBorder + stepGridY * 8 + 1,
+      stepGridX * 2 - 2, stepGridY * 3 - 2, 0, 100, 0, 0);
+
+
+    graphics.drawRoundRectComplex(
+      xBorder + stepGridX * 10 + 1, yBorder + stepGridY * 11 + 1,
+      stepGridX * 5 - 2, stepGridY * 5 - 2, 0, 0, 100, 100);
+
+    // табло
+    graphics.lineStyle(3, View.colorOff);
+		graphics.beginFill(View.colorBkOff, 1);
+
+    graphics.drawRoundRect(
+      xBorder + stepGridX * 16 + 1, yBorder + stepGridY * 8 + 1,
+      stepGridX * 8 - 2, stepGridY * 8 - 2, 0, 0);
+
+    graphics.endFill();
   }
 
-  // public function drawKey(e:KeyboardEvent, on: Bool) {
-  //   var keyParam:Array<Array<Dynamic>> = [];
-  //   // x, y, xx, yy, text
-  //   //keyParam[??] = [1, 1, 1, 1, "Esc"];
-  //   keyParam[49] = [1, 2, 1, 1, "1"];
-  //   keyParam[50] = [2, 2, 1, 1, "1"];
-  //   keyParam[32] = [4.5, 7, 4.5, 1, "Space"];
-
-  //   var keyCode:Int = e.keyCode;
-  //   var charCode:Int = e.charCode;
-  //   var xBut:Int = 0;
-  //   var yBut:Int = 0;
-  //   var text:String = "";
-  // }
-
   public function switchKeyButton(keyCode:Int, on: Bool) {
-    // var keyCode:Int = e.keyCode;
-    // var charCode:Int = e.charCode;
-    // var xBut:Int = 0;
-    // var yBut:Int = 0;
-    // var text:String = "";
-
-    // trace('keycode = ' + keyCode, on);
-
     for (k in keyButtons) {
       if (k.keyCode == keyCode) {
         if (on) k.on(); else k.off();
       }
     }
-
   }
 
 }

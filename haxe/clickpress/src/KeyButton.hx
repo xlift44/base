@@ -68,7 +68,7 @@ class KeyButton extends Sprite
 	public function on () {
     graphics.lineStyle(3, View.colorOn);
 		graphics.beginFill(View.colorBkOn, 1);
-    graphics.drawRoundRect(0, 0, 50 * w, 50 * h, 20, 20);
+    graphics.drawRoundRect(1, 1, 50 * w - 2, 50 * h - 2, 20, 20);
 		graphics.endFill();
 
     // tf.color = color;
@@ -83,7 +83,7 @@ class KeyButton extends Sprite
 	public function off () {
     graphics.lineStyle(3, View.colorOff);
 		graphics.beginFill(View.colorBkOff, 1);
-    graphics.drawRoundRect(0, 0, 50 * w, 50 * h, 20, 20);
+    graphics.drawRoundRect(1, 1, 50 * w - 2, 50 * h - 2, 20, 20);
 		graphics.endFill();
 
     tText1.textColor = View.colorOff;
